@@ -1,0 +1,67 @@
+attempt: 1
+status: "valid"
+started_at_utc: "2026-08-29T11:33:04.992Z"
+assistant_message_at_utc: "2026-08-29T11:34:44.618Z"
+usage_recorded_at_utc: "2026-08-29T11:34:44.679Z"
+response_latency_ms: 99626
+response_latency_display_seconds: "not_exposed"
+latency_method: "assistant-message-event"
+
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+
+usage:
+  source: "event-log"
+  provider_schema: "openai"
+  input_tokens_including_cached: 15489
+  cached_input_tokens: 11008
+  non_cached_input_tokens: 4481
+  cli_total_excluding_cached: 4494
+  cli_total_source: "derived-from-event-log-and-cross-checked-against-exit-ui"
+  cache_write_input_tokens: 0
+  model_context_window_event: 258400
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_applicable"
+  cache_creation_ephemeral_5m_input_tokens: "not_exposed"
+  cache_creation_ephemeral_1h_input_tokens: "not_exposed"
+  output_tokens: 13
+  reasoning_output_tokens: 0
+  context_total_tokens: 15502
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: "not_exposed"
+  iterations_observation: "not_exposed"
+  web_search_requests: 0
+  web_fetch_requests: 0
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors:
+    - "WebSocket request timed out; Codex CLI fell back to HTTPS transport and completed successfully."
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "not_provided"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    quota: "not_provided"
+
+deviations:
+  - "The request first waited for a WebSocket transport timeout, then succeeded over HTTPS; the attempt is retained as observed."
+  - "The raw exit-usage screenshot is withheld because it contains account, local-path, and Session ID fields; native token values are published through the sanitized rollout events."
+  - "Quota was not preregistered and is not used, despite incidental quota UI being visible in private evidence."

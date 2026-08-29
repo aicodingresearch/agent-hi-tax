@@ -1,0 +1,100 @@
+Captured at UTC: 2026-08-29T11:21:30.689Z
+
+## Codex CLI
+
+Executable: codex (sanitized command name)
+Version: codex-cli 0.147.0
+Authentication: Logged in using ChatGPT
+
+## Operating system
+
+Caption: Microsoft Windows 11 Home, Chinese edition
+Version: 10.0.26200
+Build number: 26200
+Architecture: 64-bit / x64
+Locale: zh-CN
+Windows time zone: China Standard Time (UTC+08:00)
+IANA time zone used in manifest: Asia/Shanghai
+
+## Fixed configuration
+
+Global config source: <CODEX_HOME>/config.toml
+Workspace config: not present
+Global instruction file discovered: <CODEX_HOME>/AGENTS.md
+Pre-prompt CLI /status Agents.md observation: <none>
+Repository AGENTS.md: not present
+Configured model: gpt-5.6-sol
+Configured reasoning effort: high
+Harness profile: as-used
+Session state: fresh
+Workspace type: independent empty directory per attempt
+
+## Enabled MCP servers
+
+- node_repl
+- sites-design-picker
+- openaiDeveloperDocs
+
+## Installed and enabled plugins
+
+- github@openai-curated 11c74d6b
+- documents@openai-primary-runtime 26.630.12135
+- pdf@openai-primary-runtime 26.630.12135
+- spreadsheets@openai-primary-runtime 26.630.12135
+- presentations@openai-primary-runtime 26.630.12135
+- template-creator@openai-primary-runtime 26.630.12135
+- sites@openai-bundled 0.1.27
+- browser@openai-bundled 26.707.31428
+- chrome@openai-bundled 26.707.31428
+- computer-use@openai-bundled 26.707.31428
+- visualize@openai-bundled 1.0.11
+
+## Enabled or discoverable skills
+
+- imagegen
+- openai-docs
+- plugin-creator
+- skill-creator
+- skill-installer
+- documents
+- pdf
+- Spreadsheets
+- Presentations
+- template-creator
+- sites-building
+- sites-hosting
+- control-in-app-browser
+- control-chrome
+- computer-use
+- visualize
+- gh-address-comments
+- gh-fix-ci
+- github
+- yeet
+
+## Hooks
+
+No explicit hooks were found in the active global config. No hook files were
+found in the enabled plugin packages outside dependency directories. The
+assessment was performed by inspecting the active configuration and enabled
+plugin package files. No hook model calls were identified.
+
+## First-attempt pre-prompt observations
+
+- observed model: gpt-5.6-sol
+- observed reasoning effort: high (summaries auto)
+- permission mode: Workspace (Ask for approval)
+- collaboration mode: Default
+- filesystem profile: Workspace
+- internal codex_apps startup error: none observed
+- workspace: independent empty non-Git directory
+- Agents.md reported by CLI /status: <none>
+
+The configuration root contains an AGENTS.md file, while CLI /status reported
+Agents.md: <none>. The manifest records the CLI-observed state and preserves
+this discrepancy as a protocol note rather than claiming that the discovered
+file was injected.
+
+Paths that identify local configuration roots were replaced with
+<CODEX_HOME>. No account identifier, email address, session ID, hostname, or
+home path is included.

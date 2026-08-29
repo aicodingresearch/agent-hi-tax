@@ -1,0 +1,218 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  # Append _<github-handle> to the id (existing maintainer reference samples predate this rule).
+  id: "20260829_codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-08-29T11:33:04.992Z"
+  captured_to_utc: "2026-08-29T12:07:08.756Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.147.0"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "Windows 11"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Plus"
+  usage_multiplier: "not_exposed"
+  # If no listed billing mode fits, record the product-native label (for example, WorkBuddy's workbuddy-credit).
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "self_reported"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "cli-status"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "true"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled:
+    - "github@openai-curated 11c74d6b"
+    - "documents@openai-primary-runtime 26.630.12135"
+    - "pdf@openai-primary-runtime 26.630.12135"
+    - "spreadsheets@openai-primary-runtime 26.630.12135"
+    - "presentations@openai-primary-runtime 26.630.12135"
+    - "template-creator@openai-primary-runtime 26.630.12135"
+    - "sites@openai-bundled 0.1.27"
+    - "browser@openai-bundled 26.707.31428"
+    - "chrome@openai-bundled 26.707.31428"
+    - "computer-use@openai-bundled 26.707.31428"
+    - "visualize@openai-bundled 1.0.11"
+  skills_enabled:
+    - "imagegen"
+    - "openai-docs"
+    - "plugin-creator"
+    - "skill-creator"
+    - "skill-installer"
+    - "documents"
+    - "pdf"
+    - "Spreadsheets"
+    - "Presentations"
+    - "template-creator"
+    - "sites-building"
+    - "sites-hosting"
+    - "control-in-app-browser"
+    - "control-chrome"
+    - "computer-use"
+    - "visualize"
+    - "gh-address-comments"
+    - "gh-fix-ci"
+    - "github"
+    - "yeet"
+  mcp_servers_enabled:
+    - "node_repl"
+    - "sites-design-picker"
+    - "openaiDeveloperDocs"
+  hooks_enabled: []
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "configuration and enabled-plugin manifest/file inspection"
+  network_mode: "enabled"
+  permission_mode: "Workspace (Ask for approval)"
+  filesystem_profile_observed: "Workspace"
+  collaboration_mode: "Default"
+  settings_sources:
+    - "<CODEX_HOME>/config.toml"
+    - "CLI launch arguments"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+# Keep native provider fields in each attempt. These definitions make the
+# scenario-wide primary and derived metrics explicit without pretending that
+# every Agent uses the same token schema.
+measurement:
+  primary_metric: "context_total_tokens"
+  secondary_metric: "cli_total_excluding_cached"
+  native_input_definition: "input_tokens_including_cached; cached_input_tokens is a subset"
+  total_input_definition: "input_tokens_including_cached"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "user-message event to assistant-message event"
+  transcript_extraction: "post-run contributor extraction from local Codex rollout"
+  transcript_deduplication: "one target user message and one final assistant message; repeated token-count events are not summed"
+
+# Add one mapping per metric actually summarized in the scenario README.
+# Copy the structure from the closest completed sample; do not invent fields.
+aggregate:
+  context_total_tokens:
+    values: [15502, 15502, 15503]
+    min: 15502
+    median: 15502
+    max: 15503
+  cli_total_excluding_cached:
+    values: [4494, 4494, 4495]
+    min: 4494
+    median: 4494
+    max: 4495
+  response_latency_ms:
+    values: [99626, 99781, 100179]
+    min: 99626
+    median: 99781
+    max: 100179
+
+quota:
+  attribution: "not_measured"
+  notes: "Quota measurement is not preregistered; session-native token usage remains in scope."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "self_reported"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "verified"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "verified"
+    mcp_plugins_and_hooks: "verified"
+  public_files:
+    - "evidence/preflight.txt"
+    - "evidence/private-evidence.md"
+    - "attempts/r1/response.png"
+    - "attempts/r2/response.png"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "Local configuration root paths were replaced with <CODEX_HOME>."
+    - "The executable path was reduced to the command name codex."
+    - "Public terminal screenshots are deterministic pixel crops of registered private originals; no pixels inside retained crop regions were changed."
+
+# Omit this block when no cross-scenario claim is made. When a comparison has
+# an uncontrolled variable, record it instead of attributing the difference.
+comparison:
+  status: "confounded"
+  reference_scenario: "20260814_codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64"
+  confounder: "subscription plan, OS/architecture, and contributor as-used harness differ from the reference sample"
+  notes: "This is an independent T-01 replication; observed differences will not be attributed to a single changed variable."
+
+protocol:
+  deviations:
+    - "The configuration root contains an AGENTS.md file, but the pre-prompt CLI /status reported Agents.md: <none>; the manifest records the observed status as no active instruction file."
+    - "All three requests first encountered a WebSocket timeout and then completed over the CLI's HTTPS transport fallback; the observed latency includes the timeout."
+    - "Quota UI was incidentally visible but was not preregistered, so quota is excluded from all results."
+    - "The supplied R2 response screenshot duplicated its status screenshot; the R2 public response crop comes from the raw exit-usage screenshot, which contains the complete prompt and reply."
+  notes: "Pre-prompt /status in all three attempts showed no codex_apps startup error."

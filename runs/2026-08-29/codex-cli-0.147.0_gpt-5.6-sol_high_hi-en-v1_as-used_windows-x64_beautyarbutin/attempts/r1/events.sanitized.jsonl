@@ -1,0 +1,5 @@
+{"timestamp":"2026-08-29T11:33:03.675Z","event":"session_meta","cli_version":"0.147.0","surface":"codex-tui"}
+{"timestamp":"2026-08-29T11:33:04.922Z","event":"turn_context","model":"gpt-5.6-sol","reasoning_effort":"high"}
+{"timestamp":"2026-08-29T11:33:04.992Z","event":"user_message","case_id":"hi-en-v1","text_sha256":"8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4","bytes":2}
+{"timestamp":"2026-08-29T11:34:44.618Z","event":"assistant_message","text":"Hi! What can I help you with?"}
+{"timestamp":"2026-08-29T11:34:44.679Z","event":"token_count","source_usage":{"input_tokens":15489,"cached_input_tokens":11008,"cache_write_input_tokens":0,"output_tokens":13,"reasoning_output_tokens":0,"total_tokens":15502},"derived":{"input_tokens_including_cached":15489,"non_cached_input_tokens":4481,"context_total_tokens":15502,"cli_total_excluding_cached":4494},"model_context_window":258400}
