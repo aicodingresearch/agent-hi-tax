@@ -2,6 +2,7 @@ schema_version: "pilot-0.3"
 protocol_version: "manual-hi-tax-0.3"
 
 scenario:
+  # Optionally append _<github-handle> when needed to avoid a same-date scenario collision.
   id: "<date>_<agent>_<model>_<effort>_<case-id>_<profile>_<platform>"
   captured_from_utc: "YYYY-MM-DDTHH:MM:SSZ"
   captured_to_utc: "YYYY-MM-DDTHH:MM:SSZ"

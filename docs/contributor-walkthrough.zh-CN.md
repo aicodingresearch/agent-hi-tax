@@ -152,6 +152,8 @@ mkdir -p ~/hi-tax-evidence/<场景名>
 
 在 `runs/YYYY-MM-DD/<scenario-id>/` 下建立如下结构（详见[贡献指南·场景包目录](../CONTRIBUTING.zh-CN.md#场景包目录)）：
 
+如果目标目录已存在，或同日同场景已被其他贡献者认领，请在目录名与 manifest 的 `scenario.id` 末尾同时追加 `_<github-handle>`（例如 `..._mac-arm64_alice`）。
+
 ```text
 runs/YYYY-MM-DD/<scenario-id>/
   README.md

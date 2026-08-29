@@ -301,6 +301,8 @@ runs/YYYY-MM-DD/<scenario-id>/
       ...
 ```
 
+If the target directory already exists, or another contributor has already claimed the same scenario for the same date, append `_<github-handle>` to both the directory name and the manifest's `scenario.id` (for example, `..._mac-arm64_alice`).
+
 The scenario field template is [`templates/scenario-manifest.yaml`](templates/scenario-manifest.yaml), the per-attempt result template is [`templates/attempt-result.yaml`](templates/attempt-result.yaml), and template selection plus optional-field notes are in [`templates/README.md`](templates/README.md). The four complete examples are listed together in [`runs/README.md`](runs/README.md).
 
 ## Privacy and redaction

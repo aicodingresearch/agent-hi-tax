@@ -152,6 +152,8 @@ For R1, R2, R3, follow this execution card strictly each time:
 
 Under `runs/YYYY-MM-DD/<scenario-id>/`, build the following structure (details in [CONTRIBUTING — run package layout](../CONTRIBUTING.md#run-package-layout)):
 
+If the target directory already exists, or another contributor has claimed the same scenario for the same date, append `_<github-handle>` to both the directory name and the manifest's `scenario.id` (for example, `..._mac-arm64_alice`).
+
 ```text
 runs/YYYY-MM-DD/<scenario-id>/
   README.md
