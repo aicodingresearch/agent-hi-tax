@@ -19,7 +19,7 @@ This page applies only to invited contributors while the repository is private.
 
 Invitees collaborate with **Read** access: fork the repository, clone your private fork, create a branch, and open a Pull Request. The fork remains private; GitHub automatically deletes it if you lose access to the private upstream repository.
 
-For a first contribution, allow about **2 hours**. The 30–60 minute estimate in the walkthrough is typical after you know the process.
+For a first contribution, allow about **1 hour**, which is enough to complete one scenario. Once you know the process, a typical contribution can be completed in about **30 minutes**.
 
 On Windows, run the verification scripts in a POSIX environment such as Git Bash or WSL. Collect the preflight equivalents in PowerShell (replace `<agent>`):
 

@@ -72,7 +72,7 @@ Full version in [CONTRIBUTING](../CONTRIBUTING.md#the-six-most-important-rules);
 - The Agent product under test + a valid subscription or API access;
 - git and a GitHub account;
 - `python3` (to run the verification scripts);
-- **An uninterrupted block of about 30–60 minutes**: practiced contributors can usually finish in about 30 minutes; a first pass through the documentation, redaction work, or a product without an existing adapter may take longer. The three runs must be completed sequentially; do not switch configurations or upgrade software midway.
+- **An uninterrupted block of about 30 minutes**: a typical contribution can usually be completed in about 30 minutes; for a first contribution, allow about 1 hour, which is enough to read the documentation, handle redaction, and complete one scenario. The three runs must be completed sequentially; do not switch configurations or upgrade software midway.
 
 ## Hands on: step by step
 
@@ -250,7 +250,7 @@ If what you deliberately selected was the product's `Auto`, that is a normal out
 Just record the actual version and explain it in the PR. The measured version is authoritative; there is no need to redo the runs.
 
 **Roughly how long will it take?**
-Usually 30–60 minutes; about 30 minutes once practiced. A first pass through the documentation, redaction work, or a product without an existing adapter may take longer. The three runs themselves are quick; most of the time goes into organizing the evidence.
+Usually about 30 minutes. For a first contribution, allow about 1 hour, which is enough to read the documentation, handle redaction, and complete one scenario. The three runs themselves are quick; most of the time goes into organizing the evidence.
 
 ## Final self-check before submitting
 
