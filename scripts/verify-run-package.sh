@@ -146,6 +146,31 @@ fi
 
 check_hashes
 
+listed_paths=$(
+  awk '{ sub(/^[^[:space:]]*[[:space:]][[:space:]]*/, ""); sub(/^\*/, ""); if ($0 != "") print }' SHA256SUMS |
+    LC_ALL=C sort
+)
+present_paths=$(find . -type f ! -name SHA256SUMS | LC_ALL=C sort)
+
+if [ "$present_paths" != "$listed_paths" ]; then
+  extra_paths=$(printf '%s\n' "$present_paths" | grep -Fxv -e "$listed_paths" || true)
+  missing_paths=$(printf '%s\n' "$listed_paths" | grep -Fxv -e "$present_paths" || true)
+  if [ -n "$extra_paths" ]; then
+    printf '%s\n' "$extra_paths" |
+      while IFS= read -r extra_path; do
+        echo "file not listed in SHA256SUMS: $extra_path" >&2
+      done
+  fi
+  if [ -n "$missing_paths" ]; then
+    printf '%s\n' "$missing_paths" |
+      while IFS= read -r missing_path; do
+        echo "listed in SHA256SUMS but not in the package: $missing_path" >&2
+      done
+  fi
+  echo "SHA256SUMS does not cover the package contents: regenerate SHA256SUMS" >&2
+  exit 1
+fi
+
 privacy_pattern='(/Users/[^/<[:space:]]+|[A-Za-z]:\\Users\\|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|Bearer[[:space:]]+[A-Za-z0-9._-]+|sk-[A-Za-z0-9_-]{12,}|codex[[:space:]]+resume|claude[[:space:]]+(--resume|-r)|01a[0-9a-f-]{30,}|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})'
 if command -v rg >/dev/null 2>&1; then
   if rg -n --glob '*.md' --glob '*.yaml' --glob '*.yml' --glob '*.jsonl' --glob '*.csv' --glob '*.txt' "$privacy_pattern" .; then
