@@ -5,7 +5,7 @@ scenario:
   # Append _<github-handle> to the id (existing maintainer reference samples predate this rule).
   id: "20260829_codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
   captured_from_utc: "2026-08-29T11:33:04.992Z"
-  captured_to_utc: "2026-08-29T12:07:08.756Z"
+  captured_to_utc: "2026-08-29T16:19:11.222Z"
   planned_repetitions: 3
   valid_repetitions: 0
 
@@ -180,6 +180,7 @@ evidence:
     - "attempts/r1/events.sanitized.jsonl"
     - "attempts/r2/events.sanitized.jsonl"
     - "attempts/r3/events.sanitized.jsonl"
+    - "attempts/r4/events.sanitized.jsonl"
   withheld_private_evidence: true
   redactions:
     - "Local configuration root paths were replaced with <CODEX_HOME>."
@@ -190,6 +191,7 @@ protocol:
   deviations:
     - "The configuration root contains an AGENTS.md file, but the pre-prompt CLI /status reported Agents.md: <none>; the manifest records the observed status as no active instruction file."
     - "R1-R3 are invalid because every request encountered a WebSocket network timeout before completing through the CLI's HTTPS transport fallback; they are retained as anomalous observations and are excluded from valid aggregates."
+    - "R4 is invalid because it launched from a different local Codex configuration root, which changed the injected harness context; it completed without a network timeout but is excluded from valid aggregates."
     - "Quota UI was incidentally visible but was not preregistered, so quota is excluded from all results."
     - "The supplied R2 response screenshot duplicated its status screenshot; the R2 public response crop comes from the raw exit-usage screenshot, which contains the complete prompt and reply."
   notes: "Pre-prompt /status in all three attempts showed no codex_apps startup error."
