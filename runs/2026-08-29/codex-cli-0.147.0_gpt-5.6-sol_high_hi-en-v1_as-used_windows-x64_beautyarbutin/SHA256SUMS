@@ -1,5 +1,5 @@
-b32f02e8a7bcca27ac1df9cfba610cef2507b7d49b5983d4aeaba7a9d10219fc *./README.md
-c42fda2163b47daf2f8a9cef987f663c6319574f7498ce64841078c190a64ba4 *./RESULTS.csv
+da1651acc45c3fdfcc4bdabe47ccb30d6fab6cfb0780fd18502967c2c0ddbecf *./README.md
+d470b280457605fa1b1372db487247964664f6caa2f905aec49f66026a1ac1bd *./RESULTS.csv
 416d96994143886f4aae127ac75567751747c082b8130e5dc381061a1f7c649a *./attempts/r1/events.sanitized.jsonl
 0a4bd2ed4bade0353ef3bc17d188364efd242ad61dbba1b084f9512890c2f015 *./attempts/r1/response.png
 a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4 *./attempts/r1/response.txt
@@ -16,8 +16,11 @@ bcdd2998e29b2fb10312e27a917775bfe42a26c955a66e20e8b28ca39e603798 *./attempts/r3/
 a55ed7a6cfec401953e571809cfb2f1caf042f4229742b1c829fe72e36e10e96 *./attempts/r4/events.sanitized.jsonl
 a65de25805112fa8bd31c0c30da9bea5ea4aa2fc5d941085342fc4b23396a2c5 *./attempts/r4/response.txt
 5eda2d39135a9482e0ca796efa5d5f1430c722d8a75d914f41ed60d53040b121 *./attempts/r4/result.yaml
+73b4ec8f790134ad533ee519234d65b98ff92c8721fcb58126422d1cdaafa8c3 *./attempts/r5/events.sanitized.jsonl
+a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4 *./attempts/r5/response.txt
+91f419205b1cdccaa01955b3956d748bc97a5f5c80de07f5a46c48c69e9d8fd3 *./attempts/r5/result.yaml
 fb9dbb86c24f85bc654e7ec0797b6eacbcebce95fbedb4fa60f12ea50a61bd1b *./evidence/preflight.txt
-2882783f769b1a9b34abb70639d504fdb681f75b706689dff885cc828a10e902 *./evidence/private-evidence.md
+68cbc7ef27f750fd44059cedea793b01c649709efee85eb29a28eded44474127 *./evidence/private-evidence.md
 2b97ba572e499d03ab49f19173b7d1ea9919398340d19cc2d88c488785aa5a9f *./launch-command.txt
-250e80a432943a5e0b95269ba00d7a8d28a0527a3afab917abb85332722b945b *./manifest.yaml
+d7a68aee026068fd2c619d3dd04137b5939d69dabc77a97dd75e2c92d037a6eb *./manifest.yaml
 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4 *./prompt.txt

@@ -16,3 +16,6 @@ Raw terminal screenshots remain outside Git when they contain an account identif
 | r4/status.raw.png | `30f35704c9be65f537bf3b07ddc2ae3b00eac72f43296c597e4d8db08a7f27e4` | Withheld: account identifier, Session ID, quota values, and local absolute path |
 | r4/response.raw.png | `885eccf6e6dc06bf61975f3db4945d20a2c01e22ba02c7163e65b58fc8210a00` | Withheld from the current Draft package; retained outside Git as the original prompt-and-response screenshot for this invalid attempt |
 | r4/usage.raw.png | `8ba2a50ff5e2c0a4568776606649365d4a27b37bb933f1686fbcb715794146b0` | Withheld: Session ID and resume command; native token values are published through the sanitized rollout events |
+| r5/status.raw.png | `8f6ea505bd1b8a3ffcebe48616344cd5de370a9da69ee6ad48c9dee555401d17` | Withheld: account identifier, Session ID, quota values, and local absolute path |
+| r5/response.raw.png | `de4ec630877ac25c4032e2d5bbc3a192679f7748bef06d5c075aa9d53cef982f` | Withheld from the current Draft package; retained outside Git as the original prompt-and-response screenshot for this invalid attempt |
+| r5/usage.raw.png | `2141d8ef966eb80e9dd901bccdf8814114dbda022dd8fe2d8e314d809fd91bed` | Withheld: Session ID and resume command; native token values are published through the sanitized rollout events |

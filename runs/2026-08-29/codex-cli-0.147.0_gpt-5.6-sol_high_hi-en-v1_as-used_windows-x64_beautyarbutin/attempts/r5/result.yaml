@@ -1,0 +1,67 @@
+attempt: 5
+status: "invalid"
+started_at_utc: "2026-08-29T23:27:58.283Z"
+assistant_message_at_utc: "2026-08-29T23:28:00.198Z"
+usage_recorded_at_utc: "2026-08-29T23:28:00.213Z"
+response_latency_ms: 1915
+response_latency_display_seconds: "not_exposed"
+latency_method: "assistant-message-event"
+
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+
+usage:
+  source: "event-log"
+  provider_schema: "openai"
+  input_tokens_including_cached: 15340
+  cached_input_tokens: 11008
+  non_cached_input_tokens: 4332
+  cli_total_excluding_cached: 4345
+  cli_total_source: "derived-from-event-log-and-cross-checked-against-exit-ui"
+  cache_write_input_tokens: 0
+  model_context_window_event: 258400
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_applicable"
+  cache_creation_ephemeral_5m_input_tokens: "not_exposed"
+  cache_creation_ephemeral_1h_input_tokens: "not_exposed"
+  output_tokens: 13
+  reasoning_output_tokens: 0
+  context_total_tokens: 15353
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: "not_exposed"
+  iterations_observation: "not_exposed"
+  web_search_requests: 0
+  web_fetch_requests: 0
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+
+evidence:
+  response_screenshot: "not_provided"
+  usage_screenshot: "not_provided"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    quota: "not_provided"
+
+deviations:
+  - "Marked invalid because the actual injected skill inventory drifted from the preregistered harness: sites-building and sites-hosting were absent from the R5 developer context."
+  - "The Codex version, model, effort, account plan, configuration root, workspace, prompt, and other injected developer/environment context remained consistent after normalizing expected date and attempt-path differences."
+  - "The request completed without a network timeout, transport fallback, extra chat interaction, tool call, or approval."
+  - "Raw status, response, and exit-usage screenshots remain outside Git because they contain private account, local-path, quota, or session-resume fields."
