@@ -35,6 +35,8 @@ Every task on this list carries a point value, written into its title as `(N pts
 
 **Group A decays, and the decay resets every quarter.** The replication tasks pay 3 / 2 / 1 / 0 points as identical work accumulates, and the count resets at the start of each natural quarter, beginning with 2026Q3. The bucket the count runs in is *product × model × effort × platform × route × subscription tier*; product point releases are ignored for this purpose. You still record the exact version, as [CONTRIBUTING](../CONTRIBUTING.md#what-counts-as-one-scenario) requires — that is scenario identity at the data layer, and it has nothing to do with the pricing bucket. When it is unclear whether two subscription names or two product names normalize into the same bucket, the maintainer decides at the time of the award and writes the decision back onto this page.
 
+**The maintainer's four pre-system reference samples neither earn points nor occupy any decay slot.** They are the baseline that replications are measured against; every replication count starts from zero, and the ledger below starts empty.
+
 **Paired tasks pay once.** A task marked "2 scenarios" pays its full value once, after both sides have been merged. If you complete only one side, it is priced at whatever tier that side satisfies on its own.
 
 **0 points does not mean "not wanted".** It means only that this round of the task is no longer being recruited with points. The data is still valuable, and submissions and independent replications are as welcome as they have always been.
@@ -67,7 +69,7 @@ Rules are abstract; here is how they cash out.
 | First Gemini CLI sample, plus an adapter the scenario actually walked through | 6 + 2 | First sample of a listed product; the adapter bonus is the only stackable bonus, once per product |
 | An adapter document alone, with no scenario exercising it | +0 | The +2 requires the adapter to be merged and walked through by a real scenario |
 | A fourth same-bucket T-01 replication in the same quarter | 0 — and still merged | 0 only means "not recruited with points this round"; the data keeps its value, and the count resets next quarter |
-| Proposing Trae (T-23); the maintainer prices it at 4 in the reply; the package merges | 4 | Off-list combinations are worth 0 until priced in a proposal reply |
+| Proposing an agent that is not named anywhere on this list (T-23); the maintainer prices it at 4 in the reply; the package merges | 4 | Off-list combinations are worth 0 until priced in a proposal reply |
 | Replicating a newly added product's first sample | priced via proposal | Not on this list yet: the maintainer prices it (often like group A, 3/2/1/0) and writes it back here |
 
 ---
@@ -177,12 +179,12 @@ Products use wildly varied metering units (tokens, credits, premium requests, qu
 - **Why this is a priority**: premium requests are yet another native metering unit; education accounts are also widespread, making material easy to obtain.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
-### T-23 Your pick: another Agent you use day to day (0 pts)
+### T-23 Your pick: another Agent you use day to day (4 pts)
 
-- **Scenario**: Cline, Qwen Code, iFlow, Trae, or another Agent product you genuinely use.
-- **Why this is a priority**: the as-used configurations of real users have the most real-world relevance. Open an issue first describing the combination; once you have confirmed under the [scenario identity rules](../CONTRIBUTING.md#what-counts-as-one-scenario) that it is a new scenario, you can start.
-- **Points**: 0 until the proposal is approved; the maintainer prices the specific product at 3–6 pts in the issue reply.
-- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+- **Scenario**: Cline, iFlow, Trae, or another Agent product you genuinely use.
+- **Why this is a priority**: the as-used configurations of real users have the most real-world relevance. For one of the products named above, open a claim issue and start. For any other product, open a proposal first and align on it, having confirmed under the [scenario identity rules](../CONTRIBUTING.md#what-counts-as-one-scenario) that it is a new scenario.
+- **Points**: 4 pts for the first merged sample of each named product (Cline, iFlow, Trae) — no prior approval needed; claim and start. Any other product needs a proposal first: the maintainer prices it at 3–6 pts in the reply, and it is worth 0 before that reply.
+- **Effort**: expect about 1–2 hours — you already use the tool every day, so the time goes into locating the usage fields and the redaction points, not into learning the product; the 30-minute figure above still does not apply.
 
 ---
 
@@ -261,7 +263,7 @@ Shared notes for this group:
 
 ---
 
-## G. Chinese model ecosystem: GLM, Kimi, MiniMax, Qwen (difficulty ★★–★★★)
+## G. Chinese model ecosystem: GLM, Kimi, MiniMax, Qwen, DeepSeek (difficulty ★★–★★★)
 
 In the existing data, Chinese models have only appeared through WorkBuddy's Auto routing (GLM-5.2, DeepSeek-V4-Flash). These vendors all have official Agent carriers or official compatible endpoints of their own, and are worth bringing under observation one by one. Product forms iterate quickly: treat the actual product form at the time you claim as authoritative, record the exact version, subscription, and route classification honestly, and if the route classification is unclear, describe the actual chain in the PR.
 
@@ -286,6 +288,11 @@ When a group offers multiple options, pick the combination you judge to be the m
 
 - **Scenario**: MiniMax's official Agent product, or its M-series models connected to a harness via an official compatible endpoint × fresh session.
 - **Why this is a priority**: there are no samples yet of MiniMax's Agent product form or its metering units; the carrier choice itself (official product vs compatible harness) is also worth explaining in the PR.
+
+### T-65 DeepSeek × official carrier or compatible endpoint (6 pts)
+
+- **Scenario**: DeepSeek's official agent product if one exists, or a pinned DeepSeek model connected to a harness via its official compatible endpoint × fresh session; record the actual product form and the route classification honestly.
+- **Why this is a priority**: the most widely used Chinese model family, yet so far it has only appeared in this dataset as a WorkBuddy Auto routing outcome (DeepSeek-V4-Flash in one attempt); its official quota/billing model and token exposure have no dedicated sample. A pinned-DeepSeek scenario also gives the existing Auto observation something to be compared against.
 
 ### T-64 Locally self-hosted open weights (difficulty ★★★) (6 pts)
 

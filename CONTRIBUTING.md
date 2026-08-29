@@ -259,6 +259,10 @@ quota:
 
 What is contaminated is the shared quota delta; it does not necessarily contaminate the current session's own machine token records.
 
+### Derived monetary cost — only where an exact public price exists
+
+When the route is `official-api`, also compute the monetary cost of each attempt: multiply each native usage bucket by the vendor's published price for that bucket — input, cache write, cache read, and output are usually priced differently, so never apply one flat rate. Record in the scenario package: the price-page link, the date you read it, the per-bucket prices used, the formula, the currency, and the resulting amount per attempt. Keep the amount as a derived field alongside — never in place of — the native token fields: prices change, and the snapshot is what keeps the number auditable later. For a `third-party-gateway` this is optional: if the gateway publishes a price table you may compute the same way, labelled as gateway-published pricing — exactly as trustworthy as the gateway's other claims. For subscriptions, credit systems, and `self-hosted` routes, write `not_applicable`; that is precisely what the no-conversion rule above protects.
+
 ## First-party products, official APIs, and gateways
 
 The agent's publisher and the inference routing are two separate variables. Even an official agent can be configured to go through a third-party gateway.
