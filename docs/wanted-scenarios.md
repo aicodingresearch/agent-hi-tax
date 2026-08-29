@@ -23,7 +23,7 @@ Last updated: 2026-08-28. Completed scenarios are listed in the [Hi Tax Index](.
 - ★★ An adapter exists, but you need to change one scenario variable while keeping everything else fixed;
 - ★★★ No existing adapter; you need to work out for yourself how the product exposes usage and where the redaction points are.
 
-Allow 2–4 hours for a first contribution; about 1.5–3 hours once you have done one.
+Allow 30–60 minutes for a typical contribution; practiced contributors can often finish in about 30 minutes. A first pass through the documentation, redaction work, or a product without an existing adapter may take longer.
 
 ---
 
