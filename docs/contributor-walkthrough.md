@@ -203,12 +203,12 @@ python3 scripts/build-results-index.py
 ./scripts/verify-all.sh
 ```
 
-Only when both pass and `RESULTS.md` has been updated is packaging complete. CI checks whether the index has drifted from the scenario packages.
+Only when both pass and `RESULTS.md` and `RESULTS.zh-CN.md` have been updated is packaging complete. CI checks whether the indexes have drifted from the scenario packages.
 
 ### Step 10: Submit the Pull Request
 
 ```sh
-git add runs/ RESULTS.md
+git add runs/ RESULTS.md RESULTS.zh-CN.md
 git commit -m "data: add <one-line scenario description> sample"
 git push -u origin <branch-name>
 ```
@@ -224,7 +224,7 @@ Common rework items — scan for these yourself before submitting:
 - cached input double-counted (check whether your vendor uses "subset" or "additive" semantics);
 - screenshots with an unredacted email address, username, or session ID;
 - `SHA256SUMS` not generated last (files edited without regenerating);
-- forgetting to rebuild the root-level `RESULTS.md`;
+- forgetting to rebuild the root-level indexes (`RESULTS.md` and `RESULTS.zh-CN.md`);
 - stating a shared-quota difference as "the cost of this hi" without an attribution note.
 
 ## FAQ
@@ -260,7 +260,7 @@ Usually 30–60 minutes; about 30 minutes once practiced. A first pass through t
 - [ ] shared-quota contamination annotated;
 - [ ] Public files free of credentials, email addresses, usernames, home paths, and session-restore identifiers; every screenshot visually inspected;
 - [ ] `SHA256SUMS` generated last;
-- [ ] `RESULTS.md` rebuilt, `./scripts/verify-all.sh` passing;
+- [ ] `RESULTS.md` and `RESULTS.zh-CN.md` rebuilt, `./scripts/verify-all.sh` passing;
 - [ ] PR template filled in completely, one scenario per PR.
 
 ---

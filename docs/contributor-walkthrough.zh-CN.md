@@ -260,7 +260,7 @@ CI 自动检查包结构、算术一致性、哈希和文本隐私线索；维�
 - [ ] 共享额度污染已标注；
 - [ ] 公开文件无凭据、邮箱、用户名、home 路径、会话恢复标识；截图逐张目视检查过；
 - [ ] `SHA256SUMS` 是最后生成的；
-- [ ] `RESULTS.zh-CN.md` 已重建，`./scripts/verify-all.sh` 通过；
+- [ ] `RESULTS.md` 与 `RESULTS.zh-CN.md` 已重建，`./scripts/verify-all.sh` 通过；
 - [ ] PR 模板填写完整，一个 PR 只有一个场景。
 
 ---

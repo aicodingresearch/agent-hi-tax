@@ -47,7 +47,7 @@ python3 scripts/build-results-index.py
 - [ ] Original visual images have not entered public Git history; redacted images have been visually inspected one by one.
 - [ ] `private_evidence` is used only for originals a maintainer has actually verified.
 - [ ] `SHA256SUMS` was generated after all public files were finalized.
-- [ ] The root-level `RESULTS.md` has been regenerated.
+- [ ] The root-level `RESULTS.md` and `RESULTS.zh-CN.md` have been regenerated.
 - [ ] `./scripts/verify-all.sh` has passed.
 - [ ] I am entitled to publish this evidence: it contains no private repository, internal tool, or third-party account material.
 - [ ] I agree that this contribution is published under the repository's licenses (CC BY 4.0 for data and documentation, Apache-2.0 for software).
