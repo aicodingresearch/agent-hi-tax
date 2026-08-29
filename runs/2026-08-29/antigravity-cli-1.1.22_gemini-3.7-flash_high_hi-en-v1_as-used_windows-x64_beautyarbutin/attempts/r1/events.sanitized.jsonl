@@ -1,0 +1,1 @@
+{"type":"result","status":"SUCCESS","started_at_utc":"2026-08-29T14:54:21.294Z","completed_at_utc":"2026-08-29T14:54:32.057Z","model":"gemini-3.7-flash-high","effort":"high","duration_seconds":2.7843215,"num_turns":1,"usage":{"input_tokens":13727,"output_tokens":154,"thinking_tokens":112,"cache_read_tokens":0,"total_tokens":13881}}

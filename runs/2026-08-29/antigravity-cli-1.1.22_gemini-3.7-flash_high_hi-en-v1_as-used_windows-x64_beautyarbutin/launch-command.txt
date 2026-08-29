@@ -1,0 +1,1 @@
+agy -p "hi" --model gemini-3.7-flash-high --effort high --output-format json --print-timeout 5m

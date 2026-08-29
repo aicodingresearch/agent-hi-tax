@@ -1,0 +1,28 @@
+Captured on 2026-08-29 UTC before the formal attempts.
+
+Agent command: agy
+Agent version: 1.1.22
+Agent distribution: first-party Antigravity CLI
+Operating system: Windows 11 Home China, version 10.0.26200, build 26200
+Architecture: x86_64
+Locale: zh-CN
+Timezone: Asia/Shanghai
+
+Requested model selector: gemini-3.7-flash-high
+Observed model label: Gemini 3.7 Flash (High)
+Observed effort: high
+Subscription plan: Google AI Pro
+Route: first-party subscription login
+Execution surface: official headless print mode with native JSON output
+
+Non-turn slash-command checks returned an empty conversation identifier, zero turns,
+and zero tokens for /model, /effort, /usage, and /skills. The formal attempts did
+not use these slash commands.
+
+MCP servers: none configured
+Imported plugins: none
+Custom agents: none listed
+User rules, skills, hooks, and instruction files: none found
+Built-in model-invocable skills: 5
+User settings SHA-256: e34d9db352f849c1e79f8ce8700bf674e6900967f2d4ddb6d038b3273c25511c
+Telemetry setting: disabled

@@ -1,0 +1,13 @@
+Source: private environment screenshot (1734 x 925 pixels)
+Public file: evidence/environment.redacted.png (600 x 105 pixels)
+
+Operation 1: crop original rectangle x=240, y=85, width=600, height=105.
+Operation 2: cover public rectangle x=23, y=43, width=255, height=28
+             with fully opaque RGB(13,13,13).
+
+The covered region contains only the account email. The preserved pixels show the
+native Antigravity CLI version, Google AI Pro plan, model, and High effort label.
+No blur, transparency, resampling, or generative editing was used.
+
+Private source SHA-256: 02c9d39120777888e694b0db01b34509015ad1cef29555c249f8822ab1080eb9
+Public image SHA-256 before final package hashing: c878134c3a7bceb82c88f6775f8628e327a10a6bc83a2e055a9f49516a266511

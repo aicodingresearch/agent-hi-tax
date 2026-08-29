@@ -1,0 +1,190 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260829_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-08-29T14:54:21.294Z"
+  captured_to_utc: "2026-08-29T14:55:38.044Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "Antigravity CLI"
+  vendor: "Google"
+  distribution: "first-party"
+  surface: "cli"
+  version: "1.1.22"
+  build: "not_exposed"
+  executable: "agy"
+
+environment:
+  os: "Windows 11 Home China"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x86_64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "Google AI Pro"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "Google"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "gemini-3.7-flash-high"
+  observed: "gemini-3.7-flash-high"
+  observation_method: "cli-status"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "print"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "agy-customizations (built-in)"
+    - "antigravity-guide (built-in)"
+    - "generative_ui (built-in)"
+    - "migrate-workflows (built-in)"
+    - "permissioned-github (built-in)"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "no user hooks configured; one print-mode turn per process"
+  network_mode: "enabled"
+  permission_mode: "default (not_exposed)"
+  filesystem_profile_observed: "default (not_exposed)"
+  settings_sources:
+    - "user settings"
+    - "Antigravity CLI built-in defaults"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "other"
+
+measurement:
+  primary_metric: "native total_tokens"
+  secondary_metric: "native input_tokens"
+  native_input_definition: "Antigravity CLI JSON usage.input_tokens; exact cache relationship retained separately and not assumed"
+  total_input_definition: "not_applicable"
+  context_total_definition: "Antigravity CLI JSON usage.total_tokens (native field; components also retained)"
+  total_input_is_subscription_cost: false
+  latency_method: "Antigravity CLI JSON duration_seconds"
+  transcript_extraction: "minimal fields copied from native print-mode JSON after each process exits"
+  transcript_deduplication: "one JSON result and one turn per fresh process"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [13727, 13723, 13723]
+    min: 13723
+    median: 13723
+    max: 13727
+    mean: 13724.333
+  cached_input_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+  output_tokens:
+    values: [154, 29, 72]
+    min: 29
+    median: 72
+    max: 154
+    mean: 85
+  reasoning_output_tokens:
+    values: [112, 20, 36]
+    min: 20
+    median: 36
+    max: 112
+    mean: 56
+  context_total_tokens:
+    values: [13881, 13752, 13795]
+    min: 13752
+    median: 13795
+    max: 13881
+    mean: 13809.333
+  response_latency_ms:
+    values: [2784, 2110, 3215]
+    min: 2110
+    median: 2784
+    max: 3215
+    mean: 2703
+
+quota:
+  attribution: "not_measured"
+  notes: "Scenario-level quota was observed during non-turn preflight only; no per-attempt quota delta is attributed."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "verified"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "verified"
+    mcp_plugins_and_hooks: "verified"
+  public_files:
+    - "evidence/environment.redacted.png"
+    - "evidence/preregistration.txt"
+    - "evidence/preflight.txt"
+    - "evidence/harness.txt"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "The public environment image is cropped and the account email is covered with a fully opaque rectangle."
+    - "Raw native JSON remains outside Git because it contains conversation identifiers; public events omit those identifiers."
+
+protocol:
+  deviations:
+    - "The generic path is used because the repository has no Antigravity CLI adapter."
+    - "The prompt is supplied as the exact command argument to the official headless print surface rather than typed in the TUI."
+  notes: "Preregistered before R1. Fixed launch command, fresh process, independent empty directory, and one prompt per attempt."

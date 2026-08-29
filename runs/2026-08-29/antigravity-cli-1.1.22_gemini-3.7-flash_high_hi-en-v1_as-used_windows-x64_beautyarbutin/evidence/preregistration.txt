@@ -1,0 +1,13 @@
+Task: T-23
+Claim issue: #10
+Preregistered at: 2026-08-29T14:52:54.558Z
+Planned attempts: 3 sequential valid attempts
+Prompt case: hi-en-v1 (2 bytes, no trailing newline)
+Agent: Antigravity CLI 1.1.22
+Model: gemini-3.7-flash-high
+Effort: high
+Harness profile: as-used
+Surface: official CLI headless print mode
+Workspace: one independent empty non-Git directory per attempt
+Session: one fresh process and one prompt per attempt; no resume
+Output: native JSON

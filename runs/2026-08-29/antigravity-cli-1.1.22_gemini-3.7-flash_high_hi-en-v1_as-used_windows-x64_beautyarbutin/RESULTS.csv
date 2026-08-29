@@ -1,0 +1,4 @@
+attempt,status,input_tokens_including_cached,cached_input_tokens,non_cached_input_tokens,output_tokens,reasoning_output_tokens,context_total_tokens,native_input_tokens,native_output_tokens,native_thinking_tokens,native_cache_read_tokens,native_total_tokens,native_duration_seconds,model_observed,effort_observed,response_sha256
+r1,valid,13727,0,13727,154,112,13881,13727,154,112,0,13881,2.7843215,gemini-3.7-flash-high,high,d251444f67c4ef9d7b15ed558bb478f3a8799c2fb2dcd6cfb966e10ea7302033
+r2,valid,13723,0,13723,29,20,13752,13723,29,20,0,13752,2.1098369,gemini-3.7-flash-high,high,b0a88b7f04e245f8b0c63d8deb16ff66324998affa15e35098892b064e02ac53
+r3,valid,13723,0,13723,72,36,13795,13723,72,36,0,13795,3.2149857,gemini-3.7-flash-high,high,1e4f5e86a0460b83a3efcbebd24cdb96957aec7053ad77fdaeba36e9ba0ee304

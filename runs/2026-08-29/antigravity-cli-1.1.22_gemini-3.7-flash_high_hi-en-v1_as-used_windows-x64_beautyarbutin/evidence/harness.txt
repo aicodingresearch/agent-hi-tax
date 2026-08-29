@@ -1,0 +1,13 @@
+Harness profile: as-used
+
+- One fresh Antigravity CLI process per attempt; no --continue or --conversation flag.
+- One independent empty non-Git directory per attempt.
+- Exact command and model/effort flags were identical across R1-R3.
+- The exact two-byte prompt was supplied once as the -p command argument.
+- Native JSON reported one turn in every attempt.
+- No MCP servers, imported plugins, custom agents, user rules, user skills, or user hooks were configured.
+- Five built-in model-invocable skills were discoverable: agy-customizations,
+  antigravity-guide, generative_ui, migrate-workflows, and permissioned-github.
+- Built-in tool definitions and effective permission/filesystem modes were not exposed.
+- Network access used the product's existing default configuration.
+- Raw JSON contains private conversation identifiers and remains outside Git.

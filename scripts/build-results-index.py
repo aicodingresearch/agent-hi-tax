@@ -70,11 +70,13 @@ COMPARISON_LABELS = {
 LATENCY_METHOD_LABELS = {
     "en": {
         "event_timestamps": "event timestamps",
+        "native_reported_duration": "native reported duration",
         "ui_whole_seconds": "UI whole seconds",
         "mixed": "mixed",
     },
     "zh": {
         "event_timestamps": "事件时间戳",
+        "native_reported_duration": "原生报告时长",
         "ui_whole_seconds": "UI 整秒",
         "mixed": "未统一",
     },
@@ -342,10 +344,15 @@ def scenario_summary(repo_root: Path, manifest_path: Path) -> dict[str, object]:
     output_tokens = collect_numbers(rows, "output_tokens")
 
     latency_ms = collect_numbers(rows, "response_latency_ms")
+    latency_native_seconds = collect_numbers(rows, "native_duration_seconds")
     latency_ui_seconds = collect_numbers(rows, "ui_latency_seconds")
     if len(latency_ms) == len(rows):
         latency_seconds = [value / 1000 for value in latency_ms]
         latency_method = "event_timestamps"
+        latency_decimals = 3
+    elif len(latency_native_seconds) == len(rows):
+        latency_seconds = latency_native_seconds
+        latency_method = "native_reported_duration"
         latency_decimals = 3
     elif len(latency_ui_seconds) == len(rows):
         latency_seconds = latency_ui_seconds
