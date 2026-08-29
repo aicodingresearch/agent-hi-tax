@@ -1,0 +1,83 @@
+Preregistered at UTC: 2026-08-29T23:40:48.845Z
+Task: T-01
+Claim issue: aicodingresearch/agent-hi-tax#7
+
+No formal hi request for this replacement scene had been sent at the time of
+this preregistration.
+
+## Frozen product and environment
+
+Product: OpenAI Codex CLI
+Version: codex-cli 0.147.0
+Model: gpt-5.6-sol
+Reasoning effort: high
+Subscription: ChatGPT Plus (self-reported; identifier omitted)
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Locale: zh-CN
+Time zone: Asia/Shanghai
+Configuration source: <CODEX_HOME>/config.toml
+Configuration SHA-256: 0d40871da0e976079a6f33a74151683e88fea673bfb738c293ff602da0800fdf
+Harness profile: as-used
+Permission mode: Workspace (Ask for approval)
+Filesystem profile: Workspace
+Collaboration mode: Default
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+
+## Installed and enabled plugins
+
+- github@openai-curated 11c74d6b
+- documents@openai-primary-runtime 26.630.12135
+- pdf@openai-primary-runtime 26.630.12135
+- spreadsheets@openai-primary-runtime 26.630.12135
+- presentations@openai-primary-runtime 26.630.12135
+- template-creator@openai-primary-runtime 26.630.12135
+- sites@openai-bundled 0.1.27
+- browser@openai-bundled 26.707.31428
+- chrome@openai-bundled 26.707.31428
+- computer-use@openai-bundled 26.707.31428
+- visualize@openai-bundled 1.0.11
+
+## Skills in the most recently observed injected harness
+
+- imagegen
+- openai-docs
+- plugin-creator
+- skill-creator
+- skill-installer
+- browser:control-in-app-browser
+- chrome:control-chrome
+- computer-use:computer-use
+- documents:documents
+- pdf:pdf
+- plugin-management:plugin-management
+- presentations:Presentations
+- spreadsheets:Spreadsheets
+- template-creator:template-creator
+- visualize:visualize
+- zotero:Zotero
+
+The Sites plugin is enabled, but sites-building and sites-hosting were absent
+from the most recently observed injected harness. They are therefore not
+registered as active skills in this scene.
+
+## Enabled MCP servers
+
+- node_repl
+- openaiDeveloperDocs
+
+The sites-design-picker server was absent from the active MCP inventory.
+
+## Hooks
+
+No explicit hooks are configured. No hook model calls were identified.
+
+## Fixed launch procedure
+
+The public launch-command.txt removes Codex Desktop-specific inherited
+environment variables, selects <CODEX_HOME>, fixes the model and effort, and
+changes only <RUN_DIR> for each independent attempt. The contributor executes
+the launch and all experiment-critical interactive actions manually.
+
+No account identifier, email address, session ID, hostname, private home path,
+or authentication material is included in this record.

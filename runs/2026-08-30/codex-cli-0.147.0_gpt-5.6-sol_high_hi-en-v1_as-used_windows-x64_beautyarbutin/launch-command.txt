@@ -1,0 +1,14 @@
+$env:CODEX_HOME = "<CODEX_HOME>"
+
+@(
+  "CODEX_DATA_ROOT",
+  "CODEX_DESKTOP_USER_DATA_DIR",
+  "CODEX_ELECTRON_ENABLE_WINDOWS_COMPUTER_USE",
+  "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+  "CODEX_PACKAGE_ROOT",
+  "CODEX_PERMISSION_PROFILE",
+  "CODEX_SHELL",
+  "CODEX_THREAD_ID"
+) | ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+
+codex --no-alt-screen --model gpt-5.6-sol --config 'model_reasoning_effort="high"' --cd "<RUN_DIR>"
