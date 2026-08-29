@@ -39,6 +39,7 @@ body:
       label: Route / 请求路由
       options:
         - first-party-subscription
+        - first-party-product
         - official-api
         - third-party-gateway
         - self-hosted

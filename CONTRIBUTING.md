@@ -266,6 +266,7 @@ The agent's publisher and the inference routing are two separate variables. Even
 Routing is uniformly classified as one of:
 
 - `first-party-subscription`
+- `first-party-product`: an official Agent product with its own account or credit system, rather than a per-seat model subscription or a bare API key (for example, WorkBuddy)
 - `official-api`
 - `third-party-gateway`
 - `self-hosted`

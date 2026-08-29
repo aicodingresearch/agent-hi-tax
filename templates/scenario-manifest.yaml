@@ -30,15 +30,16 @@ environment:
   timezone: "<IANA timezone>"
 
 account:
-  auth_channel: "subscription-login|official-api-key|gateway-account|local|other"
+  auth_channel: "subscription-login|first-party-product-login|official-api-key|gateway-account|local|other"
   subscription_plan: "<plan or not_applicable>"
   usage_multiplier: "<native label or not_exposed>"
+  # If no listed billing mode fits, record the product-native label (for example, WorkBuddy's workbuddy-credit).
   billing_mode: "included-quota|pay-as-you-go|credits|local-compute|unknown"
   quota_shared_scope: "account|workspace|team|api-project|gateway-balance|not_applicable|unknown"
   plan_evidence_status: "verified|private_evidence|self_reported|not_exposed|not_provided|not_applicable"
 
 route:
-  category: "first-party-subscription|official-api|third-party-gateway|self-hosted"
+  category: "first-party-subscription|first-party-product|official-api|third-party-gateway|self-hosted"
   provider: "<provider>"
   protocol: "native|openai-compatible|anthropic-compatible|other|unknown"
   gateway_public_name: "<name or not_applicable>"

@@ -266,6 +266,7 @@ Agent 的发行方与推理路由是两个变量。官方 Agent 也可能配置�
 路由统一分为：
 
 - `first-party-subscription`
+- `first-party-product`：官方 Agent 产品自带账号或积分体系，而非按座席的模型订阅或裸 API key（例如 WorkBuddy）
 - `official-api`
 - `third-party-gateway`
 - `self-hosted`
