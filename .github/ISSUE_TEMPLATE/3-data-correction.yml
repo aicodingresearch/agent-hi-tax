@@ -1,0 +1,50 @@
+name: "Data correction or takedown / 数据更正或撤下"
+description: "Report an error in a published scenario package, or request removal of material that is yours. 报告已公开场景包中的错误，或申请撤下属于你的材料。"
+title: "[Data] "
+labels: ["data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **Do not use this template for a leaked credential, email address, session ID, or private path.**
+        > Report those privately — see [SECURITY.md](../blob/main/SECURITY.md). Do not paste the exposed value anywhere public.
+
+        > **凭据、邮箱、session ID 或私有路径泄露不要用这个模板。**
+        > 请按 [SECURITY.zh-CN.md](../blob/main/SECURITY.zh-CN.md) 私下报告，不要把暴露的值粘贴到任何公开位置。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type / 类型
+      options:
+        - "Arithmetic or field error / 算术或字段错误"
+        - "Semantics: a native field was interpreted wrongly / 语义：原生字段被误解"
+        - "Conclusion overreaches the evidence / 结论超出证据"
+        - "Failed replication: my data disagrees / 复测不一致：我的数据与之冲突"
+        - "Takedown: this material is mine and I want it removed / 撤下：这是我的材料，我希望移除"
+    validations:
+      required: true
+  - type: input
+    id: package
+    attributes:
+      label: Scenario package / 场景包
+      placeholder: "runs/2026-08-14/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64"
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: File and field / 文件与字段
+      placeholder: "attempts/r2/result.yaml — cached_input_tokens"
+  - type: textarea
+    id: detail
+    attributes:
+      label: What is wrong / 问题是什么
+      description: "For a disagreement, link your own scenario package or PR if you have one. 如果是复测冲突，附上你自己的场景包或 PR 链接。"
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        A takedown request for your own material is granted; the affected fields are then marked `not_provided` and the record states what is no longer public.
+
+        涉及你自己材料的撤下请求一律接受；相应字段会标为 `not_provided`，记录中会说明哪些内容已不再公开。

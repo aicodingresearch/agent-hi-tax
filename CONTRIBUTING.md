@@ -327,6 +327,14 @@ If an original can only be kept privately, register its SHA-256 and the reason f
 
 Once a credential enters Git history, deleting it in the next commit is not enough: rotate or revoke it immediately, and contact the maintainers to clean the history.
 
+If you find something like this in evidence that is **already published** — yours or anyone else's — report it privately through the process in [SECURITY.md](SECURITY.md). Do not open a public issue, and do not repeat the exposed value anywhere public. Reporting your own mistake carries no penalty; a leak fixed on day one is far better than one discovered a year later.
+
+## Licensing of your contribution
+
+By opening a pull request you agree that your contribution is published under the repository's licenses: [CC BY 4.0](LICENSE-DATA) for data and documentation (`runs/`, `prompts/`, `templates/`, `docs/`, `*.md`), and the [Apache License 2.0](LICENSE) for software (`scripts/`, `.github/workflows/`). You keep the copyright in what you contribute; there is no CLA to sign.
+
+Only submit evidence you are entitled to publish. Screenshots of a third-party product's interface are reproduced here for factual research reporting; screenshots of private repositories, internal tools, or someone else's account are not — crop or reshoot instead. If your employer restricts publishing material about a product you use at work, resolve that before submitting, not after.
+
 ## Submitting a Pull Request
 
 One PR contains one scenario and all of its repeated runs. In the PR, state:

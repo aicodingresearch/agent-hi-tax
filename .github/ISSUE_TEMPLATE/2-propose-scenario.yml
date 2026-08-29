@@ -1,0 +1,58 @@
+name: "Propose a new scenario or input case / 提议新场景或新输入"
+description: "Propose a combination that is not on the wanted list, a new agent product, or a new prompt case. 提议清单外的组合、新的 Agent 产品，或新的输入 case。"
+title: "[Proposal] "
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Any agent product is in scope — CLI, IDE, desktop, or web; first-party, gateway, or self-hosted. The existing adapters record what has been sampled so far, not what is accepted.
+
+        任何 Agent 产品都在范围内：CLI、IDE、桌面端、网页端，官方、中转站或自部署都可以。现有适配器只代表已经采过样的产品，不是可接受范围。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing / 提议类型
+      options:
+        - "A new agent product (no adapter yet) / 新的 Agent 产品（还没有适配器）"
+        - "A new combination of existing variables / 现有变量的新组合"
+        - "A new input case (new prompt) / 新的输入 case"
+        - "Other / 其他"
+    validations:
+      required: true
+  - type: textarea
+    id: combination
+    attributes:
+      label: The combination / 场景组合
+      description: "product × version × model × effort × subscription × route × session state × harness"
+      placeholder: |
+        product:
+        version:
+        model / effort:
+        subscription:
+        route:
+        session state:
+        harness (rules, skills, MCP, plugins, hooks):
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it is worth measuring / 为什么值得测
+      description: "What question would this answer that existing scenarios cannot? 它能回答现有场景回答不了的什么问题？"
+    validations:
+      required: true
+  - type: textarea
+    id: exposure
+    attributes:
+      label: What the product exposes / 该产品暴露哪些字段
+      description: "Native usage fields, metering units (tokens, credits, premium requests, quota %), and where they appear. Unknown is a fine answer. 原生 usage 字段、计量单位、出现位置；不清楚也可以直说。"
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Confirmations / 确认
+      options:
+        - label: "I checked the scenario identity rules and believe this is a distinct scenario. 我已对照场景身份规则，认为这是一个新场景。"
+          required: true
+        - label: "For a new input case: I understand the exact bytes, encoding, and SHA-256 must be fixed before measuring. 新输入 case：我理解必须先固定精确字节、编码和 SHA-256 再测量。"
+          required: false

@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Security or privacy leak / 安全或隐私泄露"
+    url: https://github.com/aicodingresearch/agent-hi-tax/security/advisories/new
+    about: "Report privately — credentials, emails, session IDs, private paths. Never in a public issue. 请私下报告：凭据、邮箱、session ID、私有路径，绝不要开公开 issue。"
+  - name: "Contributing guide / 贡献指南"
+    url: https://github.com/aicodingresearch/agent-hi-tax/blob/main/CONTRIBUTING.md
+    about: "Protocol, evidence rules, and the shortest path for a first contribution. 协议、证据规则和最短参与路径。"
+  - name: "Wanted scenarios / 待测场景清单"
+    url: https://github.com/aicodingresearch/agent-hi-tax/blob/main/docs/wanted-scenarios.md
+    about: "Claimable tasks, sorted by difficulty. 可认领的任务，按难度排列。"

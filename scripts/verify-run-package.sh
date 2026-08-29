@@ -148,12 +148,12 @@ check_hashes
 
 privacy_pattern='(/Users/[^/<[:space:]]+|[A-Za-z]:\\Users\\|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|Bearer[[:space:]]+[A-Za-z0-9._-]+|sk-[A-Za-z0-9_-]{12,}|codex[[:space:]]+resume|claude[[:space:]]+(--resume|-r)|01a[0-9a-f-]{30,}|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})'
 if command -v rg >/dev/null 2>&1; then
-  if rg -n --glob '*.md' --glob '*.yaml' --glob '*.jsonl' --glob '*.csv' --glob '*.txt' "$privacy_pattern" .; then
+  if rg -n --glob '*.md' --glob '*.yaml' --glob '*.yml' --glob '*.jsonl' --glob '*.csv' --glob '*.txt' "$privacy_pattern" .; then
     echo "possible private path, email, credential, or session identifier in public text" >&2
     exit 1
   fi
 else
-  if grep -EnR --include='*.md' --include='*.yaml' --include='*.jsonl' --include='*.csv' --include='*.txt' "$privacy_pattern" .; then
+  if grep -EnR --include='*.md' --include='*.yaml' --include='*.yml' --include='*.jsonl' --include='*.csv' --include='*.txt' "$privacy_pattern" .; then
     echo "possible private path, email, credential, or session identifier in public text" >&2
     exit 1
   fi

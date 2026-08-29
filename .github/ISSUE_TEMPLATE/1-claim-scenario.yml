@@ -1,0 +1,75 @@
+name: "Claim a scenario / 认领场景"
+description: "Claim a task from the wanted-scenarios list before you start measuring. 开始测量前认领一个待测场景。"
+title: "[Claim] T-xx "
+labels: ["claim"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Claim first, measure second — it lets others see what is already in flight.
+        Multiple people claiming the same task is fine and welcome: independent replication on a different machine, account, and day is itself a contribution. Say so here and in your PR.
+
+        先认领再测量，别人才知道哪些任务已经有人在做。同一个任务被多人认领是正常且受欢迎的：不同机器、不同账号、不同时间的独立复测本身就是贡献，在这里和 PR 中说明即可。
+  - type: input
+    id: task
+    attributes:
+      label: Task ID / 任务编号
+      description: "From docs/wanted-scenarios.md. Use `new` if it is not on the list. 见 docs/wanted-scenarios.zh-CN.md；不在清单上填 new。"
+      placeholder: "T-01"
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent product and version / Agent 产品与版本
+      description: "The version you actually installed, not the one in the list. 填你实际安装的版本，不是清单里的版本。"
+      placeholder: "Codex CLI 0.147.0"
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model and effort / 模型与 effort
+      placeholder: "gpt-5.6-sol / high"
+    validations:
+      required: true
+  - type: dropdown
+    id: route
+    attributes:
+      label: Route / 请求路由
+      options:
+        - first-party-subscription
+        - official-api
+        - third-party-gateway
+        - self-hosted
+    validations:
+      required: true
+  - type: input
+    id: plan
+    attributes:
+      label: Subscription tier or billing channel / 订阅档位或计费方式
+      description: "Record honestly, even if it differs from the reference sample. 如实填写，与参照样板不同也没关系。"
+      placeholder: "Claude Max"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: OS and architecture / 操作系统与架构
+      placeholder: "macOS 26.5.2 arm64"
+    validations:
+      required: true
+  - type: input
+    id: eta
+    attributes:
+      label: Estimated completion / 预计完成时间
+      placeholder: "within a week / 一周内"
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Before you start / 开始前确认
+      options:
+        - label: "I have read CONTRIBUTING and can do 3 sequential runs without changing the configuration midway. 我已阅读贡献指南，能够在不中途改配置的前提下顺序执行 3 次。"
+          required: true
+        - label: "I did not buy a subscription for this task. 我没有为这个任务专门购买订阅。"
+          required: false

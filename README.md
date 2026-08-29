@@ -207,7 +207,8 @@ Current progress:
 - [x] Shortest path for external contributors, template notes, and pull request template
 - [ ] Automated capture and deterministic redaction helpers
 - [x] Wanted-scenario list and contributor walkthrough
-- [ ] Scenario-claim issue template
+- [x] Scenario-claim, proposal, and data-correction issue templates
+- [x] Licensing, security reporting, and open-source repository setup
 - [ ] Charts and an interactive visualization page
 - [x] Bilingual core documentation (English-primary)
 - [ ] English versions of adapter docs and process retrospectives
@@ -221,6 +222,9 @@ README.md             project entry point and basic overview
 *.zh-CN.md            Chinese versions of the corresponding documents
 RESULTS.md            auto-generated cross-agent summary index
 CONTRIBUTING.md       contribution process and evidence rules
+SECURITY.md           private reporting for leaked evidence and takedowns
+LICENSE               Apache-2.0, covering scripts/ and workflows
+LICENSE-DATA          CC BY 4.0, covering data and documentation
 prompts/              versioned standard input cases
 templates/            scenario and per-attempt templates
 runs/                 public scenario packages, redacted and checked
@@ -255,6 +259,21 @@ The project is bilingual with English as the primary language:
 - Chinese: the parallel `*.zh-CN.md` files.
 
 Both languages share the same protocol version, schema, English machine fields, and data directories — one data system, not two. The capture adapters and process retrospectives under `docs/` are currently Chinese-only; translations are welcome. The language of a test input is an independent recorded variable, unaffected by documentation language.
+
+## License
+
+Two licenses, split by what the file is:
+
+- **Data and documentation** — `runs/`, `prompts/`, `templates/`, `docs/`, and the `*.md` files: [CC BY 4.0](LICENSE-DATA). Reuse and adaptation are permitted, including commercially, with attribution. When citing a measurement, cite the scenario ID and the commit as well, so the number can be traced to a verified package.
+- **Software** — `scripts/` and `.github/workflows/`: [Apache License 2.0](LICENSE).
+
+Evidence packages contain screenshots of third-party agent products. Those licenses cover this project's own contribution — the selection, arrangement, annotation, and measurement data — not the vendors' trademarks or interface content, which appear here for factual research reporting. This project is not affiliated with, endorsed by, or sponsored by any observed vendor.
+
+By opening a pull request you agree that your contribution is published under these licenses.
+
+## Security and privacy
+
+Found a credential, account email, session identifier, or private path in published evidence? **Report it privately** — see [SECURITY.md](SECURITY.md). Do not open a public issue and do not paste the exposed value anywhere public. Takedown requests for your own material are granted.
 
 ## How to interpret results correctly
 

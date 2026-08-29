@@ -1,0 +1,15 @@
+# Every pull request requires a review from a maintainer.
+# See CONTRIBUTING.md for what review focuses on.
+*       @keting
+
+# Protocol-level files: changing these changes the meaning of every existing
+# scenario package, so they are called out explicitly.
+/prompts/       @keting
+/templates/     @keting
+/scripts/       @keting
+/.github/       @keting
+/CONTRIBUTING.md        @keting
+/CONTRIBUTING.zh-CN.md  @keting
+/LICENSE        @keting
+/LICENSE-DATA   @keting
+/SECURITY.md    @keting

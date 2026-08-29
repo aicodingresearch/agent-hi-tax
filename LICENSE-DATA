@@ -1,0 +1,63 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright 2026 YIN Keting and Agent Hi Tax contributors
+
+The data and documentation in this repository are licensed under the Creative
+Commons Attribution 4.0 International License (CC BY 4.0). Software in this
+repository is licensed separately under the Apache License 2.0; see LICENSE.
+
+WHAT THIS COVERS
+
+  CC BY 4.0 (this file):
+    runs/          scenario packages: manifests, results, evidence, hashes
+    prompts/       standard input cases
+    templates/     scenario and attempt templates
+    docs/          method notes, adapters, walkthroughs
+    *.md           README, CONTRIBUTING, RESULTS, and other documentation
+
+  Apache License 2.0 (see LICENSE):
+    scripts/       index generation and verification tooling
+    .github/workflows/
+
+  Where a file could be read as belonging to both, the license named above for
+  its directory applies.
+
+HOW TO ATTRIBUTE
+
+  Reuse, redistribution, and adaptation are permitted, including commercially,
+  provided attribution is given. A sufficient attribution reads:
+
+    Agent Hi Tax (https://github.com/aicodingresearch/agent-hi-tax),
+    by YIN Keting and Agent Hi Tax contributors, licensed under CC BY 4.0.
+
+  When citing a specific measurement, please also cite the scenario ID and the
+  commit, so that the reported numbers can be traced to a verified package.
+
+  Do not present adapted or filtered data in a way that implies the project
+  endorses your conclusions. Numbers in this repository describe one execution
+  stack at one moment; see "How to interpret results correctly" in README.md.
+
+THIRD-PARTY MATERIAL
+
+  Evidence packages include screenshots of third-party agent products. Those
+  screenshots depict interfaces, product names, and logos owned by their
+  respective vendors. The licenses above cover only this project's own
+  contribution (the selection, arrangement, annotation, and measurement data);
+  they do not and cannot grant rights in third-party trademarks or interface
+  content, which are reproduced here for factual research reporting. This
+  project is not affiliated with, endorsed by, or sponsored by any of the
+  vendors whose products it observes.
+
+FULL LICENSE TEXT
+
+  The complete CC BY 4.0 legal code is available at:
+  https://creativecommons.org/licenses/by/4.0/legalcode
+
+  A human-readable summary (not a substitute for the license) is at:
+  https://creativecommons.org/licenses/by/4.0/
+
+NO WARRANTY
+
+  The data is provided "as is", without warranty of any kind. Every record
+  describes what one contributor observed under the declared conditions; it is
+  not a guarantee that any product will behave the same way for you.
