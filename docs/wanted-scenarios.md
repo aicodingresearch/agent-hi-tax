@@ -53,6 +53,23 @@ Three checks before you pick a task:
 - A new input case needs an issue first, agreeing on the exact bytes, encoding, and SHA-256 before you measure anything.
 - For a niche or no-longer-maintained product, open a proposal explaining what it can answer that no existing scenario can.
 
+### Worked examples
+
+Rules are abstract; here is how they cash out.
+
+| What happened | Points | Why |
+| --- | ---: | --- |
+| First merged replication of T-01 — its bucket was empty | 3 | First independent replication of a reference sample: the dataset's first reproducibility check |
+| A second contributor merges the same combination a week later | 2 | Second in the same bucket this quarter; no coordination needed — the count on this page decides |
+| That contributor then merges T-13 (same setup, effort medium) | 3 | A new single-variable point on the effort axis |
+| Both sides of T-31 (MCP on/off) merged | 8, once | A paired comparison pays as one task, after both sides land |
+| Only one side of a paired task ever lands | that side's own tier (usually 0–3) | The pair price buys the comparison, not half of it |
+| First Gemini CLI sample, plus an adapter the scenario actually walked through | 6 + 2 | First sample of a listed product; the adapter bonus is the only stackable bonus, once per product |
+| An adapter document alone, with no scenario exercising it | +0 | The +2 requires the adapter to be merged and walked through by a real scenario |
+| A fourth same-bucket T-01 replication in the same quarter | 0 — and still merged | 0 only means "not recruited with points this round"; the data keeps its value, and the count resets next quarter |
+| Proposing Trae (T-23); the maintainer prices it at 4 in the reply; the package merges | 4 | Off-list combinations are worth 0 until priced in a proposal reply |
+| Replicating a newly added product's first sample | priced via proposal | Not on this list yet: the maintainer prices it (often like group A, 3/2/1/0) and writes it back here |
+
 ---
 
 ## A. Getting started: independently replicate an existing scenario (difficulty ★)
@@ -197,11 +214,6 @@ If your research interest is the Agent harness itself, this group of tasks is th
 - **Scenario**: same product and model: one group as normal fresh runs; for the other group, first create a session containing only one `hi` round trip, exit, then resume and send `hi` again.
 - **Why this is a priority**: observes how history injection and cache reads behave when a session is resumed; there is currently no data at all.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
-
-### T-34 Clean quota attribution (any carrier) (5 pts)
-
-- **Scenario**: redo any existing scenario, pausing all other usage on the same account and the same quota pool during the test, and recording the quota/percentage display before and after each attempt.
-- **Why this is a priority**: quota attribution in the existing Codex reference sample is `contaminated`, and `not_measured` in the Claude sample. Producing the first clean per-attempt attribution for subscription percentage quotas would begin to answer the project's original question: "how much quota does one hi actually consume?" The credit attribution in the WorkBuddy reference sample can serve as a methodological reference.
 
 ---
 
