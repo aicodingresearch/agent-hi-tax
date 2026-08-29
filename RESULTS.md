@@ -8,9 +8,9 @@
 
 [Project home](README.md) | [Scenario catalog](runs/README.md) | [Contribution & semantics rules](CONTRIBUTING.md)
 
-- Scenarios: 5
+- Scenarios: 4
 - Agent products: 3
-- Valid attempts: 15
+- Valid attempts: 12
 
 ## How to read this table
 
@@ -27,7 +27,6 @@
 | [Claude Code 2.1.220](runs/2026-08-15/claude-code-2.1.220_claude-fable-5_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | claude-fable-5<br><sub>high</sub> | Claude Max<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 25,008 (25,008–25,443) | 25,045 (25,045–25,473) | 37 (30–37) | 6 (5–8) s<br><sub>UI whole seconds</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
 | [Claude Code 2.1.220](runs/2026-08-15/claude-code-2.1.220_claude-opus-5_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | claude-opus-5<br><sub>high</sub> | Claude Max<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>mode-confounded comparison</sub> | 3 | 24,666 (24,600–24,837) | 24,679 (24,613–24,851) | 13 (13–14) | 5 (4–5) s<br><sub>UI whole seconds</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-14/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-14</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 13,950 | 13,964 (13,963–13,964) | 14 (13–14) | 3.561 (3.308–3.657) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: contaminated</sub> |
-| [OpenAI Codex CLI 0.147.0](runs/2026-08-29/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-29</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Windows 11 x64</sub><br><sub>confounded</sub> | 3 | 15,489 | 15,502 (15,502–15,503) | 13 (13–14) | 99.781 (99.626–100.179) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
 | [WorkBuddy 5.3.13](runs/2026-08-15/workbuddy-5.3.13_auto_craft_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | glm-5.2 (R1,R2); deepseek-v4-flash (R3)<br><sub>—</sub> | —<br><sub>official product</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 33,043 (32,119–33,193) | 33,479 (32,501–33,824) | 436 (382–631) | 8.47 (7.893–11.628) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: per_attempt_native_credit_verified</sub> |
 
 ## Updating this page

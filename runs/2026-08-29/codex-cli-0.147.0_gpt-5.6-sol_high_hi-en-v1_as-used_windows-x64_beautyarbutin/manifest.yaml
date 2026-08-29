@@ -7,7 +7,7 @@ scenario:
   captured_from_utc: "2026-08-29T11:33:04.992Z"
   captured_to_utc: "2026-08-29T12:07:08.756Z"
   planned_repetitions: 3
-  valid_repetitions: 3
+  valid_repetitions: 0
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -149,22 +149,7 @@ measurement:
 
 # Add one mapping per metric actually summarized in the scenario README.
 # Copy the structure from the closest completed sample; do not invent fields.
-aggregate:
-  context_total_tokens:
-    values: [15502, 15502, 15503]
-    min: 15502
-    median: 15502
-    max: 15503
-  cli_total_excluding_cached:
-    values: [4494, 4494, 4495]
-    min: 4494
-    median: 4494
-    max: 4495
-  response_latency_ms:
-    values: [99626, 99781, 100179]
-    min: 99626
-    median: 99781
-    max: 100179
+aggregate: {}
 
 quota:
   attribution: "not_measured"
@@ -201,18 +186,10 @@ evidence:
     - "The executable path was reduced to the command name codex."
     - "Public terminal screenshots are deterministic pixel crops of registered private originals; no pixels inside retained crop regions were changed."
 
-# Omit this block when no cross-scenario claim is made. When a comparison has
-# an uncontrolled variable, record it instead of attributing the difference.
-comparison:
-  status: "confounded"
-  reference_scenario: "20260814_codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64"
-  confounder: "subscription plan, OS/architecture, and contributor as-used harness differ from the reference sample"
-  notes: "This is an independent T-01 replication; observed differences will not be attributed to a single changed variable."
-
 protocol:
   deviations:
     - "The configuration root contains an AGENTS.md file, but the pre-prompt CLI /status reported Agents.md: <none>; the manifest records the observed status as no active instruction file."
-    - "All three requests first encountered a WebSocket timeout and then completed over the CLI's HTTPS transport fallback; the observed latency includes the timeout."
+    - "R1-R3 are invalid because every request encountered a WebSocket network timeout before completing through the CLI's HTTPS transport fallback; they are retained as anomalous observations and are excluded from valid aggregates."
     - "Quota UI was incidentally visible but was not preregistered, so quota is excluded from all results."
     - "The supplied R2 response screenshot duplicated its status screenshot; the R2 public response crop comes from the raw exit-usage screenshot, which contains the complete prompt and reply."
   notes: "Pre-prompt /status in all three attempts showed no codex_apps startup error."

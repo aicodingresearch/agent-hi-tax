@@ -1,5 +1,5 @@
 attempt: 2
-status: "valid"
+status: "invalid"
 started_at_utc: "2026-08-29T11:54:42.644Z"
 assistant_message_at_utc: "2026-08-29T11:56:22.425Z"
 usage_recorded_at_utc: "2026-08-29T11:56:22.509Z"
@@ -62,7 +62,7 @@ evidence:
     quota: "not_provided"
 
 deviations:
-  - "The request first waited for a WebSocket transport timeout, then succeeded over HTTPS; the attempt is retained as observed."
+  - "Marked invalid under the protocol because the request encountered a WebSocket network timeout before succeeding through the CLI's HTTPS transport fallback; the attempt is retained as observed."
   - "The file supplied as r2-response.raw.png was an identical duplicate of r2-status.raw.png and did not contain the response; the public response image was deterministically cropped from r2-usage.raw.png, which contains the prompt, full reply, and native Token usage line."
   - "The raw status and exit-usage screenshots are withheld because they contain account, local-path, and Session ID fields."
   - "Quota was not preregistered and is not used, despite incidental quota UI being visible in private evidence."

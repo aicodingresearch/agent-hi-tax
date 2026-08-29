@@ -1,5 +1,5 @@
 attempt: 3
-status: "valid"
+status: "invalid"
 started_at_utc: "2026-08-29T12:05:28.492Z"
 assistant_message_at_utc: "2026-08-29T12:07:08.671Z"
 usage_recorded_at_utc: "2026-08-29T12:07:08.756Z"
@@ -62,6 +62,6 @@ evidence:
     quota: "not_provided"
 
 deviations:
-  - "The request first waited for a WebSocket transport timeout, then succeeded over HTTPS; the attempt is retained as observed."
+  - "Marked invalid under the protocol because the request encountered a WebSocket network timeout before succeeding through the CLI's HTTPS transport fallback; the attempt is retained as observed."
   - "The raw status and exit-usage screenshots are withheld because they contain account, local-path, and Session ID fields; deterministic public crops retain the complete response and Token usage line."
   - "Quota was not preregistered and is not used, despite incidental quota UI being visible in private evidence."
