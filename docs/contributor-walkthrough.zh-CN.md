@@ -152,7 +152,7 @@ mkdir -p ~/hi-tax-evidence/<场景名>
 
 在 `runs/YYYY-MM-DD/<scenario-id>/` 下建立如下结构（详见[贡献指南·场景包目录](../CONTRIBUTING.zh-CN.md#场景包目录)）：
 
-如果目标目录已存在，或同日同场景已被其他贡献者认领，请在目录名与 manifest 的 `scenario.id` 末尾同时追加 `_<github-handle>`（例如 `..._mac-arm64_alice`）。
+每个新提交的场景包，都在目录名与 manifest 的 `scenario.id` 末尾追加 `_<github-handle>`（例如 `..._mac-arm64_alice`）。这使包路径从构造上就不会冲突，同日同场景的多人复测无需任何协调。现有四个参考样板先于此规则，保持原名。
 
 ```text
 runs/YYYY-MM-DD/<scenario-id>/

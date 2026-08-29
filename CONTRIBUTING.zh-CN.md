@@ -302,7 +302,7 @@ runs/YYYY-MM-DD/<scenario-id>/
       ...
 ```
 
-如果目标目录已存在，或同日同场景已被其他贡献者认领，请在目录名与 manifest 的 `scenario.id` 末尾同时追加 `_<github-handle>`（例如 `..._mac-arm64_alice`）。
+每个新提交的场景包，都在目录名与 manifest 的 `scenario.id` 末尾追加 `_<github-handle>`（例如 `..._mac-arm64_alice`）。这使包路径从构造上就不会冲突，同日同场景的多人复测无需任何协调。现有四个参考样板先于此规则，保持原名。
 
 场景字段模板见 [`templates/scenario-manifest.yaml`](templates/scenario-manifest.yaml)，单次结果模板见 [`templates/attempt-result.yaml`](templates/attempt-result.yaml)，模板选择和可选字段说明见 [`templates/README.zh-CN.md`](templates/README.zh-CN.md)。四个完整实例统一列在 [`runs/README.zh-CN.md`](runs/README.zh-CN.md)。
 
