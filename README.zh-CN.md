@@ -241,6 +241,8 @@ docs/                 方法说明和流程复盘
 
 第一次参与的贡献者，建议直接从[待测场景清单](docs/wanted-scenarios.zh-CN.md)认领一个具体任务，然后按[实测指南](docs/contributor-walkthrough.zh-CN.md)从头做到提交。
 
+私有试点受邀者在接受仓库邀请前，请先阅读[私有试点须知](docs/internal-pilot.zh-CN.md)。
+
 如果你希望贡献一次测试：
 
 1. 阅读[贡献指南](CONTRIBUTING.zh-CN.md)；

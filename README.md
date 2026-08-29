@@ -241,6 +241,8 @@ The formal schema, automated capture, and interactive visualization will be fina
 
 First-time contributors are encouraged to claim a concrete task directly from the [wanted-scenario list](docs/wanted-scenarios.md), then follow the [contributor walkthrough](docs/contributor-walkthrough.md) from start to submission.
 
+Private-pilot invitees should read the [internal pilot notes](docs/internal-pilot.md) before accepting the repository invitation.
+
 If you would like to contribute a test:
 
 1. read the [contributing guide](CONTRIBUTING.md);
