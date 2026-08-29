@@ -105,7 +105,7 @@ Each task changes exactly one variable of an existing scenario and keeps everyth
 
 ## C. New products: bringing more Agent harnesses under observation (difficulty ★★★)
 
-New-product tasks have the highest value and the highest difficulty: there is no existing adapter, and you need to answer for yourself where this product exposes usage and how to redact it. Start by collecting under the generic semantics in [CONTRIBUTING](../CONTRIBUTING.md), and describe the differences from the three existing adapters in your PR; drafting a first version of `docs/adapters/<product>.md` along the way is welcome.
+New-product tasks have the highest value and the highest difficulty: there is no existing adapter, and you need to answer for yourself where this product exposes usage and how to redact it. Start by collecting under the generic semantics in [CONTRIBUTING](../CONTRIBUTING.md), and describe the differences from the three existing adapters in your PR; in the language you write, drafting `docs/adapters/<product>.md` (English) or `docs/adapters/<product>.zh-CN.md` (Chinese) along the way is welcome.
 
 Products use wildly varied metering units (tokens, credits, premium requests, quota percentages) — **keep the native units, do not convert**.
 

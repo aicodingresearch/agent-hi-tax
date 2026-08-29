@@ -221,9 +221,10 @@ Level A 的视觉证据可以是公开脱敏图，也可以是维护者核对过
 
 ```text
 README.md             项目入口和基本说明
-RESULTS.zh-CN.md            自动生成的跨 Agent 汇总索引
-CONTRIBUTING.zh-CN.md       中文贡献流程和证据规则
-SECURITY.zh-CN.md           证据泄露的私密报告与撤下流程
+*.zh-CN.md            对应文档的中文版
+RESULTS.md            自动生成的跨 Agent 汇总索引
+CONTRIBUTING.md       贡献流程和证据规则
+SECURITY.md           证据泄露的私密报告与撤下流程
 LICENSE               Apache-2.0，覆盖 scripts/ 与 workflows
 LICENSE-DATA          CC BY 4.0，覆盖数据与文档
 prompts/              版本化的标准输入 case
@@ -259,7 +260,7 @@ docs/                 方法说明和流程复盘
 - 英文（主版本）：`README.md`、`CONTRIBUTING.md`、`RESULTS.md` 以及不带语言后缀的 docs 页面；
 - 中文：对应的 `*.zh-CN.md` 文件。
 
-中英文文档共用协议版本、schema 和英文机器字段；它们不是两套数据体系。`docs/` 下的采集适配器与流程复盘目前仅有中文版，欢迎贡献翻译。测试输入的语言作为独立变量记录，不受文档语言影响。
+中英文文档共用协议版本、schema、英文机器字段和数据目录；它们不是两套数据体系。`docs/` 下的采集适配器与流程复盘目前仅有中文版，欢迎贡献翻译。测试输入的语言作为独立变量记录，不受文档语言影响。
 
 ## 许可
 
