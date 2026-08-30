@@ -1,0 +1,207 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260830_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-08-30T10:20:39.715Z"
+  captured_to_utc: "2026-08-30T10:34:20.774Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "Google Antigravity CLI"
+  vendor: "Google"
+  distribution: "first-party"
+  surface: "cli"
+  version: "1.1.22"
+  build: "not_exposed"
+  executable: "agy"
+
+environment:
+  os: "Windows 11"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "Google AI Pro"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "Google"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "product-default: gemini-3.7-flash"
+  observed: "Gemini 3.7 Flash (High)"
+  observation_method: "startup UI and status-line JSON"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "interactive-tui"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "agy-customizations (built-in)"
+    - "antigravity-guide (built-in)"
+    - "generative_ui (built-in)"
+    - "migrate-workflows (built-in)"
+    - "permissioned-github (built-in)"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "no user hooks configured; formal runs use one interactive TUI turn per fresh process"
+  network_mode: "enabled"
+  permission_mode: "product default (effective label not_exposed)"
+  filesystem_profile_observed: "product default (effective label not_exposed)"
+  settings_sources:
+    - "<USERPROFILE>/.gemini/antigravity-cli/settings.json (SHA-256 8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3)"
+    - "Antigravity CLI built-in defaults"
+    - "passive status-line command <EVIDENCE_ROOT>/capture-statusline.ps1 (SHA-256 31f0a32cf143405c298a98d9a8ceb762b123432ece623364d8bf2231d490906e)"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "status-line context_window.current_usage.input_tokens"
+  secondary_metric: "status-line context_window.current_usage.output_tokens"
+  native_input_definition: "current_usage.input_tokens; cache_read_input_tokens and cache_creation_input_tokens are retained separately as product-native fields"
+  total_input_definition: "context_window.total_input_tokens"
+  context_total_definition: "context_window.total_input_tokens + context_window.total_output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "not_exposed in the interactive TUI status-line payload"
+  transcript_extraction: "status-line JSON plus public response screenshots; the temporary transcript path expired on exit"
+  transcript_deduplication: "one target user message and one final assistant response per fresh process"
+
+aggregate:
+  current_usage_input_tokens:
+    values: [13763, 13764, 13757]
+    min: 13757
+    median: 13763
+    max: 13764
+    mean: 13761.333333
+  current_usage_cache_creation_input_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  current_usage_cache_read_input_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  total_input_tokens:
+    values: [19570, 19570, 19570]
+    min: 19570
+    median: 19570
+    max: 19570
+    mean: 19570
+  output_tokens:
+    values: [68, 139, 41]
+    min: 41
+    median: 68
+    max: 139
+    mean: 82.666667
+  context_total_tokens:
+    values: [19638, 19709, 19611]
+    min: 19611
+    median: 19638
+    max: 19709
+    mean: 19652.666667
+
+quota:
+  attribution: "contaminated"
+  notes: "Native account-level sequential snapshots are retained, but their deltas are not attributed solely to each hi because the meter is shared and the product states that five-hour capacity is demand-smoothed."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "self_reported"
+    workspace_and_session: "self_reported"
+    skills_and_hooks: "self_reported"
+    mcp_plugins_and_hooks: "self_reported"
+  public_files:
+    - "evidence/preregistration.txt"
+    - "evidence/preregistration-statusline-replacement.txt"
+    - "evidence/environment.png"
+    - "evidence/statusline-instrumentation.md"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/usage-header.png"
+    - "attempts/r1/pre-prompt.sanitized.jsonl"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/pre-prompt.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/pre-prompt.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "The CLI settings path is represented as <USERPROFILE>/.gemini/antigravity-cli/settings.json."
+    - "The external evidence root is represented as <EVIDENCE_ROOT>."
+    - "Account identifiers and authentication material are omitted."
+    - "Public environment and usage screenshots replace only registered account-email rectangles with fully opaque black pixels."
+    - "Public response screenshots are byte-identical copies because they contain no private identifiers."
+    - "Public status-line events are constructed by a safe-field allowlist; raw payloads remain outside Git."
+
+protocol:
+  deviations:
+    - "Replacement scene after closed draft PR #11; its headless print-mode attempts remain preserved but are excluded from this interactive TUI scene."
+    - "One quota-only TUI attempt made under the first preregistration is retained outside Git as superseded and is excluded from the three status-line-instrumented valid attempts."
+    - "The first status-line preflight failed before any prompt because quoted -File syntax was passed literally on Windows; the command was corrected, all four run directories were pre-trusted, and the corrected settings were frozen before formal attempts."
+  notes: "T-24 claim #10. Passive status-line measurement is enabled under the corrected CLI settings source; it receives product-native state but does not modify model context or make model calls. Each verified quota.before value is supported by a public allowlisted pre-prompt snapshot with zero input and output tokens."

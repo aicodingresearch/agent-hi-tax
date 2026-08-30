@@ -1,0 +1,70 @@
+Preregistered at UTC: 2026-08-30T09:18:57.542Z
+Task: T-24
+Claim issue: aicodingresearch/agent-hi-tax#10
+Replacement for closed draft PR: aicodingresearch/agent-hi-tax#11
+
+No formal hi request for this replacement scene had been sent at the time of
+this preregistration. The three headless print-mode attempts preserved in
+closed PR #11 are excluded from this scene; they are not deleted or reused.
+
+## Frozen product and environment
+
+Product: Google Antigravity CLI
+Version: 1.1.22
+Surface: interactive TUI
+Model: Gemini 3.7 Flash (product default selection at fresh launch)
+Reasoning effort: high (product-exposed setting, selected in the model UI)
+Subscription: Google AI Pro (self-reported; account identifier omitted)
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Locale: zh-CN
+Time zone: Asia/Shanghai
+Harness profile: as-used
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+Planned attempts: 3 sequential valid attempts
+Prompt: hi-en-v1, exact UTF-8 bytes 68 69, typed once per attempt
+
+## Frozen as-used harness inventory
+
+User settings source: <APPDATA>/Antigravity/User/settings.json
+User settings SHA-256: 4a2865f2dbcd5d3c221a443c00e246bdc46fd1cf442c77d96dd762f2a2fd652b
+MCP servers: none configured
+Imported plugins: none
+Custom agents: none configured
+User rules, skills, hooks, and instruction files: none configured
+Known built-in model-invocable skills:
+- agy-customizations
+- antigravity-guide
+- generative_ui
+- migrate-workflows
+- permissioned-github
+Built-in tool definitions: not_exposed
+Permission and filesystem mode: product default, effective labels not_exposed
+Network: enabled using the product's existing default configuration
+
+This inventory is preregistered from the contributor's current configuration
+and the retained preflight record for closed PR #11. The replacement preflight
+must confirm it before the first formal hi. Any mismatch changes the harness and
+requires stopping and creating a new replacement preregistration.
+
+## Fixed interactive procedure
+
+For each attempt, start one new Antigravity CLI process by running `agy` from
+the attempt's independent empty non-Git directory. Do not use `-p`, print mode,
+`--continue`, or a conversation/resume option. Confirm the TUI shows Gemini 3.7
+Flash and high without changing the selection, type the exact two characters
+`hi` once, wait for the final response, capture the response evidence, obtain
+the product-native usage display, capture usage evidence, and exit the process.
+
+The contributor performs all experiment-critical interactive actions and
+screenshots manually. Only the run directory changes between R1, R2, and R3.
+
+## Frozen measurement scope
+
+Per-attempt product-native token fields and response latency are in scope.
+Package-level quota state may be recorded during preflight. No per-attempt
+quota delta or compute-unit value will be inferred when the product does not
+expose it. Any unavailable field is recorded as not_exposed or not_measured.
+
+No account identifier, email address, conversation/session ID, hostname,
+private home path, or authentication material is included in this record.

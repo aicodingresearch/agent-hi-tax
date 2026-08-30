@@ -1,0 +1,63 @@
+Redaction method: deterministic RGBA pixel replacement
+Fill color: RGBA (0, 0, 0, 255)
+Resizing: none
+Blur or mosaic: none
+Generative editing: none
+
+evidence/environment.png
+- Source dimensions: 1092 x 337
+- Output dimensions: 1092 x 337
+- Inclusive mask rectangle: x=238..492, y=50..87 (account email)
+- Changed pixels: 9690
+- Verification: every changed pixel lies inside the registered rectangle
+- Verification: every output pixel inside the rectangle is fully opaque black
+- Verification: all pixels outside the rectangle are identical to the private original
+
+attempts/r1/usage-header.png
+- Source dimensions: 920 x 430
+- Output dimensions: 920 x 430
+- Inclusive mask rectangle: x=154..428, y=58..101 (account email)
+- Changed pixels: 12100
+- Verification: outside-mask differences = 0; inside-mask non-black pixels = 0
+
+attempts/r1/usage.png
+- Source dimensions: 1169 x 922
+- Output dimensions: 1169 x 922
+- Inclusive mask rectangle: x=154..428, y=0..39 (account email)
+- Changed pixels: 11000
+- Verification: outside-mask differences = 0; inside-mask non-black pixels = 0
+
+attempts/r2/usage.png
+- Source dimensions: 1209 x 1051
+- Output dimensions: 1209 x 1051
+- Inclusive mask rectangle: x=150..424, y=48..91 (account email)
+- Changed pixels: 12100
+- Verification: outside-mask differences = 0; inside-mask non-black pixels = 0
+
+attempts/r3/usage.png
+- Source dimensions: 1170 x 1048
+- Output dimensions: 1170 x 1048
+- Inclusive mask rectangle: x=155..429, y=55..102 (account email)
+- Changed pixels: 13200
+- Verification: outside-mask differences = 0; inside-mask non-black pixels = 0
+
+attempts/r1/response.png, attempts/r2/response.png, attempts/r3/response.png
+- Treatment: byte-identical copies of their private originals
+- Visual review: each contains only the exact hi input, complete assistant reply, and safe token summary
+
+pre-prompt.sanitized.jsonl and events.sanitized.jsonl
+- Treatment: explicit field allowlist, not text substitution
+- Omitted raw fields: cwd, session_id, conversation_id, transcript_path,
+  workspace, email, terminal_width, agent_state, sandbox
+- Verification: all retained fields match their selected private status-line snapshots
+- Verification: each pre-prompt snapshot has zero input/output tokens and its
+  quota fractions exactly match the corresponding result.yaml quota.before values
+- Verification: each after-response snapshot quota fractions exactly match the
+  corresponding result.yaml quota.after values
+- Verification: public text contains no email, absolute user path, UUID, resume command, or authentication material
+
+Final visual review:
+- Account email is not visible.
+- Session and continuation identifiers are not visible.
+- Version, model, effort, Google AI Pro plan, run directory, exact prompt,
+  complete replies, quota values, and token numbers remain visible where applicable.

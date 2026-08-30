@@ -1,0 +1,65 @@
+attempt: 3
+status: "valid"
+started_at_utc: "not_exposed"
+assistant_message_at_utc: "not_exposed"
+usage_recorded_at_utc: "not_exposed"
+response_latency_ms: "not_exposed"
+response_latency_display_seconds: "not_exposed"
+latency_method: "not_exposed"
+
+model_observed: "Gemini 3.7 Flash (High)"
+effort_observed: "high"
+
+usage:
+  source: "antigravity-cli-status-line"
+  provider_schema: "other"
+  input_tokens_including_cached: "not_applicable"
+  cached_input_tokens: "not_applicable"
+  non_cached_input_tokens: "not_applicable"
+  cli_total_excluding_cached: "not_applicable"
+  cli_total_source: "not_applicable"
+  cache_write_input_tokens: "not_applicable"
+  model_context_window_event: 1048576
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: 19570
+  current_usage_input_tokens: 13757
+  current_usage_cache_creation_input_tokens: 0
+  current_usage_cache_read_input_tokens: 0
+  status_line_total_input_tokens: 19570
+  output_tokens: 41
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: 19611
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: "not_exposed"
+  web_search_requests: "not_exposed"
+  web_fetch_requests: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "fda564ba3f7a0f028106d468420f674898ed99ac5bf2765ac9586206e39d73c5"
+
+activity:
+  tool_calls: "not_exposed"
+  approvals: "not_exposed"
+  errors: []
+
+quota:
+  before: "gemini-weekly=0.9574535; gemini-5h=0.9979236"
+  after: "gemini-weekly=0.9573672; gemini-5h=0.9974061"
+  attribution: "contaminated"
+
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "usage.png"
+  pre_prompt_sanitized_event: "pre-prompt.sanitized.jsonl"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "not_exposed"
+    quota: "verified"
+
+deviations: []

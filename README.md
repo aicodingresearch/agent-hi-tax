@@ -241,9 +241,11 @@ The formal schema, automated capture, and interactive visualization will be fina
 
 First-time contributors are encouraged to claim a concrete task directly from the [wanted-scenario list](docs/wanted-scenarios.md), then follow the [contributor walkthrough](docs/contributor-walkthrough.md) from start to submission.
 
-Contributing here is also a structured reason to actually try each new agent and model as it ships: every claim turns "I should check that tool out" into a reproducible public observation, and over time this list grows into a community-maintained coverage map of real harnesses.
+The project maintains roughly ten priority observation anchors: Agent × currently anchored model × effort combinations that we encourage the community to repeat each quarter. Anchor retests pay more points than ordinary tasks; see [Anchor combinations](docs/wanted-scenarios.md#anchor-combinations) for the current list and identity rules.
 
-Private-pilot invitees should read the [internal pilot notes](docs/internal-pilot.md) before accepting the repository invitation.
+This project measures what real products actually meter, report, and charge on real accounts, reconciling multiple measurement surfaces including client receipts, native usage, quota or credits, and billing. See [Related work](docs/related-work.md) for how that scope complements projects that intercept requests.
+
+Contributing here is also a structured reason to actually try each new agent and model as it ships: every claim turns "I should check that tool out" into a reproducible public observation, and over time this list grows into a community-maintained coverage map of real harnesses.
 
 If you would like to contribute a test:
 
@@ -270,7 +272,7 @@ Both languages share the same protocol version, schema, English machine fields, 
 
 Two licenses, split by what the file is:
 
-- **Data and documentation** — `runs/`, `prompts/`, `templates/`, `docs/`, and the `*.md` files: [CC BY 4.0](LICENSE-DATA). Reuse and adaptation are permitted, including commercially, with attribution. When citing a measurement, cite the scenario ID and the commit as well, so the number can be traced to a verified package.
+- **Data and documentation** — `runs/`, `prompts/`, `templates/`, `docs/`, and the `*.md` files: [CC BY 4.0](LICENSE-DATA). Reuse and adaptation are permitted, including commercially, with attribution. When citing a measurement, cite the scenario ID and the commit as well, so the number can be traced to a verified package. Screenshots under `runs/` are **excluded** from the CC BY grant: they reproduce vendor interfaces only for factual research reporting, and copyright and trademarks in those interfaces remain with the vendors; see [LICENSE-DATA](LICENSE-DATA).
 - **Software** — `scripts/` and `.github/workflows/`: [Apache License 2.0](LICENSE).
 
 Evidence packages contain screenshots of third-party agent products. Those licenses cover this project's own contribution — the selection, arrangement, annotation, and measurement data — not the vendors' trademarks or interface content, which appear here for factual research reporting. This project is not affiliated with, endorsed by, or sponsored by any observed vendor.

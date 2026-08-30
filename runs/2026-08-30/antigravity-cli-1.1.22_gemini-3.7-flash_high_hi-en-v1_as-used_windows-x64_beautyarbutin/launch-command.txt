@@ -1,0 +1,17 @@
+# Replacement status-line-instrumented procedure.
+# Run manually in PowerShell. Replace only <RUN_DIR> for r1, r2, and r3.
+# Frozen CLI settings SHA-256:
+# 8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3
+# Frozen capture script SHA-256:
+# 31f0a32cf143405c298a98d9a8ceb762b123432ece623364d8bf2231d490906e
+Set-Location -LiteralPath "<RUN_DIR>"
+agy
+
+# In the interactive TUI:
+# 1. Confirm the current footer/model UI shows Gemini 3.7 Flash and high.
+# 2. Confirm the passive status-line token summary is present.
+# 3. Do not change model, effort, settings, plugins, MCP, skills, or hooks.
+# 4. Type the exact two characters hi once and submit.
+# 5. Wait for the final reply and capture it with the token summary.
+# 6. Open /usage and capture the complete native quota display.
+# 7. Exit. Do not resume or continue this conversation.

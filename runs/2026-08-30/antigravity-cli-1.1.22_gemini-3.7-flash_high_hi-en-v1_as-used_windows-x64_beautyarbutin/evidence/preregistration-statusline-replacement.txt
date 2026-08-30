@@ -1,0 +1,122 @@
+Replacement preregistered at UTC: 2026-08-30T09:51:21.857Z
+Task: T-24
+Claim issue: aicodingresearch/agent-hi-tax#10
+Supersedes this package's first preregistration for future formal attempts.
+
+No formal hi request using the status-line-instrumented configuration had been
+sent at the time of this replacement preregistration.
+
+## Preflight-only correction before any formal prompt
+
+Amended at UTC: 2026-08-30T10:20:39.715Z
+
+The first status-line preflight failed before any prompt was submitted because
+Antigravity CLI on Windows passed the quotes surrounding the PowerShell `-File`
+path literally. The path contains no spaces, so the quotes were removed. The
+preflight launch also caused the product to add that directory to
+`trustedWorkspaces`; the preflight and all three formal run directories were
+therefore pre-trusted before freezing the corrected settings, preventing later
+first-launch mutations. The failed preflight is not a formal attempt.
+
+Previous settings SHA-256:
+da0d12ff489d7d2141167011324ec8232a6899b406be2577209139d37b0ce7a1
+Corrected settings SHA-256:
+8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3
+
+The corrected command was tested only with synthetic JSON whose cwd leaf was
+`synthetic`, so it produced no run evidence and made no model request. No
+formal `hi` had been sent when this amendment was recorded.
+
+## Why this replacement exists
+
+After one valid quota-only TUI attempt, the contributor checked Antigravity
+CLI 1.1.22's official documentation and found the supported status-line JSON
+interface. It exposes context_window.total_input_tokens,
+total_output_tokens, current_usage.input_tokens, output_tokens,
+cache_creation_input_tokens, and cache_read_input_tokens to a local command.
+The quota-only attempt is retained outside Git as a superseded attempt; it is
+not deleted and is not counted among the three new valid attempts.
+
+The original preregistration also hashed the shared desktop-product settings
+file. This replacement corrects the configuration source to Antigravity CLI's
+official settings path.
+
+Official documentation:
+- https://antigravity.google/docs/cli/statusline/
+- https://antigravity.google/docs/cli/commands/usage/
+- https://antigravity.google/docs/cli/headless/
+
+## Frozen product and environment
+
+Product: Google Antigravity CLI
+Version: 1.1.22
+Surface: interactive TUI
+Model: Gemini 3.7 Flash (product default selection at fresh launch)
+Reasoning effort: high (product-exposed setting)
+Subscription: Google AI Pro (self-reported; account identifier omitted)
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Locale: zh-CN
+Time zone: Asia/Shanghai
+Harness profile: as-used, plus passive status-line measurement instrumentation
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+Planned attempts: 3 new sequential valid attempts
+Prompt: hi-en-v1, exact UTF-8 bytes 68 69, typed once per attempt
+
+## Frozen CLI configuration and instrumentation
+
+CLI settings source: <USERPROFILE>/.gemini/antigravity-cli/settings.json
+CLI settings SHA-256: 8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3
+Status-line type: command
+Status-line enabled: true
+Status-line capture script: <EVIDENCE_ROOT>/capture-statusline.ps1
+Capture script SHA-256: 31f0a32cf143405c298a98d9a8ceb762b123432ece623364d8bf2231d490906e
+
+The status-line command receives a product-native JSON state payload. The
+unmodified payload is written only to the repository-external private evidence
+directory. Its TUI output contains token numbers only; it does not print email,
+conversation/session ID, transcript path, or home path. It is a passive UI
+observer, is not model-invocable, does not modify the prompt or model context,
+and makes no model calls.
+
+MCP servers: none configured (`agy mcp list`)
+Imported plugins: none (`agy plugin list`)
+Custom agents: none listed (`agy agent`)
+User rules, user skills, hooks, and instruction files: none configured
+Known built-in model-invocable skills:
+- agy-customizations
+- antigravity-guide
+- generative_ui
+- migrate-workflows
+- permissioned-github
+
+## Fixed interactive procedure
+
+For each attempt, start one new `agy` process from the attempt's independent
+empty non-Git directory. Confirm Gemini 3.7 Flash and high, and confirm the
+status line is active before sending the prompt. Type the exact two characters
+`hi` once and wait for the final response. Capture the response together with
+the safe status-line token summary, open `/usage` and capture the complete quota
+panel, then exit without resume or continuation.
+
+Only the run directory changes across R1, R2, and R3. Any settings hash,
+script hash, model, effort, plugin, MCP, skill, hook, or permission change
+invalidates the attempt and requires another replacement preregistration.
+
+## Frozen measurement scope
+
+Primary metrics come from the official TUI status-line JSON:
+- current_usage.input_tokens
+- current_usage.output_tokens
+- current_usage.cache_creation_input_tokens
+- current_usage.cache_read_input_tokens
+- total_input_tokens
+- total_output_tokens
+
+Quota fractions are retained in their native units from `/usage`. The status
+line does not expose thinking tokens or response duration; unavailable fields
+remain not_exposed. No token, credit, cost, or subscription conversion is
+inferred from quota percentage-point changes.
+
+No account identifier, email address, conversation/session ID, hostname,
+private home path, or authentication material is included in this record.

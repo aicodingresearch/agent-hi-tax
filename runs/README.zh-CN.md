@@ -4,6 +4,8 @@
 
 `runs/` 保存已经完成脱敏和核对的公开测试场景。
 
+本目录下的截图排除在 CC BY 授权之外（见 [LICENSE-DATA](../LICENSE-DATA)）；测量数据（`CSV`、`YAML`、`JSONL`）照常按 CC BY 4.0 发布。
+
 每个场景至少包含 3 次有效独立运行。场景级环境、订阅和 harness 证据只保存一次；每次运行的回复、usage 和精简事件分别放在 `attempts/` 下。
 
 [在 Hi Tax Index 中汇总比较全部场景](../RESULTS.zh-CN.md)。

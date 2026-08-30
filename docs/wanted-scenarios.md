@@ -33,7 +33,7 @@ Every task on this list carries a point value, written into its title as `(N pts
 
 **When points are awarded.** At the moment a PR is merged, using the price and the count shown on this page at that moment. Nothing is reserved and no price is locked in advance. Before you start testing you can read this page together with the open claim issues to estimate what a task is likely to be worth, but that estimate is not a commitment.
 
-**Group A decays, and the decay resets every quarter.** The replication tasks pay 3 / 2 / 1 / 0 points as identical work accumulates, and the count resets at the start of each natural quarter, beginning with 2026Q3. The bucket the count runs in is *product × model × effort × platform × route × subscription tier*; product point releases are ignored for this purpose. You still record the exact version, as [CONTRIBUTING](../CONTRIBUTING.md#what-counts-as-one-scenario) requires — that is scenario identity at the data layer, and it has nothing to do with the pricing bucket. When it is unclear whether two subscription names or two product names normalize into the same bucket, the maintainer decides at the time of the award and writes the decision back onto this page.
+**Group A decays, and the decay resets every quarter.** Non-anchor replication tasks pay 3 / 2 / 1 / 0 points as identical work accumulates; anchors use the separate rate below. The count resets at the start of each natural quarter, beginning with 2026Q3. The bucket the count runs in is *product × model × effort × platform × route × subscription tier*; product point releases are ignored for this purpose. You still record the exact version, as [CONTRIBUTING](../CONTRIBUTING.md#what-counts-as-one-scenario) requires — that is scenario identity at the data layer, and it has nothing to do with the pricing bucket. When it is unclear whether two subscription names or two product names normalize into the same bucket, the maintainer decides at the time of the award and writes the decision back onto this page.
 
 **The maintainer's four pre-system reference samples neither earn points nor occupy any decay slot.** They are the baseline that replications are measured against; every replication count starts from zero, and the ledger below starts empty.
 
@@ -41,13 +41,19 @@ Every task on this list carries a point value, written into its title as `(N pts
 
 **0 points does not mean "not wanted".** It means only that this round of the task is no longer being recruited with points. The data is still valuable, and submissions and independent replications are as welcome as they have always been.
 
-**The only bonus is a usable new product adapter: +2.** It is awarded once per product, when the adapter documentation has been merged *and* its collection commands and redaction points have actually been walked through by the corresponding scenario. There is no bonus for evidence tier, and honestly labelling a package as mixed or incomplete costs you nothing.
+**The only general task bonus is a usable new product adapter: +2.** It is awarded once per product, when the adapter documentation has been merged *and* its collection commands and redaction points have actually been walked through by the corresponding scenario. The narrow probe add-on rule below applies only to sibling L1/L2 packages. There is no bonus for evidence tier, and honestly labelling a package as mixed or incomplete costs you nothing.
 
 **Before awarding, the maintainer checks whether available evidence was left out**, following the principle already stated in [CONTRIBUTING](../CONTRIBUTING.md#the-six-most-important-rules): evidence you can get should be provided, evidence you cannot get does not block. Where something was omitted that could have been collected, the points are awarded once it has been filled in. This affects points only; it does not change the bar for accepting a PR.
 
 **Combinations that are not on this list** need a proposal issue first. Before the maintainer replies they are worth 0 points; the reply prices them by a fixed rubric: 3 pts = a compatible endpoint or model substitution behind an already-covered harness; 4 pts = a mature third-party harness; 6 pts = a genuinely new first-party or independent harness.
 
 **Edge cases are decided by the maintainer**, and the decision is written back onto this page.
+
+### Probe add-ons
+
+The definitions of two new standard inputs, L1 and L2, are being finalized through the Group E process; see T-41 and T-42. Once a definition is final, a sibling L1 or L2 package added by the same contributor, in the same time window and under the same anchor combination, earns +1 point each. A sibling package may state that it reuses scenario-level environment evidence from the same batch.
+
+`hi` remains the only required input. L1 and L2 are entirely optional, and no submission will be down-scored or rejected for lacking L1 or L2 — probe add-ons only add points and never become a gate.
 
 Three checks before you pick a task:
 
@@ -61,16 +67,39 @@ Rules are abstract; here is how they cash out.
 
 | What happened | Points | Why |
 | --- | ---: | --- |
-| First merged replication of T-01 — its bucket was empty | 3 | First independent replication of a reference sample: the dataset's first reproducibility check |
-| A second contributor merges the same combination a week later | 2 | Second in the same bucket this quarter; no coordination needed — the count on this page decides |
+| First merged replication of T-01 — its anchor bucket was empty | 5 | First independent replication of anchor 1: the dataset's first reproducibility check |
+| A second contributor merges the same anchor combination a week later | 3 | Second in the anchor bucket this quarter; no coordination needed — the count on this page decides |
 | That contributor then merges T-13 (same setup, effort medium) | 3 | A new single-variable point on the effort axis |
 | Both sides of T-31 (MCP on/off) merged | 8, once | A paired comparison pays as one task, after both sides land |
 | Only one side of a paired task ever lands | that side's own tier (usually 0–3) | The pair price buys the comparison, not half of it |
-| First OpenCode sample, plus an adapter the scenario actually walked through | 6 + 2 | First sample of a listed product; the adapter bonus is the only stackable bonus, once per product |
+| First OpenCode sample, plus an adapter the scenario actually walked through | 6 + 2 | First sample of a listed product; the adapter is the only general stackable task bonus, once per product |
 | An adapter document alone, with no scenario exercising it | +0 | The +2 requires the adapter to be merged and walked through by a real scenario |
-| A fourth same-bucket T-01 replication in the same quarter | 0 — and still merged | 0 only means "not recruited with points this round"; the data keeps its value, and the count resets next quarter |
+| A fourth same-bucket T-01 replication in the same quarter | 1 | Anchor pricing keeps the fourth slot at 1; the count resets next quarter |
 | Proposing an agent that is not named anywhere on this list (T-23); the maintainer prices it at 4 in the reply; the package merges | 4 | Off-list combinations are worth 0 until priced in a proposal reply |
 | Replicating a newly added product's first sample | priced via proposal | Not on this list yet: the maintainer prices it (often like group A, 3/2/1/0) and writes it back here |
+
+## Anchor combinations
+
+Anchors are long-running objects of longitudinal observation, and quarterly repeat measurements are encouraged. Retesting an anchor is a **standing claim path**: it does not need a corresponding task on this list; open a claim issue and name the anchor number. The maintainer owns this list and may expand it.
+
+**Anchor identity rules.** An anchor's long-term identity is Agent × effort. The model column records that product's current flagship or default model, not a permanently pinned value; when the product's flagship changes, the maintainer updates the value and notes the effective quarter in the table. A model transition does not break the time series: every round still records requested and observed models under the normal protocol. In a transition quarter, contributors are encouraged to make one **old/new overlap measurement** when the old model remains selectable: measure one package for each combination in the same time window. The two packages occupy different pricing buckets and each receives the anchor rate; their within-window difference is used to separate the model-attributable component from harness drift.
+
+The current model values below are effective from **2026Q3**; future changes will carry their own effective quarter in this table.
+
+| No. | Agent | Anchored model (current value) | Effort |
+| ---: | --- | --- | --- |
+| 1 | Codex CLI | `gpt-5.6-sol` | `high` |
+| 2 | Claude Code | `claude-opus-5` | `high` |
+| 3 | Google Antigravity CLI | Product default | Default |
+| 4 | GitHub Copilot CLI | Product default | Default |
+| 5 | Cursor | Mainline model (pin it and state it in the claim) | Default |
+| 6 | OpenCode | One mainstream model (pin it when claiming) | Default |
+| 7 | Tencent WorkBuddy | `Auto` | `craft` |
+| 8 | ZCode | Mainline GLM model | Default |
+| 9 | DeepSeek line | Mainline DeepSeek model (either a first-party harness or compatible endpoint; record it accurately) | Default |
+| 10 | Local self-hosted | One frozen set of weights and stack | Default |
+
+**Anchor pricing.** Retests of an anchor combination pay 5 / 3 / 2 / 1 points, resetting each natural quarter. This price takes precedence over any task's default price. Non-anchor combinations keep their current prices; no long-tail price is reduced in this round.
 
 ---
 
@@ -84,7 +113,7 @@ Replication is the best first task: the reference sample, the adapter, and the f
 - **You need**: a ChatGPT subscription at any tier (if it differs from the reference sample's Pro 20x, record that honestly).
 - **Why this is a priority**: the existing reference sample is one observation by one maintainer, on one machine, once; whether the input context stays stable at about 13.95K tokens, and whether the cache fluctuation pattern reproduces, both need independent data points.
 - **References**: [Codex CLI adapter (Chinese)](adapters/codex-cli.zh-CN.md), [existing reference sample](../runs/2026-08-14/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64/README.md).
-- **Points**: 3 / 2 / 1 / 0, decaying as replications of the same bucket accumulate; the count resets each natural quarter.
+- **Points**: this combination is anchor 1, so it pays the anchor rate of 5 / 3 / 2 / 1, resetting each natural quarter; that rate takes precedence over this task's default price.
 
 ### T-02 Replication: Claude Code × Fable 5 × high (3 pts)
 
@@ -92,7 +121,7 @@ Replication is the best first task: the reference sample, the adapter, and the f
 - **You need**: a Claude Pro or Max subscription.
 - **Why this is a priority**: verify whether the structure of "plain input only 2 tokens + about 25K cache creation" reproduces under other accounts and configurations; keep the same permission mode across all three attempts.
 - **References**: [Claude Code adapter (Chinese)](adapters/claude-code.zh-CN.md), [existing reference sample](../runs/2026-08-15/claude-code-2.1.220_claude-fable-5_high_hi-en-v1_as-used_mac-arm64/README.md).
-- **Points**: 3 / 2 / 1 / 0, decaying as replications of the same bucket accumulate; the count resets each natural quarter.
+- **Points**: the Fable combination remains priced by this task at 3 / 2 / 1 / 0, decaying as replications of the same bucket accumulate and resetting each natural quarter. The longitudinal anchor is Claude Code × Opus 5 (anchor 2).
 
 ### T-03 Replication: WorkBuddy × Auto (3 pts)
 
@@ -310,6 +339,18 @@ If your research interest is the Agent harness itself, this group of tasks is th
 - **Note**: a new input is a protocol-level change — the exact original text, encoding, byte sequence, and SHA-256 must be defined first, with a new `prompts/` file created and a case ID decided. **Open an issue to finalize this before measuring**; do not just send a Chinese sentence as you understand it and submit.
 - **Why this is a priority**: whether the input language affects harness injection (e.g. language detection, reply length) is a question of direct interest to bilingual Chinese/English users.
 - **Points**: 4 pts covers both halves — the new input case definition and the first scenario package that uses it.
+
+### T-41 Probe L1: exact-reply case (4 pts)
+
+- **Scenario**: define a fixed instruction-style input intended to make the agent reply with exactly `OK` and use no tools. The exact bytes, encoding, and SHA-256 must first be aligned with the maintainers in an issue, then written into `prompts/`. The first package consists of 3 standard runs under any anchor combination.
+- **Why this is a priority**: `hi` is a greeting, and products branch in how they handle greetings. L1 constrains the output to the shortest form and minimizes semantic branching, making it a purer ruler for harness injection than `hi`; the two cases serve as controls for each other.
+- **Points**: 4 pts covers the case definition and first package. Later packages follow the +1 probe add-on rule.
+
+### T-42 Probe L2: fixed file-read case (4 pts)
+
+- **Scenario**: define a minimal fixed task: place a byte-for-byte fixed small fixture file in the workspace, then ask the agent to read it and return a specified field. First align the fixture's and input's exact bytes in an issue, then publish them with the case definition. The first package consists of 3 standard runs under any anchor combination.
+- **Why this is a priority**: neither `hi` nor L1 triggers a tool. L2 measures the marginal cost of one deterministic tool call, separating tool-definition cost (measured by T-31 and T-37) from tool-invocation cost.
+- **Points**: as for T-41, 4 pts covers the case definition and first package; later packages follow the +1 probe add-on rule.
 
 ---
 
