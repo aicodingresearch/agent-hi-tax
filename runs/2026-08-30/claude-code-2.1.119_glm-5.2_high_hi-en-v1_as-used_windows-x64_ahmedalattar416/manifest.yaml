@@ -30,7 +30,7 @@ environment:
 
 account:
   auth_channel: "gateway-account"
-  subscription_plan: "Z.ai API pay-as-you-go"
+  subscription_plan: "智谱开放平台 API pay-as-you-go"
   usage_multiplier: "not_exposed"
   billing_mode: "pay-as-you-go"
   quota_shared_scope: "account"
@@ -38,7 +38,7 @@ account:
 
 route:
   category: "third-party-gateway"
-  provider: "Z.ai"
+  provider: "智谱开放平台"
   protocol: "anthropic-compatible"
   gateway_public_name: "智谱开放平台"
   gateway_public_domain: "open.bigmodel.cn"

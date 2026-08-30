@@ -52,10 +52,10 @@ quota:
 evidence:
   response_screenshot: "response.png"
   usage_screenshot: "not_provided"
-  sanitized_events: "not_applicable"
+  sanitized_events: "not_provided"
   field_statuses:
     prompt_and_response: "verified"
-    usage: "verified"
+    usage: "self_reported"
     timing: "self_reported"
     quota: "not_provided"
 

@@ -1,6 +1,6 @@
 # Claude Code × GLM-5.2 × Windows 11 测试
 
-- **场景**：Claude Code 2.1.119 × GLM-5.2 × high effort × third-party-gateway (Z.ai) × Windows 11
+- **场景**：Claude Code 2.1.119 × GLM-5.2 × high effort × third-party-gateway (智谱开放平台) × Windows 11
 - **标准输入**：`hi-en-v1`
 - **测试日期**：2026-08-30
 - **贡献者**：[@AHMEDALATTAR416](https://github.com/AHMEDALATTAR416)
