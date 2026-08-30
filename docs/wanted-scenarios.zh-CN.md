@@ -490,3 +490,4 @@ Agent 的发行方和推理路由是两个变量：官方 Agent 也可以配置�
 | 日期 | 贡献者 | 任务 | PR | 积分 | 备注 |
 | --- | --- | --- | --- | ---: | --- |
 | 2026-08-30 | [@beautyarbutin](https://github.com/beautyarbutin) | T-16 | [#13](https://github.com/aicodingresearch/agent-hi-tax/pull/13) | 4 | 首个 Codex CLI Windows 包；认领为 T-01（[#7](https://github.com/aicodingresearch/agent-hi-tax/issues/7)），按命中任务中的最高档一次计为 T-16 |
+| 2026-08-30 | [@beautyarbutin](https://github.com/beautyarbutin) | T-24 | [#20](https://github.com/aicodingresearch/agent-hi-tax/pull/20) | 6 | 首个 Google Antigravity CLI 样本，也是首个 Antigravity CLI Windows 包；按更高的 T-24 档一次计分，不与 T-16 叠加 |

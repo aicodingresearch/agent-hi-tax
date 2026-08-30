@@ -490,3 +490,4 @@ The maintainer appends one row here when a PR is merged. Corrections are handled
 | Date | Contributor | Task | PR | Points | Note |
 | --- | --- | --- | --- | ---: | --- |
 | 2026-08-30 | [@beautyarbutin](https://github.com/beautyarbutin) | T-16 | [#13](https://github.com/aicodingresearch/agent-hi-tax/pull/13) | 4 | First Codex CLI Windows package; claimed as T-01 ([#7](https://github.com/aicodingresearch/agent-hi-tax/issues/7)), priced once at the highest qualifying tier (T-16) |
+| 2026-08-30 | [@beautyarbutin](https://github.com/beautyarbutin) | T-24 | [#20](https://github.com/aicodingresearch/agent-hi-tax/pull/20) | 6 | First Google Antigravity CLI sample and first Antigravity CLI Windows package; priced once at the higher T-24 tier, with no T-16 stacking |
