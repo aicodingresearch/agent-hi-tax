@@ -156,6 +156,8 @@ Each valid run records at least:
 
 The recommended minimum visual evidence is one screenshot containing the input and the complete reply. Usage can be proven with an exit-screen screenshot, the product's usage page, a provider receipt, or a redacted machine log. When the product does not surface an item, label it; there is no requirement to fabricate a "complete" screenshot.
 
+Latency values from the three sequential runs are descriptive metadata only. They do not support cross-product latency comparisons: latency is affected by time of day, load, and caching. Such a comparison requires a separate design with randomized interleaving across time blocks; this protocol does not support that class of conclusion.
+
 ## Standard execution flow
 
 ### 1. Pin the scenario
@@ -262,6 +264,21 @@ What is contaminated is the shared quota delta; it does not necessarily contamin
 ### Derived monetary cost — only where an exact public price exists
 
 When the route is `official-api`, also compute the monetary cost of each attempt: multiply each native usage bucket by the vendor's published price for that bucket — input, cache write, cache read, and output are usually priced differently, so never apply one flat rate. Record in the scenario package: the price-page link, the date you read it, the per-bucket prices used, the formula, the currency, and the resulting amount per attempt. Keep the amount as a derived field alongside — never in place of — the native token fields: prices change, and the snapshot is what keeps the number auditable later. For a `third-party-gateway` this is optional: if the gateway publishes a price table you may compute the same way, labelled as gateway-published pricing — exactly as trustworthy as the gateway's other claims. For subscriptions, credit systems, and `self-hosted` routes, write `not_applicable`; that is precisely what the no-conversion rule above protects.
+
+### Measurement surface and attribution
+
+The existing `usage.source` field records the measurement surface: `client-reported`, `provider-reported`, `billing-ledger`, or `self-reported`. Values from different measurement surfaces must be presented separately, not mixed into one figure.
+
+Use one of four attribution levels when interpreting a measurement:
+
+- `directly-observed`: the request contents were observed directly;
+- `delta-attributed`: attribution comes from the difference produced by switching a condition on and off;
+- `inferred`: the attribution is inferred rather than directly observed;
+- `not-identifiable`: the available evidence cannot identify the attribution.
+
+Any conclusion that crosses scenarios or measurement surfaces must state the attribution level it relies on, in the package README or PR description. This does not change the templates or add a required field.
+
+A hash proves that a file was not changed after it was hashed; it does not prove that the measurement was interpreted correctly. Do not conflate the two.
 
 ## First-party products, official APIs, and gateways
 
