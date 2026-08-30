@@ -34,7 +34,7 @@ account:
   usage_multiplier: "not_exposed"
   billing_mode: "included-quota"
   quota_shared_scope: "account"
-  plan_evidence_status: "private_evidence"
+  plan_evidence_status: "verified"
 
 route:
   category: "first-party-subscription"
