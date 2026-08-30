@@ -247,8 +247,6 @@ This project measures what real products actually meter, report, and charge on r
 
 Contributing here is also a structured reason to actually try each new agent and model as it ships: every claim turns "I should check that tool out" into a reproducible public observation, and over time this list grows into a community-maintained coverage map of real harnesses.
 
-Private-pilot invitees should read the [internal pilot notes](docs/internal-pilot.md) before accepting the repository invitation.
-
 If you would like to contribute a test:
 
 1. read the [contributing guide](CONTRIBUTING.md);
