@@ -1,0 +1,62 @@
+attempt: 2
+status: "valid"
+started_at_utc: "2026-08-30T11:40:00Z"
+assistant_message_at_utc: "2026-08-30T11:40:25Z"
+usage_recorded_at_utc: "2026-08-30T11:40:25Z"
+response_latency_ms: "not_exposed"
+response_latency_display_seconds: 5
+latency_method: "ui-timer-estimated"
+
+model_observed: "GLM-5.2"
+effort_observed: "high"
+
+usage:
+  source: "local-session-transcript"
+  provider_schema: "anthropic"
+  input_tokens_including_cached: 23552
+  cached_input_tokens: 19840
+  non_cached_input_tokens: 3712
+  cli_total_excluding_cached: "not_applicable"
+  cli_total_source: "not_applicable"
+  cache_write_input_tokens: "not_applicable"
+  model_context_window_event: "not_exposed"
+  input_tokens: 3712
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 19840
+  total_input_tokens: 23552
+  cache_creation_ephemeral_5m_input_tokens: 0
+  cache_creation_ephemeral_1h_input_tokens: 0
+  output_tokens: 12
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: 23564
+  service_tier: "standard"
+  speed: "standard"
+  iterations: 1
+  web_search_requests: 0
+  web_fetch_requests: 0
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "not_provided"
+  sanitized_events: "not_applicable"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "self_reported"
+    quota: "not_provided"
+
+deviations: []
