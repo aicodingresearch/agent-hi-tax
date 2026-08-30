@@ -4,6 +4,8 @@
 
 `runs/` holds public test scenarios that have been redacted and checked.
 
+Screenshots in this directory are excluded from the CC BY grant (see [LICENSE-DATA](../LICENSE-DATA)); measurement data (`CSV`, `YAML`, and `JSONL`) remain licensed under CC BY 4.0.
+
 Each scenario contains at least 3 valid independent runs. Scenario-level environment, subscription, and harness evidence is stored only once; each run's reply, usage, and trimmed events live separately under `attempts/`.
 
 [Compare all scenarios together in the Hi Tax Index](../RESULTS.md).

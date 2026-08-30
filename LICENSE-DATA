@@ -15,6 +15,13 @@ WHAT THIS COVERS
     docs/          method notes, adapters, walkthroughs
     *.md           README, CONTRIBUTING, RESULTS, and other documentation
 
+  EXCLUDED FROM THE CC BY GRANT
+    All image files under runs/ (screenshots, *.png). They reproduce third-party
+    product interfaces for factual research reporting. Copyright and trademarks in
+    those interfaces remain with their respective owners; this project grants no
+    license to them, and reusers must make their own assessment before reusing any
+    screenshot.
+
   Apache License 2.0 (see LICENSE):
     scripts/       index generation and verification tooling
     .github/workflows/
@@ -39,14 +46,14 @@ HOW TO ATTRIBUTE
 
 THIRD-PARTY MATERIAL
 
-  Evidence packages include screenshots of third-party agent products. Those
-  screenshots depict interfaces, product names, and logos owned by their
-  respective vendors. The licenses above cover only this project's own
-  contribution (the selection, arrangement, annotation, and measurement data);
-  they do not and cannot grant rights in third-party trademarks or interface
-  content, which are reproduced here for factual research reporting. This
-  project is not affiliated with, endorsed by, or sponsored by any of the
-  vendors whose products it observes.
+  Image files under runs/ are expressly excluded from the CC BY grant above.
+  They may include screenshots of third-party agent products and depict
+  interfaces, product names, and logos owned by their respective vendors. The
+  CC BY grant covers this project's measurement data and textual selection,
+  arrangement, and annotation; it grants no rights in the excluded images or
+  in third-party trademarks or interface content. Those materials are reproduced
+  here for factual research reporting. This project is not affiliated with,
+  endorsed by, or sponsored by any of the vendors whose products it observes.
 
 FULL LICENSE TEXT
 

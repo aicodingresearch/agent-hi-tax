@@ -274,7 +274,7 @@ Both languages share the same protocol version, schema, English machine fields, 
 
 Two licenses, split by what the file is:
 
-- **Data and documentation** — `runs/`, `prompts/`, `templates/`, `docs/`, and the `*.md` files: [CC BY 4.0](LICENSE-DATA). Reuse and adaptation are permitted, including commercially, with attribution. When citing a measurement, cite the scenario ID and the commit as well, so the number can be traced to a verified package.
+- **Data and documentation** — `runs/`, `prompts/`, `templates/`, `docs/`, and the `*.md` files: [CC BY 4.0](LICENSE-DATA). Reuse and adaptation are permitted, including commercially, with attribution. When citing a measurement, cite the scenario ID and the commit as well, so the number can be traced to a verified package. Screenshots under `runs/` are **excluded** from the CC BY grant: they reproduce vendor interfaces only for factual research reporting, and copyright and trademarks in those interfaces remain with the vendors; see [LICENSE-DATA](LICENSE-DATA).
 - **Software** — `scripts/` and `.github/workflows/`: [Apache License 2.0](LICENSE).
 
 Evidence packages contain screenshots of third-party agent products. Those licenses cover this project's own contribution — the selection, arrangement, annotation, and measurement data — not the vendors' trademarks or interface content, which appear here for factual research reporting. This project is not affiliated with, endorsed by, or sponsored by any observed vendor.

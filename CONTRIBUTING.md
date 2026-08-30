@@ -170,6 +170,8 @@ If you are testing shared subscription percentages, team quota, or gateway balan
 
 Do not put screenshots, transcripts, or private originals into the empty directory under test. Use a temporary evidence directory outside the repository, and copy the public files into Git only after all runs have finished and redaction is complete.
 
+All collection must be ordinary human use of the official interface or client: do not intercept or decrypt traffic, automate consumer accounts, reverse-engineer or modify the client, or bypass rate or quota limits. See [docs/tos-review.md](docs/tos-review.md) for the comparison between this method and each product's terms.
+
 ### 3. Run the environment preflight once
 
 Run the version, system, architecture, and UTC time commands, and save one preflight screenshot. Also save evidence of the subscription, model, effort, and launch screen. Check whether hooks make additional model calls; if they do, they are part of the harness and must not be hidden.
@@ -355,7 +357,7 @@ If you find something like this in evidence that is **already published** — yo
 
 ## Licensing of your contribution
 
-By opening a pull request you agree that your contribution is published under the repository's licenses: [CC BY 4.0](LICENSE-DATA) for data and documentation (`runs/`, `prompts/`, `templates/`, `docs/`, `*.md`), and the [Apache License 2.0](LICENSE) for software (`scripts/`, `.github/workflows/`). You keep the copyright in what you contribute; there is no CLA to sign.
+By opening a pull request you agree that your contributed measurement data and text are published under [CC BY 4.0](LICENSE-DATA). Screenshots you contribute are **outside the CC BY grant** and are published only for factual research reporting. Software contributions (`scripts/`, `.github/workflows/`) are published under the [Apache License 2.0](LICENSE). You keep the copyright in what you contribute; there is no CLA to sign.
 
 Only submit evidence you are entitled to publish. Screenshots of a third-party product's interface are reproduced here for factual research reporting; screenshots of private repositories, internal tools, or someone else's account are not — crop or reshoot instead. If your employer restricts publishing material about a product you use at work, resolve that before submitting, not after.
 

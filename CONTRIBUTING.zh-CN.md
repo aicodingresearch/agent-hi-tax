@@ -170,6 +170,8 @@ Windows 或其他 Agent 使用等价的原生命令。公开转录时把 home �
 
 截图、转录和私有原图不要放进被测空目录。建议使用仓库外临时证据目录，全部运行结束并脱敏后再复制公开文件到 Git。
 
+所有采集都必须是人工正常使用官方界面或客户端：不得拦截或解密流量、不得自动化操作消费者账户、不得逆向或修改客户端，也不得绕过速率或额度限制。方法与各产品条款的对照见 [docs/tos-review.zh-CN.md](docs/tos-review.zh-CN.md)。
+
 ### 3. 只做一次环境预检
 
 执行版本、系统、架构和 UTC 时间命令，保存一张预检截图。另保存订阅、模型、effort 和启动界面证据。检查 hooks 是否会额外调用模型；如果会，它就是 harness 的一部分，不能隐去。
@@ -355,7 +357,7 @@ runs/YYYY-MM-DD/<scenario-id>/
 
 ## 贡献的许可
 
-提交 Pull Request 即表示你同意你的贡献以本仓库的许可发布：数据与文档（`runs/`、`prompts/`、`templates/`、`docs/`、`*.md`）适用 [CC BY 4.0](LICENSE-DATA)，软件（`scripts/`、`.github/workflows/`）适用 [Apache License 2.0](LICENSE)。你保留自己贡献部分的著作权，不需要签署 CLA。
+提交 Pull Request 即表示你同意：你提交的测量数据与文字按 [CC BY 4.0](LICENSE-DATA) 发布；你提交的**截图不进入 CC BY 授权范围**，仅作为事实性研究报告发布。软件贡献（`scripts/`、`.github/workflows/`）按 [Apache License 2.0](LICENSE) 发布。你保留自己贡献部分的著作权，不需要签署 CLA。
 
 只提交你有权公开的证据。第三方产品界面的截图作为事实性研究记录出现在这里；私有仓库、内部工具或他人账号的截图不属于此列——请裁剪或重新截取。如果你所在单位限制公开与工作中所用产品有关的材料，请在提交之前解决，而不是提交之后。
 
