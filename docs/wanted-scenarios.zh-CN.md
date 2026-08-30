@@ -448,3 +448,4 @@ Agent 的发行方和推理路由是两个变量：官方 Agent 也可以配置�
 
 | 日期 | 贡献者 | 任务 | PR | 积分 | 备注 |
 | --- | --- | --- | --- | ---: | --- |
+| 2026-08-30 | [@beautyarbutin](https://github.com/beautyarbutin) | T-16 | [#13](https://github.com/aicodingresearch/agent-hi-tax/pull/13) | 4 | 首个 Codex CLI Windows 包；维护者评审时由 T-01 重分类为 T-16 |
