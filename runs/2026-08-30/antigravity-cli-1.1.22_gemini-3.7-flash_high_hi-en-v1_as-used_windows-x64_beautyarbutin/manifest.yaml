@@ -180,12 +180,15 @@ evidence:
     - "attempts/r1/response.png"
     - "attempts/r1/usage.png"
     - "attempts/r1/usage-header.png"
+    - "attempts/r1/pre-prompt.sanitized.jsonl"
     - "attempts/r1/events.sanitized.jsonl"
     - "attempts/r2/response.png"
     - "attempts/r2/usage.png"
+    - "attempts/r2/pre-prompt.sanitized.jsonl"
     - "attempts/r2/events.sanitized.jsonl"
     - "attempts/r3/response.png"
     - "attempts/r3/usage.png"
+    - "attempts/r3/pre-prompt.sanitized.jsonl"
     - "attempts/r3/events.sanitized.jsonl"
   withheld_private_evidence: true
   redactions:
@@ -201,4 +204,4 @@ protocol:
     - "Replacement scene after closed draft PR #11; its headless print-mode attempts remain preserved but are excluded from this interactive TUI scene."
     - "One quota-only TUI attempt made under the first preregistration is retained outside Git as superseded and is excluded from the three status-line-instrumented valid attempts."
     - "The first status-line preflight failed before any prompt because quoted -File syntax was passed literally on Windows; the command was corrected, all four run directories were pre-trusted, and the corrected settings were frozen before formal attempts."
-  notes: "T-24 claim #10. Passive status-line measurement is enabled under the corrected CLI settings source; it receives product-native state but does not modify model context or make model calls."
+  notes: "T-24 claim #10. Passive status-line measurement is enabled under the corrected CLI settings source; it receives product-native state but does not modify model context or make model calls. Each verified quota.before value is supported by a public allowlisted pre-prompt snapshot with zero input and output tokens."

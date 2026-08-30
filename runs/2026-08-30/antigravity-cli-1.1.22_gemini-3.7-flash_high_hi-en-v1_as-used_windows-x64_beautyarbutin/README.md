@@ -74,12 +74,12 @@ Status-line JSON 与 `/usage` 页面均记录了账号级 Gemini weekly 和 five
 - [私有原图哈希登记](evidence/private-evidence.md)与[像素脱敏审计](evidence/redaction-audit.txt)
 - 三次完整输入/回复截图：[R1](attempts/r1/response.png)、[R2](attempts/r2/response.png)、[R3](attempts/r3/response.png)
 - 三次脱敏后的原生 `/usage` 视觉证据；R1 由 [顶部](attempts/r1/usage-header.png) 与 [主体](attempts/r1/usage.png) 两张组成
-- 三次白名单化的 status-line 机器快照：[R1](attempts/r1/events.sanitized.jsonl)、[R2](attempts/r2/events.sanitized.jsonl)、[R3](attempts/r3/events.sanitized.jsonl)
+- 三次白名单化的 pre-prompt / after-response status-line 机器快照：R1 [before](attempts/r1/pre-prompt.sanitized.jsonl) / [after](attempts/r1/events.sanitized.jsonl)、R2 [before](attempts/r2/pre-prompt.sanitized.jsonl) / [after](attempts/r2/events.sanitized.jsonl)、R3 [before](attempts/r3/pre-prompt.sanitized.jsonl) / [after](attempts/r3/events.sanitized.jsonl)
 - 三次精确回复文本与逐次 `result.yaml`
 
 ## 已知边界与协议记录
 
-- 原始 status-line JSON 含邮箱、路径和会话标识，只保存在 Git 仓库外；公开事件只保留白名单安全字段。
+- 原始 status-line JSON 含邮箱、路径和会话标识，只保存在 Git 仓库外；公开的 before/after 事件只保留白名单安全字段。每个 before 事件均为发送 `hi` 前、token 仍为 0 且产品/计划/额度元数据已完整出现的第一条快照。
 - 产品在退出后删除临时 transcript 路径，本包不使用截图文件时间冒充提供者事件时间，因此 timing 为 `not_exposed`。
 - 在任何正式 `hi` 之前，第一次 status-line preflight 因 Windows `-File` 引号解析失败；修正、重新冻结并提交 replacement preregistration 后才开始三次正式运行。
 - 更早的一次 quota-only TUI attempt 与关闭的 headless Draft PR 均保留为审计记录，但不计入本包三次有效运行。

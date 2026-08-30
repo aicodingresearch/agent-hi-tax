@@ -55,6 +55,7 @@ evidence:
   response_screenshot: "response.png"
   usage_screenshot: "usage.png"
   additional_usage_screenshot: "usage-header.png"
+  pre_prompt_sanitized_event: "pre-prompt.sanitized.jsonl"
   sanitized_events: "events.sanitized.jsonl"
   field_statuses:
     prompt_and_response: "verified"

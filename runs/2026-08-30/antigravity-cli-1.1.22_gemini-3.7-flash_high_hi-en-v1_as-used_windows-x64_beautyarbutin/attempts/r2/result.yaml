@@ -54,6 +54,7 @@ quota:
 evidence:
   response_screenshot: "response.png"
   usage_screenshot: "usage.png"
+  pre_prompt_sanitized_event: "pre-prompt.sanitized.jsonl"
   sanitized_events: "events.sanitized.jsonl"
   field_statuses:
     prompt_and_response: "verified"

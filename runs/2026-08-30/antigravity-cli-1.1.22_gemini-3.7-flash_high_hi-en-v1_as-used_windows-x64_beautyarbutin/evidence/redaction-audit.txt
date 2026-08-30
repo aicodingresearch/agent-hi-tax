@@ -45,11 +45,15 @@ attempts/r1/response.png, attempts/r2/response.png, attempts/r3/response.png
 - Treatment: byte-identical copies of their private originals
 - Visual review: each contains only the exact hi input, complete assistant reply, and safe token summary
 
-events.sanitized.jsonl
+pre-prompt.sanitized.jsonl and events.sanitized.jsonl
 - Treatment: explicit field allowlist, not text substitution
 - Omitted raw fields: cwd, session_id, conversation_id, transcript_path,
   workspace, email, terminal_width, agent_state, sandbox
-- Verification: all retained fields match the final private status-line snapshot
+- Verification: all retained fields match their selected private status-line snapshots
+- Verification: each pre-prompt snapshot has zero input/output tokens and its
+  quota fractions exactly match the corresponding result.yaml quota.before values
+- Verification: each after-response snapshot quota fractions exactly match the
+  corresponding result.yaml quota.after values
 - Verification: public text contains no email, absolute user path, UUID, resume command, or authentication material
 
 Final visual review:
