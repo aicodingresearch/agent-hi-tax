@@ -1,0 +1,11 @@
+# Run manually in PowerShell. Replace only <RUN_DIR> for r1, r2, and r3.
+Set-Location -LiteralPath "<RUN_DIR>"
+agy
+
+# In the interactive TUI:
+# 1. Confirm the current footer/model UI shows Gemini 3.7 Flash and high.
+# 2. Do not change model, effort, settings, plugins, MCP, skills, or hooks.
+# 3. Type the exact two characters hi once and submit.
+# 4. Wait for the final reply and capture response evidence.
+# 5. Open the product-native usage display and capture usage evidence.
+# 6. Exit. Do not resume or continue this conversation.

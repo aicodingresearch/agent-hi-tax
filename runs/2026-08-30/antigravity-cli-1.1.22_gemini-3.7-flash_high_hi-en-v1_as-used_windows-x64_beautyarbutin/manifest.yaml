@@ -1,0 +1,146 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260830_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-08-30T09:18:57.542Z"
+  captured_to_utc: "pending"
+  planned_repetitions: 3
+  valid_repetitions: 0
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "Google Antigravity CLI"
+  vendor: "Google"
+  distribution: "first-party"
+  surface: "cli"
+  version: "1.1.22"
+  build: "not_exposed"
+  executable: "agy"
+
+environment:
+  os: "Windows 11"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "Google AI Pro"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "self_reported"
+
+route:
+  category: "first-party-subscription"
+  provider: "Google"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "product-default: gemini-3.7-flash"
+  observed: "Gemini 3.7 Flash"
+  observation_method: "ui-status"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "interactive-tui"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "agy-customizations (built-in)"
+    - "antigravity-guide (built-in)"
+    - "generative_ui (built-in)"
+    - "migrate-workflows (built-in)"
+    - "permissioned-github (built-in)"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "no user hooks configured; formal runs use one interactive TUI turn per fresh process"
+  network_mode: "enabled"
+  permission_mode: "product default (effective label not_exposed)"
+  filesystem_profile_observed: "product default (effective label not_exposed)"
+  settings_sources:
+    - "<APPDATA>/Antigravity/User/settings.json (SHA-256 4a2865f2dbcd5d3c221a443c00e246bdc46fd1cf442c77d96dd762f2a2fd652b)"
+    - "Antigravity CLI built-in defaults"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "product-native token usage"
+  secondary_metric: "response latency"
+  native_input_definition: "exact native input-token field and cache relationship to be confirmed in replacement preflight"
+  total_input_definition: "not_applicable"
+  context_total_definition: "product-native total-token field when exposed; components retained separately"
+  total_input_is_subscription_cost: false
+  latency_method: "manual monotonic timing around the submitted hi turn, cross-checked with native timing if exposed"
+  transcript_extraction: "post-run contributor extraction from the fresh Antigravity CLI TUI session"
+  transcript_deduplication: "one target user message and one final assistant response per fresh process"
+
+aggregate: {}
+
+quota:
+  attribution: "not_measured"
+  notes: "Package-level quota may be observed during preflight. No per-attempt quota delta or compute units will be inferred when not exposed."
+
+evidence:
+  package_level: "C"
+  visual_evidence_access: "not_provided"
+  field_statuses:
+    agent_version: "self_reported"
+    subscription_plan: "self_reported"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "self_reported"
+    reasoning_effort: "self_reported"
+    harness: "self_reported"
+    environment: "self_reported"
+    workspace_and_session: "not_provided"
+    skills_and_hooks: "self_reported"
+    mcp_plugins_and_hooks: "self_reported"
+  public_files:
+    - "evidence/preregistration.txt"
+  withheld_private_evidence: false
+  redactions:
+    - "User settings paths are represented as <APPDATA>/Antigravity/User/settings.json."
+    - "Account identifiers and authentication material are omitted."
+
+protocol:
+  deviations:
+    - "Replacement scene after closed draft PR #11; its headless print-mode attempts remain preserved but are excluded from this interactive TUI scene."
+  notes: "T-24 claim #10. The replacement preflight must match the frozen inventory before any formal hi is sent."
