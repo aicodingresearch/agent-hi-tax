@@ -1,10 +1,10 @@
 Redaction method: opaque black rectangle painted on decoded PNG pixels (1px anti-aliased edge). No resize, crop, blur, or generative redraw was applied during redaction.
 Coordinate convention: inclusive x1,y1 through x2,y2, origin at top-left.
 
-environment.redacted.png  (same file as status.redacted.png — environment evidence is captured in the status screenshot)
+environment.redacted.png
   dimensions: 1575x501 public (RGBA, alpha 255 throughout); available original 1709x555 (RGB)
   original_sha256: c48fcd1352f2274d6bb5f68ed537e58d7c7d060dc74977f6010bde712f3a1847
-  public_sha256: b59ae930cf33b556fb84f5a75150cd2814fa5260b2ce76a550bdbe4f550a536e
+  public_sha256: c233bc6848c8ad56778de0b9e55ef57ca0bcf533539d94efec83e9748e17908f
   rectangles: 287,259-1574,348
   outside_rectangles_rgb_difference_max: not_verifiable_pixel_exact
   alpha_channel_different_pixels: not_verifiable (original is RGB, no alpha channel; public alpha is 255 throughout)
@@ -17,7 +17,7 @@ status.redacted.png
   rectangles: 287,259-1574,348
   outside_rectangles_rgb_difference_max: not_verifiable_pixel_exact
   alpha_channel_different_pixels: not_verifiable (original is RGB, no alpha channel; public alpha is 255 throughout)
-  note: identical to the environment.redacted.png entry above — it is the same file. Redaction fill is pure black (0,0,0) with a 1px anti-aliased edge (values 1–4), distinct from the (12,12,12) terminal background; pixel scan found exactly one opaque dark region (the rectangle above) plus an unrelated dark glyph cluster near x=35–108,y=161–175, and no other modified regions.
+  note: same QQ-transferred original as environment.redacted.png. Redaction fill is pure black (0,0,0) with a 1px anti-aliased edge (values 1-4), distinct from the (12,12,12) terminal background; pixel scan found exactly one opaque dark region (the rectangle above) plus an unrelated dark glyph cluster near x=35-108,y=161-175, and no other modified regions.
 
 attempts/r1/response.png
   dimensions: 813x258 (unchanged)

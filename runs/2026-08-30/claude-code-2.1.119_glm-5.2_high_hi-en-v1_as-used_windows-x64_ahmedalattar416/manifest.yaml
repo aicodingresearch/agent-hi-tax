@@ -150,19 +150,26 @@ evidence:
     model: "verified"
     reasoning_effort: "verified"
     harness: "verified"
-    environment: "verified"
+    environment: "self_reported"
     workspace_and_session: "verified"
+    usage: "self_reported"
     skills_and_hooks: "not_exposed"
     mcp_plugins_and_hooks: "not_exposed"
   public_files: []
-  withheld_private_evidence: false
-  redactions: []
+  withheld_private_evidence: true
+  redactions:
+    - file: "evidence/environment.redacted.png"
+      method: "opaque_rectangle"
+      scope: "username"
+    - file: "evidence/status.redacted.png"
+      method: "opaque_rectangle"
+      scope: "session_id_and_auth_token"
 
 comparison:
-  status: "controlled"
+  status: "confounded"
   reference_scenario: "2026-08-15_claude-code-2.1.220_claude-fable-5_high_hi-en-v1_as-used_mac-arm64"
-  confounder: "not_applicable"
-  notes: "This is the GLM backend counterpart to the Fable 5 reference sample. Harness (Claude Code) is held constant; backend (GLM vs Claude) is the variable. Version difference: 2.1.119 vs 2.1.220."
+  confounder: "agent_version_os_account_route"
+  notes: "Backend substitution comparison against the Fable 5 reference, but confounded by: agent version (2.1.119 vs 2.1.220), OS (Windows 11 x64 vs macOS arm64), account/route (third-party-gateway pay-as-you-go vs first-party-subscription). Harness product (Claude Code) is the same; backend (GLM vs Claude) is the intended variable."
 
 protocol:
   deviations: []
