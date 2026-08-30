@@ -4,9 +4,9 @@ protocol_version: "manual-hi-tax-0.3"
 scenario:
   id: "20260830_codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
   captured_from_utc: "2026-08-29T23:40:48.845Z"
-  captured_to_utc: "pending"
+  captured_to_utc: "2026-08-30T00:01:51.538Z"
   planned_repetitions: 3
-  valid_repetitions: 0
+  valid_repetitions: 3
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -34,7 +34,7 @@ account:
   usage_multiplier: "not_exposed"
   billing_mode: "included-quota"
   quota_shared_scope: "account"
-  plan_evidence_status: "self_reported"
+  plan_evidence_status: "private_evidence"
 
 route:
   category: "first-party-subscription"
@@ -137,7 +137,55 @@ measurement:
   transcript_extraction: "post-run contributor extraction from local Codex rollout"
   transcript_deduplication: "one target user message and one final assistant message; repeated token-count events are not summed"
 
-aggregate: {}
+aggregate:
+  input_tokens_including_cached:
+    values: [15340, 15340, 15340]
+    min: 15340
+    median: 15340
+    max: 15340
+    mean: 15340
+  cached_input_tokens:
+    values: [11008, 11008, 11008]
+    min: 11008
+    median: 11008
+    max: 11008
+    mean: 11008
+  non_cached_input_tokens:
+    values: [4332, 4332, 4332]
+    min: 4332
+    median: 4332
+    max: 4332
+    mean: 4332
+  output_tokens:
+    values: [13, 14, 13]
+    min: 13
+    median: 13
+    max: 14
+    mean: 13.333333
+  reasoning_output_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  context_total_tokens:
+    values: [15353, 15354, 15353]
+    min: 15353
+    median: 15353
+    max: 15354
+    mean: 15353.333333
+  cli_total_excluding_cached:
+    values: [4345, 4346, 4345]
+    min: 4345
+    median: 4345
+    max: 4346
+    mean: 4345.333333
+  response_latency_ms:
+    values: [1870, 1994, 2816]
+    min: 1870
+    median: 1994
+    max: 2816
+    mean: 2226.666667
 
 quota:
   attribution: "not_measured"
@@ -148,23 +196,39 @@ evidence:
   visual_evidence_access: "public"
   field_statuses:
     agent_version: "verified"
-    subscription_plan: "self_reported"
+    subscription_plan: "verified"
     usage_multiplier: "not_exposed"
     route: "self_reported"
     model: "verified"
     reasoning_effort: "verified"
     harness: "verified"
     environment: "verified"
-    workspace_and_session: "not_provided"
+    workspace_and_session: "verified"
     skills_and_hooks: "verified"
     mcp_plugins_and_hooks: "verified"
   public_files:
     - "evidence/preregistration.txt"
-  withheld_private_evidence: false
+    - "evidence/preflight.txt"
+    - "evidence/environment.redacted.png"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
   redactions:
     - "Local configuration root paths are replaced with <CODEX_HOME>."
     - "The executable path is reduced to the command name codex."
+    - "The public environment screenshot replaces the account email and Session ID with fully opaque terminal-background rectangles."
+    - "Each public usage screenshot is a pixel crop that retains the complete Token usage line and excludes the Session ID-bearing continuation line."
+    - "Response screenshots are byte-identical copies of the private originals because they contain no sensitive identifiers."
 
 protocol:
   deviations: []
-  notes: "Replacement T-01 scene after closing PR #8. The Sites plugin remains enabled, but its two Sites skills and sites-design-picker MCP were absent from the most recently observed injected harness and are deliberately not preregistered as active."
+  notes: "Replacement T-01 scene after closing PR #8. The Sites plugin remains enabled, but its two Sites skills and sites-design-picker MCP were absent from the observed injected harness and are deliberately not registered as active. Pre-prompt /status and post-response /quit were local CLI operations and produced no additional model request. Quota percentages were incidentally visible but excluded because quota was not preregistered."

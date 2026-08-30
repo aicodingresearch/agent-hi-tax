@@ -1,0 +1,91 @@
+Captured at UTC: 2026-08-29T23:45:57.648Z
+
+## Codex CLI
+
+Executable: codex (sanitized command name)
+Version: codex-cli 0.147.0
+Authentication: Logged in using ChatGPT
+
+## Operating system
+
+Caption: Microsoft Windows 11 Home, Chinese edition
+Version: 10.0.26200
+Build number: 26200
+Architecture: 64-bit / x64
+Locale: zh-CN
+Windows time zone: China Standard Time (UTC+08:00)
+IANA time zone used in manifest: Asia/Shanghai
+
+## Fixed configuration
+
+Global config source: <CODEX_HOME>/config.toml
+Configuration SHA-256: 0d40871da0e976079a6f33a74151683e88fea673bfb738c293ff602da0800fdf
+Workspace config: not present
+Pre-prompt CLI /status Agents.md observation: <none>
+Repository AGENTS.md: not present
+Configured model: gpt-5.6-sol
+Configured reasoning effort: high
+Harness profile: as-used
+Session state: fresh
+Workspace type: independent empty non-Git directory per attempt
+
+## Enabled MCP servers
+
+- node_repl
+- openaiDeveloperDocs
+
+## Installed and enabled plugins
+
+- github@openai-curated 11c74d6b
+- documents@openai-primary-runtime 26.630.12135
+- pdf@openai-primary-runtime 26.630.12135
+- spreadsheets@openai-primary-runtime 26.630.12135
+- presentations@openai-primary-runtime 26.630.12135
+- template-creator@openai-primary-runtime 26.630.12135
+- sites@openai-bundled 0.1.27
+- browser@openai-bundled 26.707.31428
+- chrome@openai-bundled 26.707.31428
+- computer-use@openai-bundled 26.707.31428
+- visualize@openai-bundled 1.0.11
+
+## Skills observed in the injected harness
+
+- imagegen
+- openai-docs
+- plugin-creator
+- skill-creator
+- skill-installer
+- browser:control-in-app-browser
+- chrome:control-chrome
+- computer-use:computer-use
+- documents:documents
+- pdf:pdf
+- plugin-management:plugin-management
+- presentations:Presentations
+- spreadsheets:Spreadsheets
+- template-creator:template-creator
+- visualize:visualize
+- zotero:Zotero
+
+The Sites plugin was enabled, but sites-building and sites-hosting were absent
+from the observed injected harness. The sites-design-picker MCP was absent from
+the active MCP inventory.
+
+## Hooks
+
+No explicit hooks were configured. No hook model calls were identified.
+
+## Pre-prompt observations shared by R1, R2, and R3
+
+- observed model: gpt-5.6-sol
+- observed reasoning effort: high (summaries auto)
+- permission mode: Workspace (Ask for approval)
+- collaboration mode: Default
+- filesystem profile: Workspace
+- Agents.md reported by CLI /status: <none>
+- workspace: independent empty non-Git directory
+- startup or MCP error: none visible
+
+Local configuration paths were replaced with <CODEX_HOME>. No account email,
+Session ID, hostname, home path, authentication material, or resume command is
+included.

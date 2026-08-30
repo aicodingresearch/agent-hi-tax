@@ -1,0 +1,44 @@
+Redaction method: deterministic RGBA pixel edit and crop
+Resizing: none
+Blur or mosaic: none
+Generative editing: none
+
+environment.redacted.png
+- Source dimensions: 1177 x 537
+- Output dimensions: 1177 x 537
+- Fill color: RGBA (12, 12, 12, 255), matching the terminal background
+- Inclusive mask rectangle 1: x=350..674, y=343..371 (account email)
+- Inclusive mask rectangle 2: x=350..870, y=395..427 (Session ID)
+- Changed pixels: 5840
+- Verification: every changed pixel lies inside one of the two registered rectangles
+- Verification: every output pixel inside both rectangles is fully opaque terminal background
+- Verification: all pixels outside the rectangles are identical to the private original
+
+attempts/r1/usage.png
+- Source dimensions: 1135 x 67
+- Crop: x=0..1134, y=5..35
+- Output dimensions: 1135 x 31
+- Verification: output pixels exactly equal the registered source crop
+
+attempts/r2/usage.png
+- Source dimensions: 1136 x 69
+- Crop: x=0..1135, y=7..37
+- Output dimensions: 1136 x 31
+- Verification: output pixels exactly equal the registered source crop
+
+attempts/r3/usage.png
+- Source dimensions: 1136 x 68
+- Crop: x=0..1135, y=6..36
+- Output dimensions: 1136 x 31
+- Verification: output pixels exactly equal the registered source crop
+
+attempts/r1/response.png, attempts/r2/response.png, attempts/r3/response.png
+- Treatment: byte-identical copies of their private originals
+- Visual review: each contains only the exact hi input and the complete assistant reply
+
+Final visual review:
+- Account email is not visible.
+- Session and continuation identifiers are not visible.
+- Version, model, effort, directory, permission mode, Agents.md state,
+  collaboration mode, Plus plan, quota values, exact prompt, complete replies,
+  and all Token usage numbers remain visible where applicable.
