@@ -8,7 +8,7 @@
 
 [返回项目首页](README.zh-CN.md) | [查看场景目录](runs/README.zh-CN.md) | [阅读贡献与口径规则](CONTRIBUTING.zh-CN.md)
 
-- 场景数：6
+- 场景数：7
 - Agent 产品数：4
 - 有效 attempts：21
 
