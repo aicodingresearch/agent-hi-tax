@@ -52,5 +52,7 @@ python3 scripts/build-results-index.py
 - [ ] I am entitled to publish this evidence: it contains no private repository, internal tool, or third-party account material.
 - [ ] I agree that this contribution is published under the repository's licenses (CC BY 4.0 for data and documentation, Apache-2.0 for software).
 
+<!-- Your PR will receive at least two independent reviews; see docs/review-process.md for the process and the verdict template. 本 PR 将收到至少两份独立评审，流程与意见模板见 docs/review-process.zh-CN.md -->
+
 <!-- If you discover leaked credentials, emails, session IDs, or private paths in already-published evidence, do not report them here. Follow SECURITY.md and report privately. -->
 <!-- 如果你在已公开的证据中发现凭据、邮箱、session ID 或私有路径泄露，不要在这里报告，请按 SECURITY.md 私下报告。 -->
