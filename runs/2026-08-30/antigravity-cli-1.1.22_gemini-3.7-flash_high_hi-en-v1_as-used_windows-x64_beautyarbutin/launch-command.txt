@@ -1,7 +1,7 @@
 # Replacement status-line-instrumented procedure.
 # Run manually in PowerShell. Replace only <RUN_DIR> for r1, r2, and r3.
 # Frozen CLI settings SHA-256:
-# da0d12ff489d7d2141167011324ec8232a6899b406be2577209139d37b0ce7a1
+# 8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3
 # Frozen capture script SHA-256:
 # 31f0a32cf143405c298a98d9a8ceb762b123432ece623364d8bf2231d490906e
 Set-Location -LiteralPath "<RUN_DIR>"

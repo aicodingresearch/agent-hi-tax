@@ -6,6 +6,27 @@ Supersedes this package's first preregistration for future formal attempts.
 No formal hi request using the status-line-instrumented configuration had been
 sent at the time of this replacement preregistration.
 
+## Preflight-only correction before any formal prompt
+
+Amended at UTC: 2026-08-30T10:20:39.715Z
+
+The first status-line preflight failed before any prompt was submitted because
+Antigravity CLI on Windows passed the quotes surrounding the PowerShell `-File`
+path literally. The path contains no spaces, so the quotes were removed. The
+preflight launch also caused the product to add that directory to
+`trustedWorkspaces`; the preflight and all three formal run directories were
+therefore pre-trusted before freezing the corrected settings, preventing later
+first-launch mutations. The failed preflight is not a formal attempt.
+
+Previous settings SHA-256:
+da0d12ff489d7d2141167011324ec8232a6899b406be2577209139d37b0ce7a1
+Corrected settings SHA-256:
+8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3
+
+The corrected command was tested only with synthetic JSON whose cwd leaf was
+`synthetic`, so it produced no run evidence and made no model request. No
+formal `hi` had been sent when this amendment was recorded.
+
 ## Why this replacement exists
 
 After one valid quota-only TUI attempt, the contributor checked Antigravity
@@ -45,7 +66,7 @@ Prompt: hi-en-v1, exact UTF-8 bytes 68 69, typed once per attempt
 ## Frozen CLI configuration and instrumentation
 
 CLI settings source: <USERPROFILE>/.gemini/antigravity-cli/settings.json
-CLI settings SHA-256: da0d12ff489d7d2141167011324ec8232a6899b406be2577209139d37b0ce7a1
+CLI settings SHA-256: 8781ae45791bc4f4a533fbeaadb5c96344399eb5b7390577224c4a98d280ade3
 Status-line type: command
 Status-line enabled: true
 Status-line capture script: <EVIDENCE_ROOT>/capture-statusline.ps1
