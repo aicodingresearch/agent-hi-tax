@@ -42,6 +42,8 @@ AI 协助的评审必须来自**不同的模型家族**。同一家族的两份�
 评审以结构化评论的形式发在 PR 下，骨架如下：
 
 ```text
+Reviewed under: docs/review-process.md @ <template commit>
+
 ## Review verdict: APPROVE | REQUEST_CHANGES | PRIVACY-CONCERN-RAISED-PRIVATELY
 
 Reviewed at head: <commit SHA>
@@ -61,8 +63,15 @@ Could not verify: <必填，见下>
 Advisory (optional): <任务与分值判定建议，仅供维护者参考>
 ```
 
-有两条要求不是可选项：
+`<template commit>` 取本页最后一次改动的短哈希，在该 PR 的 base 分支上执行：
 
+```sh
+git log -1 --format=%h -- docs/review-process.md
+```
+
+有三条要求不是可选项：
+
+- **评审评论的第一行必须声明所依据的评审模板版本**，以上述 commit 标识为准。本页后续改版不追溯已发布的评审：每份评审按它声明的版本裁定，除非维护者明确要求按新版复审。
 - **AI 协助的评审必须署明 agent 产品、具体模型和 reasoning effort。** 产品没有暴露模型或 effort 时写 `not exposed`，不要臆测。这与本仓对证据字段的诚实规则是同一条口径：拿不到的值就记为拿不到，绝不推断。
 - **"Could not verify" 是必填栏。** 写清你这份评审实际能确立的边界。它至少包含只有贡献者才能核验的那一类主张——例如已发布图片与其脱敏所依据的私有原图之间的对应关系，或者提交之前是否还有被丢弃的 attempts。一份默默略过自身局限的评审是在夸大自己，而这正是本项目要求贡献者避免的那种失误。
 

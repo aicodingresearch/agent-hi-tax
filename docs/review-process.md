@@ -42,6 +42,8 @@ Reviews performed with AI assistance must come from **different model families**
 Reviews are posted as a structured comment on the PR, in this shape:
 
 ```text
+Reviewed under: docs/review-process.md @ <template commit>
+
 ## Review verdict: APPROVE | REQUEST_CHANGES | PRIVACY-CONCERN-RAISED-PRIVATELY
 
 Reviewed at head: <commit SHA>
@@ -61,8 +63,15 @@ Could not verify: <required; see below>
 Advisory (optional): <task and point-value suggestions, for the maintainer's reference only>
 ```
 
-Two requirements are not optional:
+`<template commit>` is the short hash of the last commit that touched this page, read on the PR's base branch:
 
+```sh
+git log -1 --format=%h -- docs/review-process.md
+```
+
+Three requirements are not optional:
+
+- **The first line of a review comment must declare the template version it was written under**, identified by that commit. Later revisions of this page are not retroactive: each review is judged against the version it declared, unless the maintainer explicitly asks for a re-review under the current one.
 - **A review performed with AI assistance must name the agent product, the exact model, and the reasoning effort.** When the product does not expose the model or the effort, write `not exposed` — do not guess. This is the same honesty rule the repository applies to evidence fields: an unavailable value is recorded as unavailable, never inferred.
 - **"Could not verify" is a required line.** State the boundary of what your review could actually establish. At minimum it includes the class of claim that only the contributor can check — for example, that the published images correspond to the private originals they were masked from, or that no additional attempts were discarded before submission. A review that silently omits its own limits overstates itself, which is the same failure this project asks contributors to avoid.
 
