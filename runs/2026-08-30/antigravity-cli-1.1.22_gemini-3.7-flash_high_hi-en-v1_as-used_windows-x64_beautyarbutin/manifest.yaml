@@ -3,7 +3,7 @@ protocol_version: "manual-hi-tax-0.3"
 
 scenario:
   id: "20260830_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
-  captured_from_utc: "2026-08-30T09:18:57.542Z"
+  captured_from_utc: "2026-08-30T09:51:21.857Z"
   captured_to_utc: "pending"
   planned_repetitions: 3
   valid_repetitions: 0
@@ -87,8 +87,9 @@ harness:
   permission_mode: "product default (effective label not_exposed)"
   filesystem_profile_observed: "product default (effective label not_exposed)"
   settings_sources:
-    - "<APPDATA>/Antigravity/User/settings.json (SHA-256 4a2865f2dbcd5d3c221a443c00e246bdc46fd1cf442c77d96dd762f2a2fd652b)"
+    - "<USERPROFILE>/.gemini/antigravity-cli/settings.json (SHA-256 da0d12ff489d7d2141167011324ec8232a6899b406be2577209139d37b0ce7a1)"
     - "Antigravity CLI built-in defaults"
+    - "passive status-line command <EVIDENCE_ROOT>/capture-statusline.ps1 (SHA-256 31f0a32cf143405c298a98d9a8ceb762b123432ece623364d8bf2231d490906e)"
 
 prompt:
   case_id: "hi-en-v1"
@@ -102,14 +103,14 @@ prompt:
   submit_method: "typed"
 
 measurement:
-  primary_metric: "product-native token usage"
-  secondary_metric: "response latency"
-  native_input_definition: "exact native input-token field and cache relationship to be confirmed in replacement preflight"
-  total_input_definition: "not_applicable"
-  context_total_definition: "product-native total-token field when exposed; components retained separately"
+  primary_metric: "status-line context_window.current_usage.input_tokens"
+  secondary_metric: "status-line context_window.current_usage.output_tokens"
+  native_input_definition: "current_usage.input_tokens; cache_read_input_tokens and cache_creation_input_tokens are retained separately as product-native fields"
+  total_input_definition: "context_window.total_input_tokens"
+  context_total_definition: "context_window.total_input_tokens + context_window.total_output_tokens"
   total_input_is_subscription_cost: false
-  latency_method: "manual monotonic timing around the submitted hi turn, cross-checked with native timing if exposed"
-  transcript_extraction: "post-run contributor extraction from the fresh Antigravity CLI TUI session"
+  latency_method: "not_exposed in the interactive TUI status-line payload"
+  transcript_extraction: "status-line JSON plus post-run extraction from the fresh Antigravity CLI TUI session"
   transcript_deduplication: "one target user message and one final assistant response per fresh process"
 
 aggregate: {}
@@ -135,12 +136,15 @@ evidence:
     mcp_plugins_and_hooks: "self_reported"
   public_files:
     - "evidence/preregistration.txt"
+    - "evidence/preregistration-statusline-replacement.txt"
   withheld_private_evidence: false
   redactions:
-    - "User settings paths are represented as <APPDATA>/Antigravity/User/settings.json."
+    - "The CLI settings path is represented as <USERPROFILE>/.gemini/antigravity-cli/settings.json."
+    - "The external evidence root is represented as <EVIDENCE_ROOT>."
     - "Account identifiers and authentication material are omitted."
 
 protocol:
   deviations:
     - "Replacement scene after closed draft PR #11; its headless print-mode attempts remain preserved but are excluded from this interactive TUI scene."
-  notes: "T-24 claim #10. The replacement preflight must match the frozen inventory before any formal hi is sent."
+    - "One quota-only TUI attempt made under the first preregistration is retained outside Git as superseded and is excluded from the three status-line-instrumented valid attempts."
+  notes: "T-24 claim #10. Passive status-line measurement is enabled under the corrected CLI settings source; it receives product-native state but does not modify model context or make model calls."
