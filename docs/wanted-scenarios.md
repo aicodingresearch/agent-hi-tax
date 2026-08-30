@@ -4,7 +4,7 @@
 
 > Each entry is a task that can be claimed independently, completed independently, and submitted as its own Pull Request.
 
-Last updated: 2026-08-29. Completed scenarios are listed in the [Hi Tax Index](../RESULTS.md); for step-by-step instructions see the [contributor walkthrough](contributor-walkthrough.md).
+Last updated: 2026-08-30. Completed scenarios are listed in the [Hi Tax Index](../RESULTS.md); for step-by-step instructions see the [contributor walkthrough](contributor-walkthrough.md).
 
 ## How to use this list
 
@@ -66,7 +66,7 @@ Rules are abstract; here is how they cash out.
 | That contributor then merges T-13 (same setup, effort medium) | 3 | A new single-variable point on the effort axis |
 | Both sides of T-31 (MCP on/off) merged | 8, once | A paired comparison pays as one task, after both sides land |
 | Only one side of a paired task ever lands | that side's own tier (usually 0–3) | The pair price buys the comparison, not half of it |
-| First Gemini CLI sample, plus an adapter the scenario actually walked through | 6 + 2 | First sample of a listed product; the adapter bonus is the only stackable bonus, once per product |
+| First OpenCode sample, plus an adapter the scenario actually walked through | 6 + 2 | First sample of a listed product; the adapter bonus is the only stackable bonus, once per product |
 | An adapter document alone, with no scenario exercising it | +0 | The +2 requires the adapter to be merged and walked through by a real scenario |
 | A fourth same-bucket T-01 replication in the same quarter | 0 — and still merged | 0 only means "not recruited with points this round"; the data keeps its value, and the count resets next quarter |
 | Proposing an agent that is not named anywhere on this list (T-23); the maintainer prices it at 4 in the reply; the package merges | 4 | Off-list combinations are worth 0 until priced in a proposal reply |
@@ -161,10 +161,12 @@ New-product tasks have the highest value and the highest difficulty: there is no
 
 Products use wildly varied metering units (tokens, credits, premium requests, quota percentages) — **keep the native units, do not convert**.
 
-### T-20 Gemini CLI (6 pts)
+### T-20 Gemini CLI (archived — product discontinued) (0 pts)
 
+- **Status**: Google migrated Gemini CLI to Antigravity CLI in 2026, and the old CLI's individual tier has stopped serving requests ([official announcement](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)); this task is retained for historical context, the product can no longer be tested, and the new budget is T-24.
 - **You need**: a Google account or Gemini subscription; confirm which usage fields the product exposes.
 - **Why this is a priority**: the only major vendor completely absent so far; its free/subscription quota model and its token exposure are both worth a first sample.
+- **Points**: 0 — product no longer serviceable; kept for historical context.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ### T-21 Cursor (6 pts)
@@ -173,17 +175,45 @@ Products use wildly varied metering units (tokens, credits, premium requests, qu
 - **Why this is a priority**: a typical product billed in "credits/request counts", an IDE carrier, with a harness structure very different from CLI products.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
-### T-22 GitHub Copilot (CLI or IDE Chat) (6 pts)
+### T-22 GitHub Copilot IDE Chat (6 pts)
 
 - **You need**: a Copilot subscription (individual or education both fine; record honestly).
 - **Why this is a priority**: premium requests are yet another native metering unit; education accounts are also widespread, making material easy to obtain.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
+### T-24 Google Antigravity CLI (6 pts)
+
+- **Scenario**: Google Antigravity CLI (current version) × the product default or an explicitly pinned model × fresh session × empty directory; record the subscription tier and whatever the product exposes (tokens, compute units, quota fraction) honestly.
+- **You need**: a Google account with Antigravity access, any tier.
+- **Why this is a priority**: Google's flagship agent harness and the successor to Gemini CLI; its statusline/usage output is machine-readable, and its multi-surface family (CLI / desktop / IDE) also sets up the T-35 comparison. Currently the largest single-vendor gap in this list.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-25 GitHub Copilot CLI (6 pts)
+
+- **Scenario**: GitHub Copilot CLI (current version) × default or pinned model × fresh session × empty directory.
+- **You need**: a Copilot subscription (individual or education both fine).
+- **Why this is a priority**: a different harness from the Copilot IDE Chat already covered by T-22 — the CLI/SDK surface reports usage per model call, so a single `hi` can reveal whether the harness makes hidden extra model calls; the Copilot ecosystem is among the largest in the industry.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-26 OpenCode (6 pts)
+
+- **Scenario**: OpenCode (current version) × one explicitly pinned provider and model (BYOK or its hosted gateway) × fresh session × empty directory; classify the route per your actual setup and explain it in the PR.
+- **You need**: an OpenCode install plus API access to at least one model provider.
+- **Why this is a priority**: the leading open-source agent CLI; its session records expose tokens, cost, cache, and reasoning per call — including auxiliary calls such as the session-title model, which is exactly the kind of hidden tax this project measures. Its BYOK design also makes it the natural carrier for T-36.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-27 xAI Grok Build (6 pts)
+
+- **Scenario**: xAI Grok Build (current version) × a pinned Grok model × fresh session × empty directory; the headless JSON output is the natural machine evidence.
+- **You need**: a SuperGrok subscription or an xAI API key; record the route honestly.
+- **Why this is a priority**: fills the Grok model-family gap with a first-party harness; usage output is fully machine-readable (per-model calls, cache buckets, and on the API path a total cost figure), which also exercises the derived monetary cost rule in CONTRIBUTING.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
 ### T-23 Your pick: another Agent you use day to day (4 pts)
 
-- **Scenario**: Cline, iFlow, Trae, or another Agent product you genuinely use.
+- **Scenario**: Cline, iFlow, Trae, Aider, Warp, OpenHands, Zed, or another Agent product you genuinely use.
 - **Why this is a priority**: the as-used configurations of real users have the most real-world relevance. For one of the products named above, open a claim issue and start. For any other product, open a proposal first and align on it, having confirmed under the [scenario identity rules](../CONTRIBUTING.md#what-counts-as-one-scenario) that it is a new scenario.
-- **Points**: 4 pts for the first merged sample of each named product (Cline, iFlow, Trae) — no prior approval needed; claim and start. Any other product needs a proposal first: the maintainer prices it at 3–6 pts in the reply, and it is worth 0 before that reply.
+- **Points**: 4 pts for the first merged sample of each named product (Cline, iFlow, Trae, Aider, Warp, OpenHands, Zed) — no prior approval needed; claim and start. Any other product needs a proposal first: the maintainer prices it at 3–6 pts in the reply, and it is worth 0 before that reply.
 - **Effort**: expect about 1–2 hours — you already use the tool every day, so the time goes into locating the usage fields and the redaction points, not into learning the product; the 30-minute figure above still does not apply.
 
 ---
@@ -215,6 +245,27 @@ If your research interest is the Agent harness itself, this group of tasks is th
 
 - **Scenario**: same product and model: one group as normal fresh runs; for the other group, first create a session containing only one `hi` round trip, exit, then resume and send `hi` again.
 - **Why this is a priority**: observes how history injection and cache reads behave when a session is resumed; there is currently no data at all.
+- **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
+
+### T-35 Same vendor, different surface (2 scenarios) (8 pts)
+
+- **Scenario**: same vendor, same account, same pinned model, same empty-workspace setup — one scenario on surface A (for example the CLI), one on surface B (the desktop app or IDE extension). Natural first pairs: Antigravity CLI vs Antigravity desktop/IDE; Codex CLI vs the Codex IDE extension; Copilot CLI vs Copilot IDE Chat.
+- **Why this is a priority**: with backend and model held constant, any difference in injected tokens is pure client-surface harness difference — system prompt, tool schema, workspace bootstrap. Whether different surfaces of the same product are "the same thing" is one of the most-asked questions in the community.
+- **Points**: 8 pts per completed pair, after both sides merge; a single side is priced at whatever tier it satisfies on its own.
+- **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
+
+### T-36 Same model, different harness (2 scenarios) (8 pts)
+
+- **Scenario**: pin one exact model via BYOK or the official API, then run the standard protocol through two different harnesses (for example Claude Code vs OpenCode, or OpenCode vs Aider); everything else held as close as the products allow. Optionally add further harnesses on the same model — fix the harness list in your claim first.
+- **Why this is a priority**: the mirror image of T-62 (harness constant, backend varying): here the model is constant and the harness varies, so the input-token delta is a direct head-to-head measurement of harness overhead — the project's core question. Community anecdotes put the spread at up to tens of times, with no uniform-protocol data.
+- **Points**: 8 pts per completed pair; +3 pts for each additional harness side declared in the claim, after it merges.
+- **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
+
+### T-37 Built-in tools and skills on/off (2 scenarios) (8 pts)
+
+- **Scenario**: same product, model, and effort; side A with the product's built-in tools/skills/plugins at a fixed, documented set, side B with them minimized or disabled as far as the product allows. MCP stays unchanged (off) on both sides — this task isolates the product's own tool schema, where T-31 isolates external MCP. Use the `custom` harness profile and publish the exact inventory.
+- **Why this is a priority**: built-in tool and skill definitions enter the context before you type anything; how much of the "free" `hi` they eat is a top community question, separate from external MCP cost.
+- **Points**: 8 pts per completed pair, after both sides merge.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
 
 ---

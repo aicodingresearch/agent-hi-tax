@@ -4,7 +4,7 @@
 
 > 每一条都是一个可以独立认领、独立完成、独立提交 Pull Request 的任务。
 
-本页更新于 2026-08-29。已完成的场景见 [Hi Tax Index](../RESULTS.zh-CN.md)；逐步操作方法见[实测指南](contributor-walkthrough.zh-CN.md)。
+本页更新于 2026-08-30。已完成的场景见 [Hi Tax Index](../RESULTS.zh-CN.md)；逐步操作方法见[实测指南](contributor-walkthrough.zh-CN.md)。
 
 ## 怎么用这个清单
 
@@ -66,7 +66,7 @@
 | 这位贡献者接着合并 T-13（同配置，effort 改 medium） | 3 | effort 轴上一个新的单变量数据点 |
 | T-31（MCP 开/关）两侧都合并 | 8，一次发 | 成对对照按一个任务计价，两侧落地后发放 |
 | 成对任务只做成了一侧 | 按该侧自身档位（通常 0–3） | pair 价买的是对照本身，不是它的一半 |
-| Gemini CLI 首样合并，且适配器被该场景实际走通 | 6 + 2 | 清单点名产品的首个样本；适配器是唯一可叠加的加分，每产品一次 |
+| OpenCode 首样合并，且适配器被该场景实际走通 | 6 + 2 | 清单点名产品的首个样本；适配器是唯一可叠加的加分，每产品一次 |
 | 只交了适配器文档，没有场景走通它 | +0 | +2 的条件是文档已合并且被真实场景走通 |
 | 本季度同桶的第 4 个 T-01 复测 | 0——但照常合并 | 0 只表示本轮不再以积分招募；数据价值不变，计数下季度重置 |
 | 提议测一个清单完全没点名的 Agent（T-23），维护者在回复中定价 4 分，包合并 | 4 | 清单外组合在 proposal 定价之前都是 0 分 |
@@ -161,10 +161,12 @@
 
 各产品计量单位五花八门（token、积分、premium requests、额度百分比）——**保留原生单位，不要换算**。
 
-### T-20 Gemini CLI（6 分）
+### T-20 Gemini CLI(已归档——产品停止服务)(0 分)
 
+- **状态**：Google 已于 2026 年将 Gemini CLI 迁移至 Antigravity CLI，旧 CLI 个人档已停止服务（[官方公告](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)）；本任务保留作历史记录，产品已不可测，新预算见 T-24。
 - **你需要**：Google 账号或 Gemini 订阅；确认产品暴露的 usage 字段。
 - **为什么优先**：主流厂商中唯一完全缺席的一家；其免费/订阅额度模型与 token 暴露方式都值得首个样本。
+- **积分**：0——产品已无法继续测试；保留作历史记录。
 - **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
 
 ### T-21 Cursor（6 分）
@@ -173,17 +175,45 @@
 - **为什么优先**：典型的"积分/请求数"计费产品，IDE 载体，与 CLI 类产品的 harness 结构差异大。
 - **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
 
-### T-22 GitHub Copilot（CLI 或 IDE Chat）（6 分）
+### T-22 GitHub Copilot IDE Chat(6 分)
 
 - **你需要**：Copilot 订阅（个人或教育版均可，如实记录）。
 - **为什么优先**：premium requests 是又一种原生计量单位；教育版账号也很普及，取材方便。
 - **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
 
+### T-24 Google Antigravity CLI（6 分）
+
+- **场景**：Google Antigravity CLI（当前版本）× 产品默认模型或显式固定的模型 × fresh session × 空目录；如实记录订阅档位以及产品暴露的所有计量（tokens、compute units、额度比例）。
+- **你需要**：拥有 Antigravity 访问权限的 Google 账号，任意档位均可。
+- **为什么优先**：Google 的旗舰 Agent harness，也是 Gemini CLI 的继任者；其状态栏/usage 输出机器可读，多形态产品家族（CLI / 桌面端 / IDE）也为 T-35 对照铺路。目前是本清单最大的单一厂商缺口。
+- **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
+
+### T-25 GitHub Copilot CLI（6 分）
+
+- **场景**：GitHub Copilot CLI（当前版本）× 默认模型或固定模型 × fresh session × 空目录。
+- **你需要**：Copilot 订阅（个人或教育版均可）。
+- **为什么优先**：这是与 T-22 已覆盖的 Copilot IDE Chat 不同的 harness——CLI/SDK 形态按每次模型调用报告 usage，因此仅发一次 `hi` 就能揭示 harness 是否暗中发起额外模型调用；Copilot 生态也是业界规模最大的生态之一。
+- **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
+
+### T-26 OpenCode（6 分）
+
+- **场景**：OpenCode（当前版本）× 显式固定一个 provider 和模型（BYOK 或其托管网关）× fresh session × 空目录；按真实配置归类 route 并在 PR 中说明。
+- **你需要**：安装 OpenCode，并拥有至少一个模型 provider 的 API 访问权限。
+- **为什么优先**：领先的开源 Agent CLI；其 session 记录会暴露每次调用的 tokens、cost、cache 和 reasoning——包括 session-title model 等辅助调用，这正是本项目要测量的 hidden tax。其 BYOK 设计也使它成为 T-36 的天然载体。
+- **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
+
+### T-27 xAI Grok Build（6 分）
+
+- **场景**：xAI Grok Build（当前版本）× 固定一个 Grok 模型 × fresh session × 空目录；headless JSON 输出是天然的机器证据。
+- **你需要**：SuperGrok 订阅或 xAI API key；如实记录 route。
+- **为什么优先**：以第一方 harness 补上 Grok 模型家族的缺口；usage 输出完全机器可读（逐模型调用、cache buckets，以及 API 路径下的总成本数字），也能实际检验 CONTRIBUTING 中的派生货币成本规则。
+- **工作量**：真实预期约 2–4 小时——摸清 usage 暴露方式和脱敏点是耗时所在，上面的 30 分钟口径在这里不适用。
+
 ### T-23 自选：你日常在用的其他 Agent（4 分）
 
-- **场景**：Cline、iFlow、Trae，或其他你真实使用的 Agent 产品。
+- **场景**：Cline、iFlow、Trae、Aider、Warp、OpenHands、Zed，或其他你真实使用的 Agent 产品。
 - **为什么优先**：真实用户的 as-used 配置最有现实意义。上面点名的产品，开一个 claim issue 就可以开工。其他产品先开 proposal 对齐，并确认按[场景身份规则](../CONTRIBUTING.zh-CN.md#什么算同一个场景)是一个新场景。
-- **积分**：点名产品（Cline、iFlow、Trae）每产品首样 4 分——无需事先批准，开 claim 即可开工。其他产品先开 proposal，维护者在回复中定价 3–6 分，回复之前为 0 分。
+- **积分**：点名产品（Cline、iFlow、Trae、Aider、Warp、OpenHands、Zed）每产品首样 4 分——无需事先批准，开 claim 即可开工。其他产品先开 proposal，维护者在回复中定价 3–6 分，回复之前为 0 分。
 - **工作量**：真实预期约 1–2 小时——工具本来就是你天天在用的，时间花在定位 usage 字段和脱敏点上，不是学产品；上面的 30 分钟口径仍不适用。
 
 ---
@@ -215,6 +245,27 @@
 
 - **场景**：同一产品和模型：一组正常 fresh；另一组先建立一个只含一次 `hi` 往返的会话、退出后 resume 再发 `hi`。
 - **为什么优先**：观察会话恢复时历史注入和缓存读取的行为，目前完全没有数据。
+- **工作量**：两侧合计真实预期约 2–4 小时，上面的 30 分钟口径在这里不适用。
+
+### T-35 同一厂商，不同产品形态（2 场景）（8 分）
+
+- **场景**：同一厂商、同一账号、同一固定模型、同一空工作区配置——一侧在形态 A（例如 CLI），另一侧在形态 B（桌面应用或 IDE 扩展）。自然的首选组合：Antigravity CLI vs Antigravity 桌面端/IDE；Codex CLI vs Codex IDE 扩展；Copilot CLI vs Copilot IDE Chat。
+- **为什么优先**：backend 和模型保持不变时，注入 tokens 的任何差异都是纯粹的客户端形态 harness 差异——system prompt、tool schema、workspace bootstrap。同一产品的不同形态是否是“同一个东西”，是社区最常问的问题之一。
+- **积分**：每个完整 pair 8 分，两侧都合并后发放；只完成一侧则按该侧自身满足的档位定价。
+- **工作量**：两侧合计真实预期约 2–4 小时，上面的 30 分钟口径在这里不适用。
+
+### T-36 同一模型，不同 harness（2 场景）（8 分）
+
+- **场景**：通过 BYOK 或官方 API 固定一个完全相同的模型，再用两个不同 harness 跑标准协议（例如 Claude Code vs OpenCode，或 OpenCode vs Aider）；其余条件在产品允许的范围内尽量保持一致。也可以在同一模型上增加更多 harness——先在 claim 中固定 harness 清单。
+- **为什么优先**：这是 T-62（harness 不变、backend 变化）的镜像：这里模型不变、harness 变化，因此 input-token 差值就是 harness 开销的直接正面对照——本项目的核心问题。社区传闻差距可达数十倍，但还没有统一协议下的数据。
+- **积分**：每个完整 pair 8 分；claim 中声明的每个额外 harness 侧在合并后加 3 分。
+- **工作量**：两侧合计真实预期约 2–4 小时，上面的 30 分钟口径在这里不适用。
+
+### T-37 内置工具与 skills 开 / 关（2 场景）（8 分）
+
+- **场景**：同一产品、模型和 effort；A 侧把产品内置 tools/skills/plugins 固定在一份有记录的清单，B 侧在产品允许的范围内尽量精简或禁用。两侧的 MCP 保持不变（关闭）——本任务隔离产品自身的 tool schema，T-31 则隔离外部 MCP。使用 `custom` harness profile，并公开精确清单。
+- **为什么优先**：内置 tool 和 skill 定义会在你输入任何内容前进入上下文；它们吃掉了多少“免费”`hi`，是社区最关心的问题之一，且与外部 MCP 成本相互独立。
+- **积分**：每个完整 pair 8 分，两侧都合并后发放。
 - **工作量**：两侧合计真实预期约 2–4 小时，上面的 30 分钟口径在这里不适用。
 
 ---

@@ -241,6 +241,8 @@ docs/                 方法说明和流程复盘
 
 第一次参与的贡献者，建议直接从[待测场景清单](docs/wanted-scenarios.zh-CN.md)认领一个具体任务，然后按[实测指南](docs/contributor-walkthrough.zh-CN.md)从头做到提交。
 
+在这里贡献，也是一个真正去试用每个新 Agent 和新模型的结构化理由：每次 claim 都会把“我该去看看那个工具”变成一条可复现的公开观察；日积月累，这份清单会成长为一张由社区共同维护的真实 harness 覆盖地图。
+
 私有试点受邀者在接受仓库邀请前，请先阅读[私有试点须知](docs/internal-pilot.zh-CN.md)。
 
 如果你希望贡献一次测试：
