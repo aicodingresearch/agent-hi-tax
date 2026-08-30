@@ -45,7 +45,7 @@ Every task on this list carries a point value, written into its title as `(N pts
 
 **Before awarding, the maintainer checks whether available evidence was left out**, following the principle already stated in [CONTRIBUTING](../CONTRIBUTING.md#the-six-most-important-rules): evidence you can get should be provided, evidence you cannot get does not block. Where something was omitted that could have been collected, the points are awarded once it has been filled in. This affects points only; it does not change the bar for accepting a PR.
 
-**Combinations that are not on this list** need a proposal issue first. The maintainer prices them in the reply; before that reply they are worth 0 points.
+**Combinations that are not on this list** need a proposal issue first. Before the maintainer replies they are worth 0 points; the reply prices them by a fixed rubric: 3 pts = a compatible endpoint or model substitution behind an already-covered harness; 4 pts = a mature third-party harness; 6 pts = a genuinely new first-party or independent harness.
 
 **Edge cases are decided by the maintainer**, and the decision is written back onto this page.
 
@@ -114,11 +114,12 @@ Each task changes exactly one variable of an existing scenario and keeps everyth
 - **You need**: a Claude subscription (Max is best, allowing direct comparison with the existing reference samples).
 - **Why this is a priority**: **This is the most clearly identified fix needed in the current dataset.** The existing Fable/Opus comparison is confounded by footer mode (`bypass permissions on` vs `manual mode on`); the 342-token difference in total input currently cannot be attributed to the model. Re-measuring both models with the mode held fixed removes this confounder.
 - **Note**: two scenarios, two PRs; fill in the comparison/confounder fields in the manifest.
+- **Fallback condition**: Fable 5 may fall back to Opus 5 because of the safety classifier; every attempt must record the actual observed model. An attempt that falls back cannot count as a Fable-side sample: label it and run a replacement attempt.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
 
-### T-10 Claude Code × Sonnet 5 × high (3 pts)
+### T-10 Claude Code × Sonnet 5 (`claude-sonnet-5`) × high (3 pts)
 
-- **Scenario**: Claude Code (current version) × `claude-sonnet-5` × `high` × fresh session.
+- **Scenario**: Claude Code (current version) × Sonnet 5 (`claude-sonnet-5`) × `high` × fresh session.
 - **You need**: a Claude subscription.
 - **Why this is a priority**: once Sonnet is added, the footprints of three model tiers under the same harness can be viewed side by side: does model choice change how much system prompt and tool definition content is injected? Keep the permission mode consistent with the reference sample you are comparing against.
 
@@ -161,24 +162,25 @@ New-product tasks have the highest value and the highest difficulty: there is no
 
 Products use wildly varied metering units (tokens, credits, premium requests, quota percentages) — **keep the native units, do not convert**.
 
-### T-20 Gemini CLI (archived — product discontinued) (0 pts)
+### T-20 Gemini CLI (archived — consumer path sunset) (0 pts)
 
-- **Status**: Google migrated Gemini CLI to Antigravity CLI in 2026, and the old CLI's individual tier has stopped serving requests ([official announcement](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)); this task is retained for historical context, the product can no longer be tested, and the new budget is T-24.
+- **Status**: On 2026-06-18, Gemini CLI stopped serving requests for individual/free and Pro/Ultra tiers ([official announcement](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)); enterprise licenses and paid API key paths remain available. To measure one of those retained paths, open a proposal for pricing first. The consumer first sample can no longer be measured; the new budget is T-24.
 - **You need**: a Google account or Gemini subscription; confirm which usage fields the product exposes.
 - **Why this is a priority**: the only major vendor completely absent so far; its free/subscription quota model and its token exposure are both worth a first sample.
-- **Points**: 0 — product no longer serviceable; kept for historical context.
-- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+- **Points**: 0 — request service for individual/free and Pro/Ultra tiers ended on 2026-06-18; enterprise licenses and paid API key paths remain available and require a proposal for pricing. The consumer first sample is no longer measurable; see T-24 for the new budget.
 
 ### T-21 Cursor (6 pts)
 
 - **You need**: a Cursor subscription.
 - **Why this is a priority**: a typical product billed in "credits/request counts", an IDE carrier, with a harness structure very different from CLI products.
+- **Risk note**: OpenAI has notified Cursor that it plans to stop supplying its models on 2026-11-12; continue measuring as normal and record the actual model mix. This task and its point value will be reviewed then.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ### T-22 GitHub Copilot IDE Chat (6 pts)
 
 - **You need**: a Copilot subscription (individual or education both fine; record honestly).
 - **Why this is a priority**: premium requests are yet another native metering unit; education accounts are also widespread, making material easy to obtain.
+- **Billing note**: GitHub moved to AI Credits billing on 2026-06-01 while some legacy premium-request plans remain; record which billing system applies to the account.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ### T-24 Google Antigravity CLI (6 pts)
@@ -193,6 +195,7 @@ Products use wildly varied metering units (tokens, credits, premium requests, qu
 - **Scenario**: GitHub Copilot CLI (current version) × default or pinned model × fresh session × empty directory.
 - **You need**: a Copilot subscription (individual or education both fine).
 - **Why this is a priority**: a different harness from the Copilot IDE Chat already covered by T-22 — the CLI/SDK surface reports usage per model call, so a single `hi` can reveal whether the harness makes hidden extra model calls; the Copilot ecosystem is among the largest in the industry.
+- **Billing note**: GitHub moved to AI Credits billing on 2026-06-01 while some legacy premium-request plans remain; record which billing system applies to the account.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ### T-26 OpenCode (6 pts)
@@ -207,13 +210,31 @@ Products use wildly varied metering units (tokens, credits, premium requests, qu
 - **Scenario**: xAI Grok Build (current version) × a pinned Grok model × fresh session × empty directory; the headless JSON output is the natural machine evidence.
 - **You need**: a SuperGrok subscription or an xAI API key; record the route honestly.
 - **Why this is a priority**: fills the Grok model-family gap with a first-party harness; usage output is fully machine-readable (per-model calls, cache buckets, and on the API path a total cost figure), which also exercises the derived monetary cost rule in CONTRIBUTING.
+- **Surface note**: this task covers the terminal version of Grok Build. The web/mobile "Build" added by xAI on 2026-08-19 is a different surface and is out of scope; propose it separately.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-28 Kiro (6 pts)
+
+- **Scenario**: Kiro (current version) × one declared surface (IDE or CLI) × the product default or an explicitly pinned model × fresh session × empty directory; record the credit shown when each interaction ends as the native unit.
+- **You need**: a Kiro account.
+- **Why this is a priority**: AWS's flagship agentic IDE/CLI and the designated successor to Amazon Q Developer, whose end of support is announced for 2027-04-30 and whose new subscriptions stop on 2026-05-15. Kiro meters credits to 0.01 and shows each interaction's charge immediately, while officially billing per request without a token-level receipt — keep credits as the native unit. One subscription spans IDE, CLI, and web surfaces, naturally setting up T-35.
+- **Points**: 6 pts for the first Kiro harness sample.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-29 Meta Muse Code (6 pts)
+
+- **Scenario**: Meta Muse Code (current beta) × Muse Spark 1.2 × fresh session × empty directory; record the selected pricing tier and preserve the local event log covering model calls, tool runs, approvals, and edits.
+- **You need**: a Meta developer account.
+- **Why this is a priority**: Meta's first-party terminal coding agent, released on 2026-08-05, offers unusually transparent local evidence. A lower-priced "Contributor" data-exchange tier has only secondary reporting and no verified official price sheet; if you use it, state the tier evidence status in the package. A standard-vs-Contributor comparison should become a separate task only after the official pricing can be verified.
+- **Points**: 6 pts for the first Meta Muse Code harness sample.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ### T-23 Your pick: another Agent you use day to day (4 pts)
 
-- **Scenario**: Cline, iFlow, Trae, Aider, Warp, OpenHands, Zed, or another Agent product you genuinely use.
+- **Scenario**: Cline, TraeCode, Aider, OpenHands, Zed, or another Agent product you genuinely use.
 - **Why this is a priority**: the as-used configurations of real users have the most real-world relevance. For one of the products named above, open a claim issue and start. For any other product, open a proposal first and align on it, having confirmed under the [scenario identity rules](../CONTRIBUTING.md#what-counts-as-one-scenario) that it is a new scenario.
-- **Points**: 4 pts for the first merged sample of each named product (Cline, iFlow, Trae, Aider, Warp, OpenHands, Zed) — no prior approval needed; claim and start. Any other product needs a proposal first: the maintainer prices it at 3–6 pts in the reply, and it is worth 0 before that reply.
+- **Points**: 4 pts for the first merged sample of each named product (Cline, TraeCode, Aider, OpenHands, Zed) — no prior approval needed; claim and start. Any other product needs a proposal first: the maintainer prices it under the fixed 3/4/6-point rubric above, and it is worth 0 before that reply.
+- **Native-agent condition**: Named products must be measured on their own native agent; running Claude Code, Codex, or another external agent inside a host (for example via Zed or OpenHands acting as an ACP client) is a sample of that external agent, not of the host.
 - **Effort**: expect about 1–2 hours — you already use the tool every day, so the time goes into locating the usage fields and the redaction points, not into learning the product; the 30-minute figure above still does not apply.
 
 ---
@@ -225,6 +246,7 @@ If your research interest is the Agent harness itself, this group of tasks is th
 ### T-31 MCP on/off comparison (2 scenarios) (8 pts)
 
 - **Scenario**: same product, same model and effort, 3 attempts each in two states: "with a specific MCP server configured" and "with that MCP removed". Choosing an MCP server with many tools makes the effect clearer.
+- **Validity condition**: the MCP side's schema must be non-empty, with tools actually registered.
 - **Why this is a priority**: MCP tool definitions enter the context and affect input tokens even when they are never called — this is a direct measurement of "tool definition cost", one of the most frequently cited questions in harness research.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
 
@@ -239,6 +261,7 @@ If your research interest is the Agent harness itself, this group of tasks is th
 - **Scenario**: same machine, same product and model: first do 3 attempts under your real configuration (`as-used`); then construct a verifiably clean environment (e.g. a newly created system user, confirmed free of global rules, MCP, plugins) and do 3 `standard-clean` attempts.
 - **Why this is a priority**: the difference approximates "the entire fixed overhead of your personal harness configuration".
 - **Note**: the bar for `standard-clean` is high — [CONTRIBUTING](../CONTRIBUTING.md#three-harness-profiles) requires that you have actually verified the environment before using this label. If you cannot fully confirm it, honestly use `as-used`, or switch to a single-switch comparison like T-31/T-32.
+- **Inventory evidence**: the `as-used` side must submit a rules/MCP/skills/memory inventory snapshot and its hash.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
 
 ### T-33 fresh vs resumed session (2 scenarios) (8 pts)
@@ -264,9 +287,18 @@ If your research interest is the Agent harness itself, this group of tasks is th
 ### T-37 Built-in tools and skills on/off (2 scenarios) (8 pts)
 
 - **Scenario**: same product, model, and effort; side A with the product's built-in tools/skills/plugins at a fixed, documented set, side B with them minimized or disabled as far as the product allows. MCP stays unchanged (off) on both sides — this task isolates the product's own tool schema, where T-31 isolates external MCP. Use the `custom` harness profile and publish the exact inventory.
+- **Validity condition**: prove that the switch actually changed the injected configuration, rather than merely changing a UI toggle.
 - **Why this is a priority**: built-in tool and skill definitions enter the context before you type anything; how much of the "free" `hi` they eat is a top community question, separate from external MCP cost.
 - **Points**: 8 pts per completed pair, after both sides merge.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
+
+### T-38 Receipt vs vendor billing reconciliation (5 pts per pair)
+
+- **Scenario**: run the standard three-attempt protocol for one scenario while collecting both sides of the measurement: the client/harness-reported receipt (tokens, credits, or cost) and the vendor billing or admin usage record (for example GitHub AI Credits usage, a Kiro account page, Tencent Credits detail, or an API bill); reconcile them and document any semantic difference.
+- **You need**: a product and account that expose both a per-run client receipt and a vendor-side billing or admin usage record.
+- **Why this is a priority**: usage semantics are diverging across vendors — GitHub, for example, explicitly treats `ai_credits_used` as an aggregate metric rather than a bill. This task calibrates the whole measurement instrument, not merely one more data point.
+- **Points**: 5 pts per pair, awarded only when both evidence sides are complete.
+- **Effort**: expect about 2–4 hours of real work — collecting and reconciling both evidence surfaces is what takes the time; the 30-minute figure above does not apply here.
 
 ---
 
@@ -305,11 +337,11 @@ Shared notes for this group:
 - **Why this is a priority**: a horizontal view of whether one gateway's metering semantics and latency are consistent across different upstreams, while also building a public record of "claimed model vs observable behavior".
 - **Points**: 3 pts per model scenario, for now limited to the model list named above.
 
-### T-52 Different gateways, same model label (8 pts)
+### T-52 Different gateways, same model label (6 pts)
 
 - **Scenario**: same harness, same model label, one group each on two different gateways.
 - **Why this is a priority**: if the two gateways show clearly different token/latency distributions for the same model label, that is itself an observation worth publishing; if they agree, it strengthens the indirect evidence that the label is credible.
-- **Points**: 8 pts paid once, after both gateway sides have been merged.
+- **Points**: 6 pts per pair for an isolated two-gateway comparison without an official anchor. If it forms a star design with an already merged T-50 official side, each additional gateway side is +3 pts; declare the star in the claim.
 - **Effort**: expect about 2–4 hours of real work across both sides; the 30-minute figure above does not apply here.
 
 ---
@@ -324,32 +356,82 @@ When a group offers multiple options, pick the combination you judge to be the m
 
 - **Scenario**: official Qwen Code CLI × default or explicitly pinned Qwen model × official account quota × fresh session.
 - **Why this is a priority**: an official open-source CLI harness with a low free-quota barrier, well suited as the first entry in group G; its harness shares a common origin with Gemini CLI, so it can later form a structurally matched comparison with T-20.
+- **Route note**: the free OAuth tier ended on 2026-04-15; record the actual authentication and billing route (Coding Plan, API key, etc.), which is part of the pricing bucket.
 
-### T-61 Kimi × official carrier (6 pts)
+### T-61 Kimi Code CLI (6 pts)
 
-- **Scenario**: the official Kimi CLI, or a Kimi subscription connected to an officially supported compatible harness × pinned Kimi model.
+- **Scenario**: the new Kimi Code CLI introduced in May 2026 (the Node/TypeScript rewrite) × a pinned Kimi model × fresh session. The old Python `kimi-cli` is no longer officially maintained and must not be used.
 - **Why this is a priority**: there is currently no public sample at all of Kimi's subscription/quota model or its token exposure.
 
-### T-62 GLM × Claude Code compatible endpoint (official coding subscription) (6 pts)
+### T-62 GLM × Claude Code compatible endpoint (3 pts)
 
 - **Scenario**: Zhipu's official coding subscription connected to Claude Code via its Anthropic-compatible endpoint × pinned GLM model, everything else aligned with the existing Claude Code reference samples.
-- **Why this is a priority**: the same Claude Code harness, connected to Anthropic's official service on one side and GLM's official endpoint on the other — a clean **harness-constant, backend-varying** comparison, directly comparable with the existing Claude Code reference samples on input injection and cache behavior. Record claimed and observed models separately.
+- **Why this is a priority**: the same Claude Code harness, connected to Anthropic's official service on one side and GLM's official endpoint on the other — a clean **harness-constant, backend-varying** comparison, directly comparable with the existing Claude Code reference samples on input injection and cache behavior. Record claimed and observed models separately. Under the rubric this is a backend substitution (3 pts), not a new-harness first sample; for Z.ai's first-party agent, see T-67 ZCode.
 
-### T-63 MiniMax × official carrier or compatible endpoint (6 pts)
+### T-63 MiniMax Code (6 pts)
 
-- **Scenario**: MiniMax's official Agent product, or its M-series models connected to a harness via an official compatible endpoint × fresh session.
-- **Why this is a priority**: there are no samples yet of MiniMax's Agent product form or its metering units; the carrier choice itself (official product vs compatible harness) is also worth explaining in the PR.
+- **Scenario**: the first-party MiniMax Code product (current version) × default or explicitly pinned MiniMax model × fresh session; record the actual product form and metering units.
+- **Why this is a priority**: there are no samples yet of MiniMax Code's first-party Agent form or its metering units.
+- **Points**: 6 pts for the first sample of the first-party MiniMax Code product. Connecting a MiniMax model to a third-party harness (for example, × Claude Code) follows the rubric at 3 pts through a proposal.
 
-### T-65 DeepSeek × official carrier or compatible endpoint (6 pts)
+### T-65 DeepSeek (6 or 3 pts)
 
 - **Scenario**: DeepSeek's official agent product if one exists, or a pinned DeepSeek model connected to a harness via its official compatible endpoint × fresh session; record the actual product form and the route classification honestly.
 - **Why this is a priority**: the most widely used Chinese model family, yet so far it has only appeared in this dataset as a WorkBuddy Auto routing outcome (DeepSeek-V4-Flash in one attempt); its official quota/billing model and token exposure have no dedicated sample. A pinned-DeepSeek scenario also gives the existing Auto observation something to be compared against.
+- **Points**: 6 pts for the first sample of a first-party DeepSeek harness; 3 pts for DeepSeek × Claude Code via the compatible endpoint (the current official coding-agent documentation uses this route). The actual product form determines the price when claimed and must be written into the claim.
+
+### T-66 Tencent CodeBuddy Code (6 pts)
+
+- **Scenario**: Tencent CodeBuddy Code (current version) × one declared first-party surface (plugin, IDE, or CodeBuddy Code CLI) × default or explicitly pinned model × fresh session × empty directory; record the native Credits and the shared-quota scope honestly.
+- **You need**: a Tencent CodeBuddy Code account with access to one of its first-party surfaces.
+- **Why this is a priority**: this is Tencent's first-party development product and a different product surface from the already measured WorkBuddy, despite belonging to the same Buddy family. Official billing makes CodeBuddy Code and WorkBuddy share Credits under the same account, so `quota_shared_scope` must identify that pool. The CLI also exposes `/cost` and has cost-management documentation; a same-account comparison with WorkBuddy is a high-value follow-up pair that can be proposed separately.
+- **Points**: 6 pts for the first Tencent CodeBuddy Code harness sample.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure, shared quota, and redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-67 ZCode (6 pts)
+
+- **Scenario**: ZCode (current version) × one pinned model × one declared Z.ai subscription or billing route × fresh session × empty directory.
+- **You need**: a Z.ai account with ZCode access.
+- **Why this is a priority**: Z.ai's own first-party coding agent was still shipping rapidly in August 2026. With the model and subscription route pinned, it forms a natural comparison against T-62, which puts GLM behind Claude Code as a 3-point compatible-endpoint substitution: first-party harness vs endpoint substitution.
+- **Points**: 6 pts for the first ZCode harness sample.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ### T-64 Locally self-hosted open weights (difficulty ★★★) (6 pts)
 
 - **Scenario**: open weights (e.g. the open versions of GLM or Qwen) deployed locally via vLLM or Ollama, connected to any open-source harness; record the route as `self-hosted`.
 - **Why this is a priority**: this is the only route where both ends — "the raw request" and "the metering" — are visible at the same time: the prompt token counts in the inference server logs can be reconciled word for word against the harness's injection, the cleanest way of weighing the harness. Requires some local deployment experience and hardware.
 - **Points**: 6 pts applies to one self-hosted stack, priced in advance in your claim issue; further stacks are not priced by default.
+- **Stack freeze**: freeze the entire stack — model checkpoint/hash, quantization, serving runtime and version, GPU, context settings, and sampling/tool support. A later quantization or runtime change is a variable task that needs a proposal (2–3 pts), not another 6-point first sample.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+---
+
+## H. Recently shipped harnesses (difficulty ★★★)
+
+This group covers product lines newly released or newly surfaced in the second half of 2026. Prices follow the rubric; products are moving quickly, so the actual form at claim time is authoritative.
+
+### T-70 Devin CLI (6 pts)
+
+- **Scenario**: Devin CLI (current version) × the product default or an explicitly pinned model × fresh session × empty directory; record the subscription and native ACU usage honestly.
+- **You need**: a Devin account with Local/CLI access.
+- **Why this is a priority**: in Cognition's current product line, Windsurf joined Devin Desktop on 2026-06-02 and Cascade is deprecated, so old-product captures are out of scope. Devin Local and CLI share the next-generation harness and meter in ACUs; a T-35 same-vendor pair with Devin Desktop is a natural follow-up.
+- **Points**: 6 pts for the first Devin CLI harness sample.
+- **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
+
+### T-71 Mistral Vibe (conditional 4 pts)
+
+- **Scenario**: Mistral Vibe version 2.23.3 or later × one explicitly pinned provider and model × fresh session × empty directory; collect provider-reported token usage for every run.
+- **You need**: a Mistral Vibe install plus provider access that can expose stable per-run token usage.
+- **Why this is a priority**: Mistral's official CLI adds a mature-vendor harness to the list, but its locally calculated USD cost is explicitly indicative. Record that amount only as `indicative`, never as canonical monetary cost.
+- **Points**: 4 pts only if the package proves that stable provider-reported token usage can be collected per run; otherwise handle it through a proposal.
+- **Effort**: expect about 2–4 hours of real work — proving the per-run token receipt and its semantics is what takes the time; the 30-minute figure above does not apply here.
+
+### T-72 Warp Agent CLI (6 pts)
+
+- **Scenario**: Warp Agent CLI (current version) × the product default or an explicitly pinned model × fresh session × empty directory; use `/usage` to record plan and per-turn credit consumption.
+- **You need**: a Warp account with Agent CLI access, any tier.
+- **Why this is a priority**: the standalone Agent CLI released on 2026-08-04 works in any terminal, and since 2026-08-25 its `/usage` output exposes plan and credit usage under per-turn credit billing. Do not collect the deprecated Oz or old `warp-cli`, which this product replaces.
+- **Points**: 6 pts for the first Warp Agent CLI harness sample; this replaces Warp's former 4-point named slot in T-23.
 - **Effort**: expect about 2–4 hours of real work — working out the usage exposure and the redaction points is what takes the time; the 30-minute figure above does not apply here.
 
 ---
