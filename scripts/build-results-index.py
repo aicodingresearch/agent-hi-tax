@@ -202,9 +202,12 @@ def read_yaml_scalars(path: Path) -> dict[str, object]:
     values: dict[str, object] = {}
     stack: list[tuple[int, str]] = []
 
-    for line_number, raw_line in enumerate(
-        path.read_text(encoding="utf-8").splitlines(), start=1
-    ):
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        text = path.read_text(encoding="utf-16")
+
+    for line_number, raw_line in enumerate(text.splitlines(), start=1):
         stripped = raw_line.lstrip()
         if not stripped or stripped.startswith("#") or stripped.startswith("- "):
             continue
