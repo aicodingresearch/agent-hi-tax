@@ -17,7 +17,7 @@ Harness here means the entire system the Agent product wraps around the model: t
 The design of this experiment turns the harness itself into the object under measurement. The visible input of `hi` is only 2 characters; yet the existing data already shows:
 
 - In the Claude Code reference sample, plain input is only **2 tokens**, while the first request simultaneously created about **25K tokens** of cache;
-- Across the four completed scenarios, per-run input context ranges between roughly **14K and 33K tokens**.
+- Across the six completed scenarios, per-run input context ranges between roughly **14K and 33K tokens**.
 
 As user input approaches zero, these input tokens come almost entirely from the harness itself. Therefore:
 
@@ -166,7 +166,7 @@ runs/YYYY-MM-DD/<scenario-id>/
   attempts/r1 r2 r3/        # per attempt: result.yaml, response.txt, response.png, trimmed event log
 ```
 
-**Do not guess fields from a blank template.** Pick the one of the [four complete reference samples](../runs/README.md) closest to your product, copy the whole package, and replace each item with your own data. Do not change the meaning of vendor-native fields to "look consistent"; write `not_applicable` where a field does not apply, `not_exposed` where the product does not expose it, `not_provided` where it was not obtained.
+**Do not guess fields from a blank template.** Pick the one of the [six published scenario packages](../runs/README.md) closest to your product, copy the whole package, and replace each item with your own data. Do not change the meaning of vendor-native fields to "look consistent"; write `not_applicable` where a field does not apply, `not_exposed` where the product does not expose it, `not_provided` where it was not obtained.
 
 ### Step 7: Redaction
 

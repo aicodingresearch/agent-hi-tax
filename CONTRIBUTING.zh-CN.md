@@ -18,7 +18,7 @@ Agent Hi Tax 是一个轻松但尽量可复核的观察项目。它不是模型�
 2. 选一份采集适配器，或走通用路径。**任何 Agent 产品都在范围内**：CLI、IDE、桌面端或网页端都可以。现有适配器覆盖 [Codex CLI](docs/adapters/codex-cli.zh-CN.md)、[Claude Code](docs/adapters/claude-code.zh-CN.md) 和 [WorkBuddy Desktop](docs/adapters/workbuddy-desktop.zh-CN.md)，这份清单记录的是已经采过样的产品，不是本项目接受的产品范围。你的产品没有适配器时，按本页通用语义采集，在 PR 中说明产品差异，也欢迎顺手起草一份 `docs/adapters/<产品>.md`。
 3. 先固定场景和 launch command，再顺序执行至少 3 次 fresh attempt；不要边测边改模型、effort、权限模式或插件状态。
 4. 原始截图和原始 session/transcript 先留在 Git 仓库外；只有脱敏副本和最小机器事件可以进入 PR。
-5. 复制[场景模板](templates/scenario-manifest.yaml)、[单次模板](templates/attempt-result.yaml)，并参考与自己产品最接近的[四个完整样板](runs/README.zh-CN.md)。
+5. 复制[场景模板](templates/scenario-manifest.yaml)、[单次模板](templates/attempt-result.yaml)，并参考与自己产品最接近的[六个已公开场景包](runs/README.zh-CN.md)。
 6. 生成哈希，运行 `./scripts/verify-all.sh`，再使用仓库的 Pull Request 模板提交。
 
 不必为了追求 Level A 而解析不理解的内部日志。只有截图时可以诚实提交 Level B；字段拿不到就使用固定缺失状态。未经脱敏的原图、账号信息和 session 标识绝不能先上传、再等待维护者删除。
@@ -327,7 +327,7 @@ runs/YYYY-MM-DD/<scenario-id>/
 
 每个新提交的场景包，都在目录名与 manifest 的 `scenario.id` 末尾追加 `_<github-handle>`（例如 `..._mac-arm64_alice`）。这使包路径从构造上就不会冲突，同日同场景的多人复测无需任何协调。现有四个参考样板先于此规则，保持原名。
 
-场景字段模板见 [`templates/scenario-manifest.yaml`](templates/scenario-manifest.yaml)，单次结果模板见 [`templates/attempt-result.yaml`](templates/attempt-result.yaml)，模板选择和可选字段说明见 [`templates/README.zh-CN.md`](templates/README.zh-CN.md)。四个完整实例统一列在 [`runs/README.zh-CN.md`](runs/README.zh-CN.md)。
+场景字段模板见 [`templates/scenario-manifest.yaml`](templates/scenario-manifest.yaml)，单次结果模板见 [`templates/attempt-result.yaml`](templates/attempt-result.yaml)，模板选择和可选字段说明见 [`templates/README.zh-CN.md`](templates/README.zh-CN.md)。六个完整实例统一列在 [`runs/README.zh-CN.md`](runs/README.zh-CN.md)。
 
 ## 隐私与脱敏
 

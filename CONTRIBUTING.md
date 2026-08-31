@@ -18,7 +18,7 @@ For your first contribution, follow this order:
 2. Pick a collection adapter, or take the generic path. **Any agent product is in scope** — CLI, IDE, desktop, or web. Adapters exist today for [Codex CLI](docs/adapters/codex-cli.zh-CN.md) (Chinese), [Claude Code](docs/adapters/claude-code.zh-CN.md) (Chinese), and [WorkBuddy Desktop](docs/adapters/workbuddy-desktop.zh-CN.md) (Chinese); that list records the products already sampled, not the products we accept. If yours has no adapter, collect according to the generic semantics on this page, describe the product differences in your PR, and — optionally — include a first draft of `docs/adapters/<product>.md`.
 3. Pin the scenario and launch command first, then execute at least 3 fresh attempts sequentially; do not change the model, effort, permission mode, or plugin state mid-test.
 4. Keep raw screenshots and raw session/transcripts outside the Git repository at first; only redacted copies and minimal machine events may enter the PR.
-5. Copy the [scenario template](templates/scenario-manifest.yaml) and the [attempt template](templates/attempt-result.yaml), and refer to whichever of the [four complete reference samples](runs/README.md) is closest to your product.
+5. Copy the [scenario template](templates/scenario-manifest.yaml) and the [attempt template](templates/attempt-result.yaml), and refer to whichever of the [six published scenario packages](runs/README.md) is closest to your product.
 6. Generate hashes, run `./scripts/verify-all.sh`, and submit using the repository's Pull Request template.
 
 Do not parse internal logs you do not understand just to chase Level A. If all you have is screenshots, honestly submit Level B; when a field cannot be obtained, use the fixed missing-value states. Unredacted original images, account information, and session identifiers must never be uploaded first with the expectation that maintainers will delete them later.
@@ -327,7 +327,7 @@ runs/YYYY-MM-DD/<scenario-id>/
 
 Every newly submitted scenario package appends `_<github-handle>` to both the directory name and the manifest's `scenario.id` (for example, `..._mac-arm64_alice`). This makes package paths collision-free by construction, so several contributors replicating the same scenario on the same date need no coordination at all. The four existing reference samples predate this rule and keep their original names.
 
-The scenario field template is [`templates/scenario-manifest.yaml`](templates/scenario-manifest.yaml), the per-attempt result template is [`templates/attempt-result.yaml`](templates/attempt-result.yaml), and template selection plus optional-field notes are in [`templates/README.md`](templates/README.md). The four complete examples are listed together in [`runs/README.md`](runs/README.md).
+The scenario field template is [`templates/scenario-manifest.yaml`](templates/scenario-manifest.yaml), the per-attempt result template is [`templates/attempt-result.yaml`](templates/attempt-result.yaml), and template selection plus optional-field notes are in [`templates/README.md`](templates/README.md). The six complete examples are listed together in [`runs/README.md`](runs/README.md).
 
 ## Privacy and redaction
 

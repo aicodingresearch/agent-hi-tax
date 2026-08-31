@@ -185,7 +185,7 @@ Full rules are in the [contributing guide](CONTRIBUTING.md).
 
 ## Current status
 
-The project is currently in a manual pilot phase. The maintainer has completed four reference samples following the "external contributor" path, and keeps using the real process to check:
+The project is currently in a manual pilot phase. The repository contains six published scenarios: four maintainer reference samples completed through the "external contributor" path and two contributor packages. The real process remains the basis for checking:
 
 - whether the scenario variables are sufficient;
 - whether screenshots and logs can be tied to the same run;

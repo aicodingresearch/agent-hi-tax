@@ -17,7 +17,7 @@
 这个实验的设计恰好把 harness 变成被测对象。`hi` 的可见输入只有 2 个字符；但已有数据显示：
 
 - Claude Code 样板里，普通 input 只有 **2 tokens**，首次请求却同时创建了约 **25K tokens** 的缓存；
-- 四个已完成场景的单次输入上下文在约 **1.4 万到 3.3 万 tokens** 之间。
+- 六个已完成场景的单次输入上下文在约 **1.4 万到 3.3 万 tokens** 之间。
 
 当用户输入趋近于零时，这些输入 token 几乎全部来自 harness 本身。因此：
 
@@ -166,7 +166,7 @@ runs/YYYY-MM-DD/<scenario-id>/
   attempts/r1 r2 r3/        # 每次的 result.yaml、response.txt、response.png、精简事件日志
 ```
 
-**不要从空白模板开始猜字段。** 从[四个完整样板](../runs/README.zh-CN.md)里挑与你产品最接近的一个，整包复制后逐项替换成自己的数据。厂商原生字段的含义不要为了"看起来一致"而修改；不适用写 `not_applicable`，没暴露写 `not_exposed`，没拿到写 `not_provided`。
+**不要从空白模板开始猜字段。** 从[六个已公开场景包](../runs/README.zh-CN.md)里挑与你产品最接近的一个，整包复制后逐项替换成自己的数据。厂商原生字段的含义不要为了"看起来一致"而修改；不适用写 `not_applicable`，没暴露写 `not_exposed`，没拿到写 `not_provided`。
 
 ### 第 7 步：脱敏
 
