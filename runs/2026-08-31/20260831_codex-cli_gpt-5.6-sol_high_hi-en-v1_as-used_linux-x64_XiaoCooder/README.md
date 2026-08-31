@@ -14,7 +14,7 @@ This is a three-attempt replication of T-01 using the first-party Codex CLI with
 - Session: three fresh sessions, one prompt per session
 - Workspace: three independent empty workspaces; absolute paths are withheld from the public package
 - Harness profile: `as-used`
-- Permission mode: `YOLO mode`
+- Permission mode: `YOLO mode`, enabled with the `--dangerously-bypass-approvals-and-sandbox` launch argument
 
 ## Results
 
@@ -43,6 +43,6 @@ The three replies were:
 
 ## Evidence and limitations
 
-This package is Level B: it contains public visual evidence and exact reply text, but no sanitized machine event logs. Per-attempt timestamps and latency were not retained and are marked `not_exposed`. Quota before/after was not measured and is excluded from the results.
+This package is Level B: it contains public visual evidence and exact reply text, but no sanitized machine event logs. Per-attempt timestamps and latency were not retained and are marked `not_provided`. Quota before/after was not measured and is excluded from the results.
 
 The environment screenshot confirms Codex CLI 0.149.1, `gpt-5.6-sol`, `high`, and the R3 workspace. The subscription screenshot confirms ChatGPT Plus. Detailed plugins, skills, MCP, hooks, and network state were not captured and are not inferred.

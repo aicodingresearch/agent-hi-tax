@@ -1,11 +1,11 @@
 attempt: 1
 status: "valid"
-started_at_utc: "not_exposed"
-assistant_message_at_utc: "not_exposed"
-usage_recorded_at_utc: "not_exposed"
-response_latency_ms: "not_exposed"
-response_latency_display_seconds: "not_exposed"
-latency_method: "not_exposed"
+started_at_utc: "not_provided"
+assistant_message_at_utc: "not_provided"
+usage_recorded_at_utc: "not_provided"
+response_latency_ms: "not_provided"
+response_latency_display_seconds: "not_provided"
+latency_method: "not_provided"
 model_observed: "gpt-5.6-sol"
 effort_observed: "high"
 usage:

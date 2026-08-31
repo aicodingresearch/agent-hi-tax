@@ -4,7 +4,7 @@ protocol_version: "manual-hi-tax-0.3"
 scenario:
   id: "20260831_codex-cli_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_XiaoCooder"
   captured_from_utc: "2026-08-31T08:01:47Z"
-  captured_to_utc: "not_exposed"
+  captured_to_utc: "not_provided"
   planned_repetitions: 3
   valid_repetitions: 3
 
@@ -70,18 +70,19 @@ harness:
   prior_human_chat_turns: 0
   workspace_type: "empty-directory"
   environment_context_injected: "not_exposed"
-  instruction_files: []
+  instruction_files: "not_provided"
   built_in_tools: "not_exposed"
-  plugins_enabled: []
-  skills_enabled: []
-  mcp_servers_enabled: []
-  hooks_enabled: []
-  hook_model_calls_observed: "not_exposed"
-  hook_model_call_assessment: "not_exposed"
-  network_mode: "not_exposed"
+  plugins_enabled: "not_provided"
+  skills_enabled: "not_provided"
+  mcp_servers_enabled: "not_provided"
+  hooks_enabled: "not_provided"
+  hook_model_calls_observed: "not_provided"
+  hook_model_call_assessment: "not_provided"
+  network_mode: "not_provided"
   permission_mode: "YOLO mode"
   filesystem_profile_observed: "not_exposed"
-  settings_sources: []
+  settings_sources:
+    - "CLI launch arguments"
 
 prompt:
   case_id: "hi-en-v1"
@@ -101,7 +102,7 @@ measurement:
   total_input_definition: "input_tokens_including_cached = non_cached_input_tokens + cached_input_tokens"
   context_total_definition: "input_tokens_including_cached + output_tokens"
   total_input_is_subscription_cost: false
-  latency_method: "not_exposed"
+  latency_method: "not_provided"
   transcript_extraction: "not_applicable"
   transcript_deduplication: "not_applicable"
 
@@ -160,7 +161,7 @@ evidence:
 
 protocol:
   deviations:
-    - "No machine event logs or per-attempt timestamps were retained; timing is marked not_exposed."
+    - "No machine event logs or per-attempt timestamps were retained; timing is marked not_provided."
     - "The environment screenshot is a scenario-level screenshot showing the r3 workspace; r1 and r2 workspace state is self-reported."
-    - "The three attempts used YOLO mode, recorded as-used rather than standard-clean."
+    - "The three attempts used YOLO mode via the --dangerously-bypass-approvals-and-sandbox launch argument, recorded as-used rather than standard-clean."
   notes: "Three fresh attempts used the exact hi-en-v1 prompt. R1 and R2 reported the same usage; R3 reported a smaller cached input and a longer output including 9 reasoning tokens."

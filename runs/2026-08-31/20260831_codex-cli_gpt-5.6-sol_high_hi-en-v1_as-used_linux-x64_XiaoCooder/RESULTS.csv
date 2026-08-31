@@ -1,4 +1,4 @@
 attempt,status,started_at_utc,response_latency_ms,usage_source,input_tokens_including_cached,cached_input_tokens,non_cached_input_tokens,output_tokens,reasoning_output_tokens,context_total_tokens,cli_total_excluding_cached,cli_total_source,quota_attribution,response_text_sha256
-r1,valid,not_exposed,not_exposed,exit-ui,19160,11008,8152,13,not_exposed,19173,8165,exit-ui,not_measured,a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4
-r2,valid,not_exposed,not_exposed,exit-ui,19160,11008,8152,13,not_exposed,19173,8165,exit-ui,not_measured,a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4
-r3,valid,not_exposed,not_exposed,exit-ui,17609,9984,7625,22,9,17631,7647,exit-ui,not_measured,7a15ceec41a6560fa4376c97b91e79ea68cb24c0fc2e9fb806c7f22dba889eb0
+r1,valid,not_provided,not_provided,exit-ui,19160,11008,8152,13,not_exposed,19173,8165,exit-ui,not_measured,a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4
+r2,valid,not_provided,not_provided,exit-ui,19160,11008,8152,13,not_exposed,19173,8165,exit-ui,not_measured,a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4
+r3,valid,not_provided,not_provided,exit-ui,17609,9984,7625,22,9,17631,7647,exit-ui,not_measured,7a15ceec41a6560fa4376c97b91e79ea68cb24c0fc2e9fb806c7f22dba889eb0
