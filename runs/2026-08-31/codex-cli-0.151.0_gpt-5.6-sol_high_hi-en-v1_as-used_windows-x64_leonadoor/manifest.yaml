@@ -1,0 +1,215 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260831_codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_leonadoor"
+  captured_from_utc: "2026-08-31T13:10:44Z"
+  captured_to_utc: "2026-08-31T13:36:16.191Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@leonadoor"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.151.0"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "Windows 11 Professional"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Plus"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "cli-status-and-local-session-transcript"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "true"
+  instruction_files:
+    - "<CODEX_HOME>/AGENTS.md (806 bytes; sha256 a071ae5c25478e84abf40c0b9454d937b3c10786e38890b887445d3426ae4afb)"
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "imagegen"
+    - "openai-docs"
+    - "plugin-creator"
+    - "skill-creator"
+    - "skill-installer"
+    - "plugin-management:plugin-management"
+  mcp_servers_enabled:
+    - "codegraph"
+  hooks_enabled: []
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "configuration, plugin inventory, and retained local rollout inspection"
+  network_mode: "restricted"
+  permission_mode: "Workspace (Ask for approval)"
+  filesystem_profile_observed: "Workspace"
+  collaboration_mode: "Default"
+  settings_sources:
+    - "<CODEX_HOME>/config.toml"
+    - "<CODEX_HOME>/AGENTS.md"
+    - "CLI launch arguments"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "context_total_tokens"
+  secondary_metric: "cli_total_excluding_cached"
+  native_input_definition: "input_tokens_including_cached; cached_input_tokens is a subset"
+  total_input_definition: "input_tokens_including_cached"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "human user-message event to assistant-message event"
+  transcript_extraction: "post-run contributor extraction from retained local Codex rollout"
+  transcript_deduplication: "one exact human hi and one final assistant reply; exclude the harness-injected AGENTS/environment user-role message; do not sum repeated token-count events"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [16055, 16055, 16055]
+    min: 16055
+    median: 16055
+    max: 16055
+    mean: 16055
+  cached_input_tokens:
+    values: [11008, 11008, 11008]
+    min: 11008
+    median: 11008
+    max: 11008
+    mean: 11008
+  non_cached_input_tokens:
+    values: [5047, 5047, 5047]
+    min: 5047
+    median: 5047
+    max: 5047
+    mean: 5047
+  output_tokens:
+    values: [13, 14, 13]
+    min: 13
+    median: 13
+    max: 14
+    mean: 13.333333
+  reasoning_output_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  context_total_tokens:
+    values: [16068, 16069, 16068]
+    min: 16068
+    median: 16068
+    max: 16069
+    mean: 16068.333333
+  cli_total_excluding_cached:
+    values: [5060, 5061, 5060]
+    min: 5060
+    median: 5060
+    max: 5061
+    mean: 5060.333333
+  response_latency_ms:
+    values: [9333, 10310, 8872]
+    min: 8872
+    median: 9333
+    max: 10310
+    mean: 9505
+
+quota:
+  attribution: "not_measured"
+  notes: "Quota measurement was explicitly excluded at preregistration; incidentally visible percentages are not used."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "verified"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "verified"
+    mcp_plugins_and_hooks: "verified"
+  public_files:
+    - "evidence/preregistration.txt"
+    - "evidence/preflight.txt"
+    - "evidence/environment.redacted.png"
+    - "evidence/plan.png"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "The public environment image masks the account email and Session ID with fully opaque terminal-background rectangles."
+    - "The public plan image is a deterministic crop retaining only the Plus plan card and excluding browser chrome."
+    - "Each public response image is a deterministic crop retaining the exact hi, transport warning, and complete reply while excluding account and session fields."
+    - "Each public usage image is a deterministic crop retaining only the complete Token usage line."
+    - "Local configuration paths are represented with <CODEX_HOME>; run paths contain no home-directory identifier."
+
+protocol:
+  deviations: []
+  notes: "All three attempts showed the same WebSocket-to-HTTPS transport fallback after a proxy-scheme error and then completed normally. Each retained rollout exposes one exact human hi, one final assistant reply, one token-count event, and no tool call. The additional user-role AGENTS/environment message is deterministic harness injection, not a prior human turn. Quota was not measured."

@@ -1,0 +1,52 @@
+Redaction method: deterministic FFmpeg crop and opaque pixel fill
+Resizing: none
+Blur or mosaic: none
+Generative editing: none
+
+environment.redacted.png
+- Private source: r1/status.png
+- Source dimensions: 1115 x 628
+- Mask 1 before crop: x=210..539, y=370..411 (account value)
+- Mask 2 before crop: x=210..709, y=410..461 (Session value)
+- Fill color: RGB (12, 12, 12), fully opaque terminal background
+- Crop: x=10..749, y=195..524
+- Output dimensions: 740 x 330
+- Verification: visual inspection confirms no account email or Session ID remains visible.
+- Verification: version, model, effort, directory, permission mode, collaboration mode, and quota bars remain visible.
+
+plan.png
+- Private source: plan.raw.png
+- Source dimensions: 2560 x 1392
+- Crop: x=670..1069, y=235..1154
+- Output dimensions: 400 x 920
+- Verification: the crop contains only the Plus plan card; browser chrome and other plan cards are excluded.
+
+attempts/r1/response.png
+- Private source dimensions: 1115 x 628
+- Crop: x=8..1097, y=385..559
+- Output dimensions: 1090 x 175
+- Verification: exact hi, transport warning, and complete reply are visible; status fields and continuation identifiers are excluded.
+
+attempts/r2/response.png
+- Private source dimensions: 1115 x 628
+- Crop: x=8..1097, y=385..559
+- Output dimensions: 1090 x 175
+- Verification: exact hi, transport warning, and complete reply are visible; status fields and continuation identifiers are excluded.
+
+attempts/r3/response.png
+- Private source dimensions: 1115 x 628
+- Crop: x=8..1097, y=228..402
+- Output dimensions: 1090 x 175
+- Verification: exact hi, transport warning, and complete reply are visible; status fields and continuation identifiers are excluded.
+
+attempts/r1/usage.png, attempts/r2/usage.png, attempts/r3/usage.png
+- Private source dimensions: 1115 x 628 each
+- Crop: x=5..1104, y=388..411
+- Output dimensions: 1100 x 24 each
+- Verification: every image contains only its complete Token usage line; the resume command below it is excluded.
+
+Final visual review:
+- Account email is not visible.
+- Session and continuation identifiers are not visible.
+- No browser account identifier is visible.
+- Exact prompts, complete replies, transport warnings, token numbers, environment fields, and Plus-plan evidence remain visible where applicable.

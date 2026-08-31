@@ -1,0 +1,30 @@
+Preregistered at UTC: 2026-08-31T13:10:44Z
+Task: T-01 / anchor 1
+Claim issue: aicodingresearch/agent-hi-tax#30
+
+No formal hi request had been sent at the time of this local preregistration.
+
+## Frozen scene
+
+Product: OpenAI Codex CLI
+Version: codex-cli 0.151.0
+Model: gpt-5.6-sol
+Reasoning effort: high
+Authentication: ChatGPT subscription login
+Subscription: ChatGPT Plus
+Route: first-party-subscription
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Harness profile: as-used
+Global instruction file: <CODEX_HOME>/AGENTS.md
+Enabled MCP: codegraph
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+Planned repetitions: 3 sequential valid attempts
+Quota: not_measured
+
+## Fixed launch command
+
+codex --no-alt-screen --model gpt-5.6-sol --config 'model_reasoning_effort="high"' --cd "<RUN_DIR>"
+
+Only the equal-length r1/r2/r3 workspace suffix changes between attempts. No account identifier, email address, Session ID, hostname, private home path, or authentication material is included here.
+
