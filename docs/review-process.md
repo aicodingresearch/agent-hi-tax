@@ -6,6 +6,8 @@
 
 This page describes what happens to a data Pull Request after it is opened: who reads it, what they are asked to look at, how disagreement is resolved, and what a review comment must contain. The rules for collecting and submitting evidence stay in [CONTRIBUTING](../CONTRIBUTING.md); this page only covers the review.
 
+For the one-PR-URL Agent workflow that routes both review and post-merge points submission, see [Agent entry point for PR review and points](agent-review-and-scoring.md).
+
 ## What review covers
 
 Automated verification already runs on every PR. `./scripts/verify-all.sh` checks package structure, the arithmetic of derived fields, `SHA256SUMS`, textual privacy clues, and whether the generated indexes still match the data — see [the pre-submission section of CONTRIBUTING](../CONTRIBUTING.md#submitting-a-pull-request). Reviewers do not repeat that work, and a green check is not an opinion about the submission.

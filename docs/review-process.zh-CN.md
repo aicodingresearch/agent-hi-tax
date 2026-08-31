@@ -6,6 +6,8 @@
 
 本页说明一个数据 Pull Request 开出来之后会发生什么：谁来读、被要求看哪些东西、意见不一致怎么办、一份评审意见必须写清哪些内容。采集和提交证据的规则仍以[贡献指南](../CONTRIBUTING.zh-CN.md)为准，本页只讲评审。
 
+只给一个 PR URL 即可路由评审与合并后积分提交的 Agent 工作流，见 [Agent 评审与计分入口](agent-review-and-scoring.zh-CN.md)。
+
 ## 评审覆盖什么
 
 每个 PR 都会先跑自动校验。`./scripts/verify-all.sh` 检查场景包结构、派生字段的算术、`SHA256SUMS`、文本中的隐私线索，以及生成的索引是否仍与数据一致——见[贡献指南「提交 Pull Request」一节](../CONTRIBUTING.zh-CN.md#提交-pull-request)。评审不重复这部分工作，绿色的检查标记也不构成对这份提交的任何意见。

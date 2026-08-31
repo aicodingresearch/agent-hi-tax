@@ -27,6 +27,8 @@ Allow about 30 minutes for a typical contribution. For a first contribution, all
 
 ## Points
 
+For the one-PR-URL Agent workflow that calculates an award after merge and submits the bilingual ledger update, see [Agent entry point for PR review and points](agent-review-and-scoring.md).
+
 Every task on this list carries a point value, written into its title as `(N pts)`.
 
 **What the number means.** It is a price on how much marginal information that task adds to the dataset *right now* — nothing more. It exists so you can see at a glance where the gaps are and choose accordingly. Points price contributions; they do not rank products. This is not the "simple leaderboard across vendors" that the [README rules out](../README.md#what-this-is-not) — that phrase refers to comparing vendors and models against each other, which this project still does not do. The same prices apply to every contributor.
