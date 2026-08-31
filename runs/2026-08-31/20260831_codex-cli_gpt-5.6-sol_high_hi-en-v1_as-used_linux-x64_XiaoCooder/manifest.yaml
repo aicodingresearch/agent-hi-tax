@@ -1,0 +1,166 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260831_codex-cli_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_XiaoCooder"
+  captured_from_utc: "2026-08-31T08:01:47Z"
+  captured_to_utc: "not_exposed"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@XiaoCooder"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.149.1"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "Linux"
+  os_version: "5.15.0-171-generic"
+  os_build: "#181-Ubuntu SMP Fri Feb 6 22:44:50 UTC 2026"
+  architecture: "x86_64"
+  locale: "not_exposed"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Plus"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "unknown"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic-observed"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "ui-status"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled: []
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "not_exposed"
+  network_mode: "not_exposed"
+  permission_mode: "YOLO mode"
+  filesystem_profile_observed: "not_exposed"
+  settings_sources: []
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "context_total_tokens"
+  secondary_metric: "cli_total_excluding_cached"
+  native_input_definition: "Codex CLI displayed non-cached input plus cached input in parentheses"
+  total_input_definition: "input_tokens_including_cached = non_cached_input_tokens + cached_input_tokens"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "not_exposed"
+  transcript_extraction: "not_applicable"
+  transcript_deduplication: "not_applicable"
+
+aggregate:
+  context_total_tokens:
+    values: [19173, 19173, 17631]
+    min: 17631
+    median: 19173
+    max: 19173
+  cli_total_excluding_cached:
+    values: [8165, 8165, 7647]
+    min: 7647
+    median: 8165
+    max: 8165
+  output_tokens:
+    values: [13, 13, 22]
+    min: 13
+    median: 13
+    max: 22
+
+quota:
+  attribution: "not_measured"
+  notes: "No before/after quota measurement was retained; subscription UI percentage is not used."
+
+evidence:
+  package_level: "B"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "verified"
+    workspace_and_session: "self_reported"
+    skills_and_hooks: "not_provided"
+    mcp_plugins_and_hooks: "not_provided"
+  public_files:
+    - "evidence/preflight.txt"
+    - "evidence/environment.png"
+    - "evidence/subscription.png"
+    - "attempts/r1/response.txt"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+  withheld_private_evidence: false
+  redactions:
+    - "Published screenshots were checked for account identifiers, credentials, session identifiers, and private paths; none are present."
+
+protocol:
+  deviations:
+    - "No machine event logs or per-attempt timestamps were retained; timing is marked not_exposed."
+    - "The environment screenshot is a scenario-level screenshot showing the r3 workspace; r1 and r2 workspace state is self-reported."
+    - "The three attempts used YOLO mode, recorded as-used rather than standard-clean."
+  notes: "Three fresh attempts used the exact hi-en-v1 prompt. R1 and R2 reported the same usage; R3 reported a smaller cached input and a longer output including 9 reasoning tokens."
