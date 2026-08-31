@@ -13,9 +13,9 @@ effort_observed: "high"
 usage:
   source: "local-session-transcript"
   provider_schema: "anthropic"
-  input_tokens_including_cached: 23552
-  cached_input_tokens: 19840
-  non_cached_input_tokens: 3712
+  input_tokens_including_cached: "not_applicable"
+  cached_input_tokens: "not_applicable"
+  non_cached_input_tokens: "not_applicable"
   cli_total_excluding_cached: "not_applicable"
   cli_total_source: "not_applicable"
   cache_write_input_tokens: "not_applicable"
@@ -37,7 +37,7 @@ usage:
 
 response:
   file: "response.txt"
-  exact_text_sha256: "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+  exact_text_sha256: "1cc2d1097acb5fd6902ee6b58d004f7b10f27451e46b11bdbde3699d305df709"
 
 activity:
   tool_calls: 0
@@ -52,10 +52,10 @@ quota:
 evidence:
   response_screenshot: "response.png"
   usage_screenshot: "not_provided"
-  sanitized_events: "not_applicable"
+  sanitized_events: "not_provided"
   field_statuses:
     prompt_and_response: "verified"
-    usage: "verified"
+    usage: "self_reported"
     timing: "self_reported"
     quota: "not_provided"
 
