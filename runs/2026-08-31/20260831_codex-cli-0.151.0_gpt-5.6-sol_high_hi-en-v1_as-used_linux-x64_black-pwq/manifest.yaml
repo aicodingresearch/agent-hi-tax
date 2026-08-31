@@ -1,0 +1,209 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260831_codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_black-pwq"
+  captured_from_utc: "2026-08-31T14:29:45Z"
+  captured_to_utc: "2026-08-31T15:13:27.294Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@black-pwq"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.151.0"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "Linux (WSL2)"
+  os_version: "6.6.87.2-microsoft-standard-WSL2"
+  os_build: "not_exposed"
+  architecture: "x86_64"
+  locale: "C.UTF-8"
+  timezone: "Asia/Singapore"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Plus"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "cli-status and event-log"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_provided"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "true"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "imagegen"
+    - "openai-docs"
+    - "plugin-creator"
+    - "skill-creator"
+    - "skill-installer"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "configuration inspection before R1; confirm after retained rollout inspection"
+  network_mode: "restricted"
+  permission_mode: "Workspace (Ask for approval)"
+  filesystem_profile_observed: "workspace-write with restricted filesystem profile"
+  collaboration_mode: "Default"
+  settings_sources:
+    - "<CODEX_HOME>/config.toml"
+    - "CLI launch arguments"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "context_total_tokens"
+  secondary_metric: "cli_total_excluding_cached"
+  native_input_definition: "input_tokens_including_cached; cached_input_tokens is a subset"
+  total_input_definition: "input_tokens_including_cached"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "user-message event to assistant-message event"
+  transcript_extraction: "post-run contributor extraction from local Codex rollout"
+  transcript_deduplication: "one target user message and one final assistant message; repeated token-count events are not summed"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [17902, 17902, 17902]
+    min: 17902
+    median: 17902
+    max: 17902
+    mean: 17902
+  cached_input_tokens:
+    values: [11008, 11008, 11008]
+    min: 11008
+    median: 11008
+    max: 11008
+    mean: 11008
+  non_cached_input_tokens:
+    values: [6894, 6894, 6894]
+    min: 6894
+    median: 6894
+    max: 6894
+    mean: 6894
+  output_tokens:
+    values: [13, 13, 14]
+    min: 13
+    median: 13
+    max: 14
+    mean: 13.333333
+  reasoning_output_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  context_total_tokens:
+    values: [17915, 17915, 17916]
+    min: 17915
+    median: 17915
+    max: 17916
+    mean: 17915.333333
+  cli_total_excluding_cached:
+    values: [6907, 6907, 6908]
+    min: 6907
+    median: 6907
+    max: 6908
+    mean: 6907.333333
+  response_latency_ms:
+    values: [4082, 2629, 2798]
+    min: 2629
+    median: 2798
+    max: 4082
+    mean: 3169.666667
+
+quota:
+  attribution: "not_measured"
+  notes: "Quota measurement is not preregistered; session-native token usage remains in scope."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "verified"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "verified"
+    mcp_plugins_and_hooks: "verified"
+  public_files:
+    - "evidence/preregistration.txt"
+    - "evidence/preflight.txt"
+    - "evidence/skills-prompt-input.txt"
+    - "evidence/harness-prompt-input.txt"
+    - "evidence/environment.redacted.png"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "Absolute executable and configuration paths are reduced to command names or <CODEX_HOME>."
+    - "Account email, Session IDs, and continuation identifiers are covered with fully opaque terminal-background rectangles."
+
+protocol:
+  deviations: []
+  notes: "Pre-registered before R1. The model-visible prompt contains a 50-entry recommended plugin catalog and generic apps instructions; these are injected context, not installed or enabled plugins, apps, or MCP servers. Pre-prompt /status and post-response /quit were local CLI operations and produced no additional model request. Quota percentages were incidentally visible but excluded because quota was not preregistered."

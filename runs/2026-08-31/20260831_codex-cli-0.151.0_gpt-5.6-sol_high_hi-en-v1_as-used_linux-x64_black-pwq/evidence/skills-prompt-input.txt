@@ -1,0 +1,13 @@
+Extraction method
+codex --model gpt-5.6-sol --config 'model_reasoning_effort="high"' debug prompt-input
+
+The diagnostic was run from the R1 empty workspace before the target prompt.
+Only skill names were retained from the model-visible skills_instructions block;
+the complete prompt input and local skill paths were not retained.
+
+Model-visible skills
+imagegen
+openai-docs
+plugin-creator
+skill-creator
+skill-installer
