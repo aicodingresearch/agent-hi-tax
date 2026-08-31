@@ -28,6 +28,36 @@ If the user supplies only the URL, route by authoritative PR state:
 
 There are two different URL roles. A **target PR URL** identifies work and is sufficient for automatic routing. This **runbook URL** identifies instructions, not a target; if it is the only URL and the surrounding context does not identify exactly one PR, the Agent asks for the target PR URL rather than guessing.
 
+### Recommended review input
+
+URL-only invocation remains valid, but the recommended review prompt also records the reviewer runtime explicitly:
+
+```text
+Action: independently review and post a verdict comment
+Target PR: https://github.com/aicodingresearch/agent-hi-tax/pull/<number>
+Reviewer Agent: <product, for example Claude Code or Codex>
+Reviewer model: <exact model, for example claude-opus-5 or gpt-5.6-sol>
+Reasoning effort: <exact effort, for example xhigh>
+
+Follow the Agent review and scoring entry point in this repository. Review the
+exact current head. Do not read existing review comments or reviewer findings
+before publishing this independent verdict. Post a comment only; do not use
+GitHub's formal Approve or Request changes action.
+```
+
+The Agent product, model, and effort must describe the actual runtime. Writing them in a prompt does not switch or configure the runtime. If the supplied identity conflicts with what the product exposes, the Agent reports the mismatch and uses the observed value; if unavailable, it writes `not exposed` rather than copying or guessing.
+
+For post-merge points, the recommended input is:
+
+```text
+Action: calculate points and submit the bilingual ledger update
+Target PR: https://github.com/aicodingresearch/agent-hi-tax/pull/<merged-number>
+
+Follow the Agent review and scoring entry point in this repository. Recompute
+eligibility and points, check for an existing row or pending ledger PR first,
+and do not modify the repository for any non-RECORDED outcome.
+```
+
 The prompt does not need to copy policy text, provide an absolute local path, or include a token, email address, or other credential. The Agent must derive the owner, repository, PR number, head SHA, base SHA, contributor, task or claim, checks, and changed files from the URL and repository state.
 
 This contract assumes the Agent can:

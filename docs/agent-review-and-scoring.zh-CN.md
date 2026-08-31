@@ -28,6 +28,34 @@
 
 这里有两类不同的 URL。**目标 PR URL** 标识要处理的对象，足以自动路由；**本 runbook URL** 只标识操作规则，不标识目标。如果用户只给了 runbook URL，且上下文不能唯一确定一个 PR，Agent 必须询问目标 PR URL，不得猜测。
 
+### 建议的评审输入
+
+只给 URL 仍然有效，但建议在评审 prompt 中同时登记 reviewer 的实际运行配置：
+
+```text
+动作：独立评审并发布 verdict comment
+目标 PR：https://github.com/aicodingresearch/agent-hi-tax/pull/<编号>
+评审 Agent：<产品，例如 Claude Code 或 Codex>
+评审模型：<准确模型，例如 claude-opus-5 或 gpt-5.6-sol>
+Reasoning effort：<准确 effort，例如 xhigh>
+
+按本仓库的 Agent 评审与计分入口执行。评审当前精确 head；在发布本次
+独立 verdict 前，不得读取已有评审评论或其他 reviewer findings。只发布
+comment，不使用 GitHub 的正式 Approve 或 Request changes。
+```
+
+Agent 产品、模型和 effort 必须描述真实运行环境。把它们写进 prompt 不会切换或配置运行时。用户填写的身份与产品实际暴露值冲突时，Agent 必须报告不一致并使用观察值；拿不到时写 `not exposed`，不得照抄或猜测。
+
+合并后计分建议使用：
+
+```text
+动作：计算积分并提交中英文台账更新
+目标 PR：https://github.com/aicodingresearch/agent-hi-tax/pull/<已合并编号>
+
+按本仓库的 Agent 评审与计分入口执行。重新计算资格与分值，先检查已有
+台账行或待合并台账 PR；outcome 不是 RECORDED 时不得修改仓库。
+```
+
 提示词不需要复制规则正文，不需要给绝对本地路径，也不能包含 token、邮箱或其他凭据。Agent 必须从 URL 和仓库状态自行解析 owner、仓库、PR 编号、head SHA、base SHA、贡献者、任务或认领、检查状态和变更文件。
 
 该约定假设 Agent 能够：
