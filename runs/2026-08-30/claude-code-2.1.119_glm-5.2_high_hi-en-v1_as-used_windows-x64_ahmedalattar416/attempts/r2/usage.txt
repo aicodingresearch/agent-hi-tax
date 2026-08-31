@@ -1,0 +1,6 @@
+input_tokens: 3712
+cache_creation_input_tokens: 0
+cache_read_input_tokens: 19840
+output_tokens: 12
+service_tier: standard
+speed: standard

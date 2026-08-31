@@ -1,0 +1,181 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "2026-08-30_claude-code-2.1.119_glm-5.2_high_hi-en-v1_as-used_windows-x64_ahmedalattar416"
+  captured_from_utc: "2026-08-30T11:35:00Z"
+  captured_to_utc: "2026-08-30T11:45:00Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@AHMEDALATTAR416"
+
+agent:
+  product: "Claude Code"
+  vendor: "Anthropic"
+  distribution: "first-party"
+  surface: "cli"
+  version: "2.1.119"
+  build: "not_exposed"
+  executable: "claude"
+
+environment:
+  os: "Windows"
+  os_version: "11"
+  os_build: "10.0.26200 Build 26200"
+  architecture: "x86_64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "gateway-account"
+  subscription_plan: "智谱开放平台 API pay-as-you-go"
+  usage_multiplier: "not_exposed"
+  billing_mode: "pay-as-you-go"
+  quota_shared_scope: "account"
+  plan_evidence_status: "self_reported"
+
+route:
+  category: "third-party-gateway"
+  provider: "智谱开放平台"
+  protocol: "anthropic-compatible"
+  gateway_public_name: "智谱开放平台"
+  gateway_public_domain: "open.bigmodel.cn"
+  upstream_model_claimed: "GLM-5.2"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "GLM-5.2"
+  observed: "GLM-5.2"
+  observation_method: "local-session-transcript"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "standard"
+  speed: "standard"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "true"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled: []
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "not_exposed"
+  network_mode: "enabled"
+  permission_mode: "bypassPermissions"
+  filesystem_profile_observed: "not_exposed"
+  settings_sources: ["~/.claude/settings.json"]
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "input_tokens"
+  secondary_metric: "output_tokens"
+  native_input_definition: "Claude Code local transcript usage fields"
+  total_input_definition: "input_tokens + cache_creation_input_tokens + cache_read_input_tokens"
+  context_total_definition: "total_input_tokens + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "ui-timer"
+  transcript_extraction: "jq"
+  transcript_deduplication: "group by message.id, keep max timestamp"
+
+aggregate:
+  input_tokens:
+    r1: 23552
+    r2: 3712
+    r3: 3712
+  cache_creation_input_tokens:
+    r1: 0
+    r2: 0
+    r3: 0
+  cache_read_input_tokens:
+    r1: 0
+    r2: 19840
+    r3: 19840
+  output_tokens:
+    r1: 11
+    r2: 12
+    r3: 11
+  total_input:
+    r1: 23552
+    r2: 23552
+    r3: 23552
+  context_total:
+    r1: 23563
+    r2: 23564
+    r3: 23563
+  responses:
+    r1: "Hi! How can I help you today?"
+    r2: "Hi! What can I help you with today?"
+    r3: "Hi! How can I help you today?"
+
+quota:
+  attribution: "not_measured"
+  notes: ""
+
+evidence:
+  package_level: "B"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "self_reported"
+    usage_multiplier: "not_exposed"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "self_reported"
+    workspace_and_session: "self_reported"
+    usage: "self_reported"
+    skills_and_hooks: "not_exposed"
+    mcp_plugins_and_hooks: "not_exposed"
+  public_files:
+    - "evidence/environment.redacted.png"
+    - "evidence/status.redacted.png"
+    - "attempts/r1/response.png"
+    - "attempts/r2/response.png"
+    - "attempts/r3/response.png"
+  withheld_private_evidence: true
+  redactions:
+    - file: "evidence/environment.redacted.png"
+      method: "opaque_rectangle"
+      scope: "username"
+    - file: "evidence/status.redacted.png"
+      method: "opaque_rectangle"
+      scope: "session_id_and_auth_token"
+
+comparison:
+  status: "confounded"
+  reference_scenario: "2026-08-15_claude-code-2.1.220_claude-fable-5_high_hi-en-v1_as-used_mac-arm64"
+  confounder: "agent_version_os_account_route_harness_config"
+  notes: "Backend substitution comparison against the Fable 5 reference, but confounded by: agent version (2.1.119 vs 2.1.220), OS (Windows 11 x64 vs macOS arm64), account/route (third-party-gateway pay-as-you-go vs first-party-subscription), as-used harness configuration (bypassPermissions + permission allow-list vs default). Harness product (Claude Code) is the same; backend (GLM vs Claude) is the intended variable."
+
+protocol:
+  deviations: []
+  notes: "Claude Code version 2.1.119 does not display usage summary on /exit. Usage data extracted from transcript. Harness configuration (model override, effort level, bypassPermissions, permission allow-list) was applied pre-session via ~/.claude/settings.json, not during measured sessions."

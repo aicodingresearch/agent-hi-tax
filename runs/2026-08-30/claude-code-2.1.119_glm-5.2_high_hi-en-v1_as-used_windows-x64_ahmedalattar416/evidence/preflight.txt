@@ -1,0 +1,21 @@
+Sanitized scenario preflight
+
+executable: claude
+Claude Code version: 2.1.119
+authentication method: gateway-account
+API provider: third-party-gateway
+subscription type: 智谱开放平台 API pay-as-you-go
+operating system: Windows 11
+operating system build: 10.0.26200 Build 26200
+architecture: AMD64
+time zone: China Standard Time (UTC+8)
+captured at UTC: 2026-08-30T09:30:00Z
+
+Background processes during test:
+- VPN: enabled
+
+Removed from this public transcription:
+- local user and host names
+- account email and organization identifiers
+- absolute home path
+- API keys and tokens
