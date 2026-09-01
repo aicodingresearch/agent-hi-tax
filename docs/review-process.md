@@ -31,11 +31,13 @@ Review exists for the four things a script cannot do:
 
 - **"Disagreement" means the Verdict lines differ.** Two REQUEST_CHANGES verdicts that raise entirely different findings are not a disagreement — they are two lists, and the contributor is expected to address both.
 - **Every review names the head commit it was performed at.** After a force-push or a new commit, the affected reviews are redone against the new head; a verdict written against an older tree does not carry forward.
+- **A draft PR is not reviewed.** Review starts when the contributor marks the PR Ready for review, and an explicit request to review a draft does not change that — a verdict on a moving head is scheduled to be redone, and [CONTRIBUTING](../CONTRIBUTING.md#submitting-a-pull-request) puts the automated verification and the screenshot re-check before that transition, not after it. Looking at a draft and leaving ordinary comments is welcome; it is a pre-review consultation, not a verdict, and it counts toward no gate.
+- **Re-review appends; it does not rewrite verdict history.** After a contributor responds to a verdict by pushing commits or updating the PR description, leave the earlier verdict comment unchanged and post a new structured verdict after the contributor's update, even when the head SHA did not change. The follow-up links the earlier comment in `Supersedes`, states what was re-reviewed, and discloses that the preceding discussion was read. It replaces that reviewer's earlier verdict for the current gate, but it is still the same review and does not count as another independent L1 review. Editing an earlier verdict is limited to typo, link, or formatting corrections that do not change its decision or findings; an explicit maintainer-directed historical correction must retain an edit note.
 - **Target response time is about 3 working days**, the same as the acknowledgement window in [SECURITY.md](../SECURITY.md).
 
 ## Reviewer independence
 
-The two reviews are dispatched in parallel and each reaches its own conclusion before publication. Not reading the reviews already posted on the PR is a hard requirement of [the verdict comment](#the-verdict-comment), not a courtesy: a review written after seeing another reviewer's findings must disclose that, and it does not count toward the two-independent-review minimum.
+The two reviews are dispatched in parallel and each reaches its own conclusion before publication. Not reading the reviews already posted on the PR is a hard requirement of [the verdict comment](#the-verdict-comment), not a courtesy: a review written after seeing another reviewer's findings must disclose that, and it does not count toward the two-independent-review minimum. An explicitly requested same-reviewer re-review may read that reviewer's earlier verdict and the contributor's subsequent response because it is validating a revision, not creating another independent review; the follow-up must disclose this boundary.
 
 Reviews performed with AI assistance must come from **different model families**. Two reviews from the same family count as one, and the second one does not satisfy the L1 minimum.
 
@@ -51,6 +53,7 @@ Reviewed under: docs/review-process.md @ <template commit>
 Reviewed at head: <commit SHA>
 Reviewer: <human name, or agent product + model + reasoning effort>
 Date: <YYYY-MM-DD>
+Supersedes (re-review only): <prior verdict comment URL>
 
 | Dimension | Result |
 | --- | --- |
@@ -71,10 +74,11 @@ Advisory (optional): <task and point-value suggestions, for the maintainer's ref
 git log -1 --format=%h -- docs/review-process.md
 ```
 
-Four requirements are not optional:
+Five requirements are not optional:
 
 - **The first line of a review comment must declare the template version it was written under**, identified by that commit. Later revisions of this page are not retroactive: each review is judged against the version it declared, unless the maintainer explicitly asks for a re-review under the current one.
 - **Do not read any review already posted on the PR before publishing your own; reach your conclusion independently.** Review from the diff and the files themselves, without opening the PR conversation page. If you did see another reviewer's findings, disclose it in your comment: that review no longer counts toward the two-independent-review minimum and stands as reference only.
+- **A re-review posts a new comment and names the verdict it supersedes.** Do not edit an earlier verdict into a different decision after the contributor has acted on it. Keep the old comment as the visible reason for the contributor's response, and use the new comment as that reviewer's current verdict.
 - **A review performed with AI assistance must name the agent product, the exact model, and the reasoning effort.** When the product does not expose the model or the effort, write `not exposed` — do not guess. This is the same honesty rule the repository applies to evidence fields: an unavailable value is recorded as unavailable, never inferred.
 - **"Could not verify" is a required line.** State the boundary of what your review could actually establish. At minimum it includes the class of claim that only the contributor can check — for example, that the published images correspond to the private originals they were masked from, or that no additional attempts were discarded before submission. A review that silently omits its own limits overstates itself, which is the same failure this project asks contributors to avoid.
 

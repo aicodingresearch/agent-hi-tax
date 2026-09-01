@@ -26,6 +26,14 @@
 - merged PR 进入计分动作；
 - draft PR 或 closed 但未合并的 PR 只报告“尚不适用”，Agent 停止，不发布 comment，也不修改仓库。
 
+### draft PR 一律不评审
+
+评审资格取决于 PR 本身的状态，而不是评审是被怎样发起的。**draft PR 在任何调用方式下都不具备评审资格**——只给 URL 的自动路由、下文的建议评审输入，或人类明确点名该 PR 的指令，都一样。Agent 报告 draft 状态，写明唯一的解除条件（由贡献者把 PR 转为 Ready for review），然后停止：不发布 comment，不修改仓库。在 draft 上发布 verdict、再在评论里声明“这是 draft”并不是可接受的替代做法——那条路仍然把一份 verdict 留在了记录上，事后还要靠人工把它从门禁里剔除。
+
+这不是新增限制，而是两条既有规则的推论。[每份评审都要写明所针对的 head commit](review-process.zh-CN.md#判定细则)，追加提交后即须重做，所以针对一个仍在移动的 draft 写下的判定，在动笔之前就已注定作废。而[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)要求贡献者在自动核验通过、且逐张复看过截图之后才转 Ready for review——早于该时点评审，等于把评审精力花在贡献者本人尚未交付的检查上。
+
+维护者当然可以看 draft 并留言。那属于评审前的沟通：只发普通评论，不发结构化 verdict comment，也不计入任何评审门禁。
+
 这里有两类不同的 URL。**目标 PR URL** 标识要处理的对象，足以自动路由；**本 runbook URL** 只标识操作规则，不标识目标。如果用户只给了 runbook URL，且上下文不能唯一确定一个 PR，Agent 必须询问目标 PR URL，不得猜测。
 
 ### 建议的评审输入
@@ -85,7 +93,7 @@ Agent 产品、模型和 effort 必须描述真实运行环境。把它们写进
 Agent 按以下顺序执行：
 
 1. 解析 PR URL，记录当前 head SHA、base SHA、作者、变更文件、draft 状态、CI checks 和可合并状态。评审对象是精确 head，不是会移动的分支名。
-2. 在读取任何已有 review 或 PR 会话评论之前，从 PR 的 base 分支读取：`CONTRIBUTING.zh-CN.md`、`docs/review-process.zh-CN.md`、`.github/CODEOWNERS`、`docs/wanted-scenarios.zh-CN.md` 中的适用任务，以及关联 claim 或 proposal。读取 PR 正文、diff 和提交文件，但在本评审发布前不得打开其他评审者的 findings。
+2. 初次独立评审时，在读取任何已有 review 或 PR 会话评论之前，从 PR 的 base 分支读取：`CONTRIBUTING.zh-CN.md`、`docs/review-process.zh-CN.md`、`.github/CODEOWNERS`、`docs/wanted-scenarios.zh-CN.md` 中的适用任务，以及关联 claim 或 proposal。读取 PR 正文、diff 和提交文件，但在本评审发布前不得打开其他评审者的 findings。明确要求由同一 reviewer 复审时，先解析当前 PR 状态，再读取该 reviewer 的旧 verdict 和核验修订所需的贡献者回复；必须披露这一点，且不得声称新增了一份独立评审。
 3. 按 [PR 类型分诊](#pr-类型分诊)分类，再选择评审维度：
    - 场景数据：脱敏、证据交叉一致、协议符合度、结论克制；
    - 协议/软件/文档：行为正确性、与权威规则的冲突、中英文和链接一致性、可执行性与安全边界；
@@ -96,7 +104,8 @@ Agent 按以下顺序执行：
 6. 按适用级别独立形成 verdict。AI 协助评审必须写出 Agent 产品、准确模型和 reasoning effort；没有暴露的值写 `not exposed`，不得猜测。
 7. 对符合条件的场景数据交付，在 `Advisory` 中给出任务、候选分值、叠加或不叠加判断及证据边界。仅协议、文档、软件或台账的 PR 写 `points: not_applicable`，除非已有明确计价任务。
 8. 发布适用的结构化 verdict comment。场景数据评审使用 `docs/review-process.zh-CN.md` 模板。非数据评审保留版本、verdict、head、reviewer、日期、findings、verification、`Could not verify` 和 Advisory 字段，但使用上述对应维度，不得在数据证据表里伪造 `n/a` 行。AI 评审只发 comment，绝不使用 GitHub 的正式 **Approve** 或 **Request changes**。
-9. 发布之后，Agent 才可以读取其他 verdict comment，并按当前 PR 类型汇报总门禁：所需独立评审、CODEOWNER 正式批准、CI、threads 解决状态和 merge state。PR head 变化后必须重新评审。
+9. 贡献者更新后的复审必须保留旧 verdict comment，并在更新之后另发新的结构化 follow-up；绝不通过编辑旧评论来改变其 verdict 或 findings。新评论在 `Supersedes` 中链接旧 verdict，写明本次复核的状态（包括 head 不变、只更新 PR 描述的情况），并披露已经读过前序讨论。它仍属于同一个 reviewer，不得重复计入 L1 独立评审数。
+10. 发布之后，Agent 才可以读取其他 verdict comment，并按当前 PR 类型汇报总门禁：所需独立评审、CODEOWNER 正式批准、CI、threads 解决状态和 merge state。PR head 变化后必须重新评审。汇总时，每个 reviewer 对被评审状态只采用最新且有效的 superseding verdict，旧评论继续保留为历史。
 
 若疑似出现敏感信息泄露，遵守 `docs/review-process.zh-CN.md` 的隐私例外：不得在公开位置复述该值或指出位置，细节通过私密渠道报告。
 
@@ -149,9 +158,11 @@ outcome 不是 `RECORDED` 时，省略不适用字段，不创建 commit 或 PR�
 
 1. 只给一个 open 场景数据 PR URL。Agent 必须正确分为数据 PR、保持评审独立、使用数据维度，并发布一份带正确版本的 verdict。
 2. 只给一个 open 协议/文档或台账 PR URL。Agent 必须使用非数据维度，不套数据证据表，不声称自动适用 L1 两份评审，并把积分标为 `not_applicable`。
-3. 只给一个尚无台账行、也无待合并台账 PR 的合格 merged 场景 PR URL。Agent 必须只计算一次，并只创建一个中英文台账更新 PR。
-4. 在台账 PR open 时和合并后，再次给同一个 merged 场景 PR URL。outcome 必须分别是 `ALREADY_PENDING` 和 `ALREADY_RECORDED`，不得产生重复行或重复 PR。
-5. 只给一个 merged 积分台账 PR 或无计价文档 PR URL。outcome 必须是 `NOT_APPLICABLE`，不得修改仓库。
+3. 给一个已发布 REQUEST_CHANGES verdict 的 PR，再让贡献者推送新 head，或只更新 PR 描述。同一 reviewer 必须保留旧 verdict 不变，并在贡献者更新之后另发一条 superseding verdict；门禁只能把该 reviewer 计数一次。
+4. 给一个 draft PR URL，先只给 URL，再附上明确要求评审并发布 verdict 的指令。两次 Agent 都必须报告 draft 状态并停止，不得发布任何 comment；明确指令不得解锁一份“带免责声明的 verdict”。
+5. 只给一个尚无台账行、也无待合并台账 PR 的合格 merged 场景 PR URL。Agent 必须只计算一次，并只创建一个中英文台账更新 PR。
+6. 在台账 PR open 时和合并后，再次给同一个 merged 场景 PR URL。outcome 必须分别是 `ALREADY_PENDING` 和 `ALREADY_RECORDED`，不得产生重复行或重复 PR。
+7. 只给一个 merged 积分台账 PR 或无计价文档 PR URL。outcome 必须是 `NOT_APPLICABLE`，不得修改仓库。
 
 引入本页时使用的 bootstrap prompt 不能证明“只给 URL”契约已经通过；只有合并后的上述测试才算验收。
 

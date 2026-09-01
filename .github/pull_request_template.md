@@ -1,4 +1,10 @@
 <!-- 中文贡献者：可以用中文填写本模板；规则见 CONTRIBUTING.zh-CN.md -->
+## Related issue / 关联 Issue
+
+Closes #
+
+<!-- Replace the line above with the claim issue number, for example: Closes #123. GitHub will close the issue when this PR is merged. 请填写认领 Issue 编号，例如：Closes #123；本 PR 合并后 GitHub 会自动关闭该 Issue。 -->
+
 ## Scenario
 
 - Scenario ID:
@@ -38,6 +44,7 @@ python3 scripts/build-results-index.py
 ## Pre-submission checklist
 
 - [ ] This PR contains exactly one scenario and all of its attempts.
+- [ ] The related claim issue is linked above with `Closes #<issue-number>`.
 - [ ] There are at least 3 valid independent runs, and they are not parallel, resumed, or cherry-picked minimums.
 - [ ] The prompt, Agent version, model, effort, route, permission mode, and harness are consistent across the valid attempts.
 - [ ] Exactly one copy of scenario-level environment evidence is kept, with the reply and usage kept separately for each attempt.
