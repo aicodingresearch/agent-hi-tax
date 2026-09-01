@@ -1,0 +1,12 @@
+# Manual official Desktop procedure. Replace only <N> with 1, 2, or 3.
+# Launch the installed official Google Antigravity 2.0 Desktop 2.11.0 app.
+
+# In the application:
+# 1. Open the pre-created r<N> project bound to the empty desktop/r<N> folder.
+# 2. Start a new conversation; do not resume an earlier conversation.
+# 3. Confirm Gemini 3.7 Flash High, Security Preset Default, and Always Ask.
+# 4. Capture the pre-prompt native quota view.
+# 5. Type the exact two characters hi once and submit.
+# 6. Wait for the final reply and capture it.
+# 7. Capture the post-response native quota view.
+# 8. End without another turn or conversation reuse.
