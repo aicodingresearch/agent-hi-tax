@@ -1,0 +1,9 @@
+Public evidence audit for the T-35 Antigravity Desktop side
+
+- Six formal-attempt screenshots were reviewed at original resolution.
+- No account email, username, absolute path, session/conversation identifier, or credential is visible.
+- Each public start.png and response.png is byte-identical to its registered private original.
+- No blur, crop, opaque rectangle, generative edit, or semantic rewrite was applied.
+- The rounded quota previews in start.png are explicitly labeled unverified_cache_state and are not copied into quota.before or quota.after.
+- Public text files were scanned for account-email patterns, Windows absolute paths, home-directory paths, UUID-shaped identifiers, and credential-like strings.
+- Private configuration screenshots and all opaque local application databases remain outside Git.

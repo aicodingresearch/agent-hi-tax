@@ -1,0 +1,81 @@
+T-35 Antigravity 2.0 Desktop preflight (sanitized)
+captured_at_utc: 2026-09-01T09:48:37.268Z
+formal_model_requests_sent: 0
+
+product: Google Antigravity 2.0 Desktop
+version: 2.11.0
+executable_sha256: e4b0a4077543627765a412ca4ac0e746ec670caa71ec8d56c69ac8d806743b83
+surface: desktop
+route: first-party-subscription
+subscription_plan: Google AI Pro (verified by private UI screenshot)
+model_requested: Gemini 3.7 Flash
+effort_requested: high
+harness_profile: custom (pair-matched project permission/review settings)
+
+os: Microsoft Windows 11 Home, Chinese locale
+os_version: 10.0.26200
+os_build: 26200
+architecture: x64
+
+desktop_user_settings_sha256: 4a2865f2dbcd5d3c221a443c00e246bdc46fd1cf442c77d96dd762f2a2fd652b
+desktop_user_settings_keys:
+  - python.languageServer
+  - editor.fontSize
+  - explorer.fileNesting.patterns
+built_in_skills_identified:
+  - agy-customizations
+  - antigravity-guide
+  - generative_ui
+  - migrate-workflows
+  - permissioned-github
+explicit_user_mcp_plugins_hooks: none identified in the inspected text configuration roots; MCP and customization state also verified in the official UI
+customizations_enabled: none (verified by private UI screenshot)
+built_in_global_skill_count: 5 (verified by private UI screenshot)
+installed_mcp_servers: none (verified by private UI screenshot)
+customizations_top_screenshot_private_sha256: 01bbb4456b99749a2b266529934a2db27f4b390d37d954edda94f6ea60e88f4e
+enabled_user_plugins: none (supported by the UI statement that no customizations are enabled)
+user_hooks: none identified in inspected text configuration; no dedicated hooks panel exposed in the captured Customizations UI
+customizations_bottom_screenshot_private_sha256: 0bac490565a89510eefe0afa223b8ec9313840f307e09a6bd82c89f5d9a0b705
+security_preset: Turbo Mode (verified by private UI screenshot)
+artifact_review_policy: Always Proceed (verified by private UI screenshot)
+queued_messages: Queue (verified by private UI screenshot)
+permission_rules_visible_counts:
+  terminal_commands: 2
+  file_access: exact rules not yet opened
+  network_access: exact rules not yet opened
+permissions_screenshot_private_sha256: 68ca19f96b0ad0b4d2733bea80e0e61e5e7859c5a67fdaf8cab5e81b2a47ed8c
+permission_comparison_note: Desktop R1, R2, and R3 are explicitly set to Default security plus Always Ask artifact review, aligning their review posture with the CLI request-review baseline.
+r1_project_folder: r1 (private UI verified; underlying full path retained only in the private preflight plan)
+r1_security_preset: Default
+r1_artifact_review_policy_current: Always Ask
+r1_artifact_review_effective_current: Always Ask
+r1_permission_alignment_status: complete
+r1_project_customizations_screenshot_private_sha256: 30708f5e0f6c2b0922b57b98a8145fa8413b1fa1ce54a0e3fface5f8fbccc68f
+r1_project_settings_before_artifact_fix_private_sha256: c6221971136e887c5f372bd589a5be16a8d48434eb7a898658dceb00bbd81629
+r1_project_settings_final_private_sha256: 273be33c13bd180e5af484d3999131bdebf8a7dffb7e43e9f497f15e605a81ec
+r2_project_folder: r2 (private UI verified; underlying full path retained only in the private preflight plan)
+r2_security_preset: Default
+r2_artifact_review_policy_current: Always Ask
+r2_artifact_review_effective_current: Always Ask
+r2_permission_alignment_status: complete
+r2_project_settings_final_private_sha256: 58638ad6008989f7dceaaf91fdf6b60b333e81c3a87785bc7981447d238ac987
+r3_project_folder: r3 (private UI verified; underlying full path retained only in the private preflight plan)
+r3_security_preset: Default
+r3_artifact_review_policy_current: Always Ask
+r3_artifact_review_effective_current: Always Ask
+r3_permission_alignment_status: complete
+r3_project_settings_final_private_sha256: 31abab1d5872db596924f18165105c706a33052ccb8aa72d97f0e6afb5515bc6
+
+token_measurement: not_exposed
+note: Opaque internal SQLite/Protobuf fields will not be decoded because the repository forbids client reverse engineering. Visible quota and other first-party UI evidence will still be collected.
+
+planned_workspaces:
+  - <LAB_ROOT>/workspaces/desktop/r1
+  - <LAB_ROOT>/workspaces/desktop/r2
+  - <LAB_ROOT>/workspaces/desktop/r3
+workspace_precheck: all empty and not Git worktrees
+
+pending_manual_ui_evidence:
+  - launch screen in the formal workspace
+
+package_completion_note: The launch-screen item above was pending at preflight time and is now satisfied by attempts/r1/start.png, attempts/r2/start.png, and attempts/r3/start.png.

@@ -4,9 +4,9 @@ protocol_version: "manual-hi-tax-0.3"
 scenario:
   id: "20260901_antigravity-desktop-2.11.0_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
   captured_from_utc: "2026-09-01T10:32:25.701Z"
-  captured_to_utc: "pending"
+  captured_to_utc: "2026-09-01T11:50:03.890Z"
   planned_repetitions: 3
-  valid_repetitions: 0
+  valid_repetitions: 3
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -113,22 +113,25 @@ measurement:
   transcript_extraction: "manual official-UI response screenshots; opaque local database fields are excluded"
   transcript_deduplication: "one target user message and one final assistant response per fresh project conversation"
 
-aggregate: {}
+aggregate:
+  token_measurement: "not_exposed"
+  response_latency: "not_exposed"
+  quota_measurement: "not_measured"
 
 quota:
   attribution: "contaminated"
-  notes: "The account-level meter is shared across the alternating CLI/Desktop pair and rounded in the desktop UI; snapshots are retained but no per-attempt delta is attributed solely to hi."
+  notes: "No formal Desktop before/after snapshots were captured. Unrefreshed rounded launch previews are retained as model/launch evidence but excluded from quota values; the account meter is also shared across the alternating pair."
 
 evidence:
-  package_level: "C"
-  visual_evidence_access: "private_evidence"
+  package_level: "B"
+  visual_evidence_access: "public"
   field_statuses:
     agent_version: "private_evidence"
     subscription_plan: "private_evidence"
     usage_multiplier: "not_exposed"
     route: "self_reported"
-    model: "private_evidence"
-    reasoning_effort: "private_evidence"
+    model: "verified"
+    reasoning_effort: "verified"
     harness: "private_evidence"
     environment: "private_evidence"
     workspace_and_session: "private_evidence"
@@ -137,18 +140,29 @@ evidence:
   public_files:
     - "evidence/preregistration.txt"
     - "evidence/preregistration-cli-1.1.23-replacement.txt"
+    - "evidence/preflight.txt"
+    - "evidence/measurement-boundary.md"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/start.png"
+    - "attempts/r1/response.png"
+    - "attempts/r2/start.png"
+    - "attempts/r2/response.png"
+    - "attempts/r3/start.png"
+    - "attempts/r3/response.png"
   withheld_private_evidence: true
   redactions:
     - "Account identifiers, local absolute paths, conversation IDs, and authentication material are omitted."
-    - "Public screenshots will replace account identifiers with fully opaque pixels before publication."
+    - "All six published attempt screenshots are byte-identical copies; visual review found no private identifier, path, session ID, or credential."
 
 comparison:
-  status: "controlled"
+  status: "other"
   reference_scenario: "20260901_antigravity-cli-1.1.23_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
-  confounder: "not_applicable"
+  confounder: "Desktop per-conversation token measurement is not_exposed through an accepted official interface."
   notes: "T-35 paired surface study: vendor, account, requested model/effort, OS, prompt, empty workspace, and review posture are held fixed; client surface is the intended variable. Desktop token usage is not exposed by an accepted official interface, so no exact cross-surface token delta will be claimed."
 
 protocol:
   deviations:
     - "Before any formal prompt, a CLI launch-only preflight revealed an automatic paired-side update from 1.1.22 to 1.1.23. The Desktop configuration did not change; this manifest's reference was replacement-preregistered to the 1.1.23 CLI scene before collection."
+    - "Formal Desktop pre/post quota snapshots were not captured. The rounded launch previews were not explicitly refreshed and are excluded from quota.before and quota.after."
   notes: "T-35 claim #42. Pair order is CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3, Desktop R3. The contributor performs all experiment-critical interactions and screenshots manually."
