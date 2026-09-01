@@ -1,0 +1,5 @@
+{"type":"session_meta","timestamp":"2026-09-01T02:12:43.055Z","cli_version":"0.151.0-alpha.7.2","source":"exec"}
+{"type":"turn_context","timestamp":"2026-09-01T02:12:46.185Z","model":"gpt-5.6-sol","effort":"high"}
+{"type":"response_item","timestamp":"2026-09-01T02:12:46.359Z","role":"user","text":"hi"}
+{"type":"response_item","timestamp":"2026-09-01T02:12:49.814Z","role":"assistant","text":"Hi! 有什么我可以帮你的？"}
+{"type":"event_msg","timestamp":"2026-09-01T02:12:49.815Z","usage":{"input_tokens":20756,"cached_input_tokens":11008,"cache_write_input_tokens":0,"output_tokens":32,"reasoning_output_tokens":17,"total_tokens":20788},"model_context_window":258400}

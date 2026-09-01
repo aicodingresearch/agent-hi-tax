@@ -1,0 +1,202 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260901_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_TH-Chou"
+  captured_from_utc: "2026-09-01T02:12:17.554Z"
+  captured_to_utc: "2026-09-01T02:13:09.392Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@TH-Chou"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.151.0-alpha.7.2"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "macOS"
+  os_version: "27.0"
+  os_build: "26A5421a"
+  architecture: "arm64"
+  locale: "C.UTF-8"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "not_exposed"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "not_exposed"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "local-session-transcript"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "true"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: "not_exposed"
+  skills_enabled:
+    - "imagegen"
+    - "openai-docs"
+    - "plugin-creator"
+    - "skill-creator"
+    - "skill-installer"
+    - "browser:control-in-app-browser"
+    - "computer-use:computer-use"
+  mcp_servers_enabled:
+    - "node_repl"
+  hooks_enabled:
+    - "user-configured local hook"
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "no tools were called; hook internals not inspected"
+  network_mode: "enabled"
+  permission_mode: "not_exposed"
+  filesystem_profile_observed: "restricted"
+  settings_sources:
+    - "local Codex config"
+    - "CLI launch arguments"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "context_total_tokens"
+  secondary_metric: "cli_total_excluding_cached"
+  native_input_definition: "input_tokens_including_cached; cached_input_tokens is a subset"
+  total_input_definition: "input_tokens_including_cached"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "user-message event to assistant-message event"
+  transcript_extraction: "post-run extraction from local Codex rollout"
+  transcript_deduplication: "one target user message and one final assistant message; token-count events are not summed"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [20959, 20756, 20756]
+    min: 20756
+    median: 20756
+    max: 20959
+    mean: 20823.666667
+  cached_input_tokens:
+    values: [11008, 11008, 11008]
+    min: 11008
+    median: 11008
+    max: 11008
+    mean: 11008
+  non_cached_input_tokens:
+    values: [9951, 9748, 9748]
+    min: 9748
+    median: 9748
+    max: 9951
+    mean: 9815.666667
+  output_tokens:
+    values: [15, 32, 31]
+    min: 15
+    median: 31
+    max: 32
+    mean: 26
+  reasoning_output_tokens:
+    values: [0, 17, 16]
+    min: 0
+    median: 16
+    max: 17
+    mean: 11
+  context_total_tokens:
+    values: [20974, 20788, 20787]
+    min: 20787
+    median: 20788
+    max: 20974
+    mean: 20849.666667
+  cli_total_excluding_cached:
+    values: [9966, 9780, 9779]
+    min: 9779
+    median: 9780
+    max: 9966
+    mean: 9841.666667
+  response_latency_ms:
+    values: [2163, 3455, 2656]
+    min: 2163
+    median: 2656
+    max: 3455
+    mean: 2758
+
+quota:
+  attribution: "not_measured"
+  notes: "No before/after quota observation was captured; session-native usage remains in scope."
+
+evidence:
+  package_level: "C"
+  visual_evidence_access: "not_provided"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "not_exposed"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "verified"
+    workspace_and_session: "self_reported"
+    skills_and_hooks: "self_reported"
+    mcp_plugins_and_hooks: "self_reported"
+  public_files:
+    - "evidence/preflight.txt"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: false
+  redactions:
+    - "Removed the complete developer/system context, local paths, session identifiers, and account-related content from public event logs."
+
+protocol:
+  deviations:
+    - "An initial interactive TUI probe was cancelled after no response; it is preserved as attempts/r0 and excluded from valid repetitions."
+    - "The successful repetitions used codex exec --json to obtain machine-readable native usage; no visual screenshots were captured."
+    - "Subscription quota before/after was not measured."
+  notes: "Three successful fresh-session runs were executed sequentially in separate empty non-Git directories with the same model, effort, and CLI arguments."
