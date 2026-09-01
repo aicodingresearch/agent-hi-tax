@@ -8,9 +8,9 @@
 
 [返回项目首页](README.zh-CN.md) | [查看场景目录](runs/README.zh-CN.md) | [阅读贡献与口径规则](CONTRIBUTING.zh-CN.md)
 
-- 场景数：7
-- Agent 产品数：4
-- 有效 attempts：21
+- 场景数：8
+- Agent 产品数：5
+- 有效 attempts：24
 
 ## 阅读规则
 
@@ -31,6 +31,7 @@
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-14/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-14</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>官方订阅</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 13,950 | 13,964 (13,963–13,964) | 14 (13–14) | 3.561 (3.308–3.657) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: contaminated</sub> |
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-30/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-29</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Windows 11 x64</sub> | 3 | 15,340 | 15,353 (15,353–15,354) | 13 (13–14) | 1.994 (1.87–2.816) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [WorkBuddy 5.3.13](runs/2026-08-15/workbuddy-5.3.13_auto_craft_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | glm-5.2 (R1,R2); deepseek-v4-flash (R3)<br><sub>—</sub> | —<br><sub>官方产品</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 33,043 (32,119–33,193) | 33,479 (32,501–33,824) | 436 (382–631) | 8.47 (7.893–11.628) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: per_attempt_native_credit_verified</sub> |
+| [ZCode 3.10.2](runs/2026-09-01/20260901_zcode-3.10.2_glm-5.3-flash_highest_hi-en-v1_as-used_mac-arm64_TH-Chou/README.md)<br><sub>2026-09-01</sub> | GLM-5.3-Flash<br><sub>最高</sub> | —<br><sub>官方产品</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | — | — | — | 4 (4–7) s<br><sub>UI 整秒</sub> | C · 无视觉证据<br><sub>quota: not_measured</sub> |
 
 ## 更新这个页面
 

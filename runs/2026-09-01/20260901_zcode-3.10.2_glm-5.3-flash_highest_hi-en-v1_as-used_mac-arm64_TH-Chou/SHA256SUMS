@@ -1,0 +1,14 @@
+0a554d12b5a06168a61b6fbd428fd22ae586741667a0273769d2374be41b7247  ./README.md
+90724630ffa8b00852ccca8802f6560d6c3b97cd3aacfbe4a7defb909f30d851  ./RESULTS.csv
+6c366f394fc578fecbbfb63fd10b75a49cade8912eab15bec25b111f871e5802  ./attempts/r1/events.sanitized.jsonl
+f57333d3a8395bec6d40e10099b8ca6702ba20233f65b240fc8ef88556418046  ./attempts/r1/response.txt
+cc280a1e74a60dd34d7e0d6d93b91dd713d11a6d848f18af3fb4f6006e971fe6  ./attempts/r1/result.yaml
+9b1e8736bc56c48bae1572a7127fb7287b971500ec230fe57f2cbfe18122b1b9  ./attempts/r2/events.sanitized.jsonl
+2aaf2865ef7dafd7099b5539bcac4e1f69f06a710706fa69287a583bc5b2fcd0  ./attempts/r2/response.txt
+c693404d6d2ddda14bd5b4a7a5f198e737a8f9d4693291e9cc7074427562cdd5  ./attempts/r2/result.yaml
+cfa6f1d221d58cf0a36ad241fb568ddbe059158a72a4615fdb8961e43691b363  ./attempts/r3/events.sanitized.jsonl
+002996fc86ca5861cffbe13e3c6864eda37c799cc63e75a2ce8fad511f392ae7  ./attempts/r3/response.txt
+6ca45947488449c800ddcba2d643f7ddc635ebb3cc17298e9cc787b790c2ce00  ./attempts/r3/result.yaml
+afa6871e268bea95ff6ae61406bb005a47e415eda835a4f35e30d5354f52bd02  ./evidence/preflight.txt
+200570b765eae38c15bbed6464eed06966ebe5438a9378ca9346c6a83c8370b3  ./manifest.yaml
+8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4  ./prompt.txt

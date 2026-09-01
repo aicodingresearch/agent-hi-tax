@@ -1,0 +1,161 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260901_zcode-3.10.2_glm-5.3-flash_highest_hi-en-v1_as-used_mac-arm64_TH-Chou"
+  captured_from_utc: "2026-09-01T02:35:00Z"
+  captured_to_utc: "2026-09-01T02:38:00Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@TH-Chou"
+
+agent:
+  product: "ZCode"
+  vendor: "Z.ai"
+  distribution: "first-party"
+  surface: "desktop-ide"
+  version: "3.10.2"
+  build: "3.10.2.6414"
+  executable: "ZCode.app"
+
+environment:
+  os: "macOS"
+  os_version: "27.0"
+  os_build: "26A5421a"
+  architecture: "arm64"
+  locale: "not_exposed"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "first-party-product-login"
+  subscription_plan: "not_provided"
+  usage_multiplier: "not_exposed"
+  billing_mode: "unknown"
+  quota_shared_scope: "account"
+  plan_evidence_status: "not_provided"
+
+route:
+  category: "first-party-product"
+  provider: "Z.ai"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "not_exposed"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "GLM-5.3-Flash"
+  observed: "GLM-5.3-Flash"
+  observation_method: "ui-status"
+
+reasoning:
+  effort_requested: "最高"
+  effort_observed: "最高"
+  mode: "变更前确认"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: "not_exposed"
+  built_in_tools: "not_exposed"
+  plugins_enabled: "not_exposed"
+  skills_enabled: "not_exposed"
+  mcp_servers_enabled: "not_exposed"
+  hooks_enabled: "not_exposed"
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "not_exposed"
+  network_mode: "not_exposed"
+  permission_mode: "变更前确认"
+  filesystem_profile_observed: "not_exposed"
+  settings_sources:
+    - "ZCode application settings"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "context_usage_displayed_tokens"
+  secondary_metric: "ui_latency_seconds"
+  native_input_definition: "not_exposed"
+  total_input_definition: "not_exposed"
+  context_total_definition: "not_exposed; UI context usage is a product-native displayed occupancy field"
+  total_input_is_subscription_cost: false
+  latency_method: "product UI rounded whole seconds"
+  transcript_extraction: "manual extraction from product UI"
+  transcript_deduplication: "one user message and one final assistant reply per fresh task"
+
+aggregate:
+  context_usage_displayed_tokens:
+    values: [28585, 28614, 28595]
+    min: 28585
+    median: 28595
+    max: 28614
+    mean: 28598
+  ui_latency_seconds:
+    values: [7, 4, 4]
+    min: 4
+    median: 4
+    max: 7
+    mean: 5
+
+quota:
+  attribution: "not_measured"
+  notes: "今日余额界面未作为可归因的前后余额证据采集；本包不推导共享账户额度变化。"
+
+evidence:
+  package_level: "C"
+  visual_evidence_access: "not_provided"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "not_provided"
+    usage_multiplier: "not_exposed"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "not_exposed"
+    mcp_plugins_and_hooks: "not_exposed"
+  public_files:
+    - "evidence/preflight.txt"
+    - "attempts/r1/response.txt"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "The r2 local workspace path in the assistant reply is replaced with [redacted-local-path] in public response text and events."
+    - "Raw UI screenshots remain outside the repository because they may contain account, session, or local-path identifiers."
+
+protocol:
+  deviations:
+    - "ZCode has no repository adapter; the generic GUI collection semantics were used."
+    - "Product UI exposes rounded whole-second work duration, so response_latency_ms is not inferred."
+    - "The r2 assistant reply exposed a local workspace path; the public copy is redacted while the attempt remains valid for the requested greeting measurement."
+    - "Native token buckets, cost, per-attempt credit, and account-level balance delta were not exposed or not captured."
+  notes: "This package reports the ZCode desktop harness observation and does not convert displayed context occupancy into token cost."

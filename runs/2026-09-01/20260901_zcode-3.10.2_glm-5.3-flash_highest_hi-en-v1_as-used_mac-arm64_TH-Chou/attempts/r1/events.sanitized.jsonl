@@ -1,0 +1,2 @@
+{"event":"prompt","attempt":"r1","prompt":"hi","model":"GLM-5.3-Flash","effort":"最高","mode":"变更前确认"}
+{"event":"assistant_final","attempt":"r1","response":"Hi! I'm ZCode, ready to help you with coding tasks, file work, documents, browser automation, and more. What would you like to work on?","ui_latency_seconds":7,"context_usage_displayed_tokens":28585,"context_limit_tokens":1000000}

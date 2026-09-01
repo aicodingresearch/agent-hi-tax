@@ -1,0 +1,54 @@
+attempt: 2
+status: "valid"
+started_at_utc: "2026-09-01T02:36:00Z"
+assistant_message_at_utc: "2026-09-01T02:36:04Z"
+usage_recorded_at_utc: "2026-09-01T02:36:04Z"
+response_latency_ms: "not_exposed"
+response_latency_display_seconds: 4
+latency_method: "cli-ui-rounded-seconds"
+model_observed: "GLM-5.3-Flash"
+effort_observed: "最高"
+usage:
+  source: "exit-ui"
+  provider_schema: "other"
+  input_tokens_including_cached: "not_exposed"
+  cached_input_tokens: "not_exposed"
+  non_cached_input_tokens: "not_exposed"
+  cli_total_excluding_cached: "not_applicable"
+  cli_total_source: "not_applicable"
+  cache_write_input_tokens: "not_applicable"
+  model_context_window_event: 1000000
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_exposed"
+  output_tokens: "not_exposed"
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: "not_exposed"
+  iterations_observation: "not_exposed"
+  web_search_requests: "not_exposed"
+  web_fetch_requests: "not_exposed"
+response:
+  file: "response.txt"
+  exact_text_sha256: "2aaf2865ef7dafd7099b5539bcac4e1f69f06a710706fa69287a583bc5b2fcd0"
+activity:
+  tool_calls: "not_exposed"
+  approvals: 0
+  errors: []
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+evidence:
+  response_screenshot: "not_provided"
+  usage_screenshot: "not_provided"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    quota: "not_measured"
+deviations: []

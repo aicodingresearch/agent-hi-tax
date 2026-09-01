@@ -1,0 +1,13 @@
+Scenario preflight
+
+- Product: ZCode 3.10.2 (build 3.10.2.6414)
+- Model selector: GLM-5.3-Flash
+- Effort selector: 最高
+- Permission mode: 变更前确认
+- Surface: desktop application
+- Workspace condition: three separate empty, non-Git directories verified before use
+- Session condition: one newly created task per attempt; no resume
+- Prompt: exactly hi, typed once per attempt
+- Execution order: r1, r2, r3, sequentially
+- Visual evidence: retained privately and withheld from the public package
+- Account-level quota: not measured
