@@ -1,0 +1,21 @@
+Paired-reference replacement preregistered at UTC: 2026-09-01T10:38:32.070Z
+Task: T-35, Desktop side of the paired surface study
+Claim issue: aicodingresearch/agent-hi-tax#42
+
+No formal `hi` request for either side had been sent. A launch-only CLI
+preflight revealed that the installed official CLI had automatically updated
+from 1.1.22 to 1.1.23. No prompt was submitted and no formal status-line raw
+file was created. The Desktop product and all three Desktop project settings
+remain unchanged.
+
+This record replaces only the paired CLI reference:
+
+- superseded reference: 20260901_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin
+- frozen replacement: 20260901_antigravity-cli-1.1.23_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin
+
+The Desktop side remains Google Antigravity 2.0 Desktop 2.11.0 with Gemini 3.7
+Flash High, the same Google AI Pro account, independent empty r1/r2/r3 project
+folders, Security Preset Default, Artifact Review Policy Always Ask, no enabled
+user customizations, no MCP servers, and the previously frozen built-in skill
+inventory. The fixed alternating order and all measurement limitations remain
+unchanged.

@@ -136,6 +136,7 @@ evidence:
     mcp_plugins_and_hooks: "private_evidence"
   public_files:
     - "evidence/preregistration.txt"
+    - "evidence/preregistration-cli-1.1.23-replacement.txt"
   withheld_private_evidence: true
   redactions:
     - "Account identifiers, local absolute paths, conversation IDs, and authentication material are omitted."
@@ -143,10 +144,11 @@ evidence:
 
 comparison:
   status: "controlled"
-  reference_scenario: "20260901_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
+  reference_scenario: "20260901_antigravity-cli-1.1.23_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
   confounder: "not_applicable"
   notes: "T-35 paired surface study: vendor, account, requested model/effort, OS, prompt, empty workspace, and review posture are held fixed; client surface is the intended variable. Desktop token usage is not exposed by an accepted official interface, so no exact cross-surface token delta will be claimed."
 
 protocol:
-  deviations: []
+  deviations:
+    - "Before any formal prompt, a CLI launch-only preflight revealed an automatic paired-side update from 1.1.22 to 1.1.23. The Desktop configuration did not change; this manifest's reference was replacement-preregistered to the 1.1.23 CLI scene before collection."
   notes: "T-35 claim #42. Pair order is CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3, Desktop R3. The contributor performs all experiment-critical interactions and screenshots manually."
