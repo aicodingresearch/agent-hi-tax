@@ -4,9 +4,9 @@ protocol_version: "manual-hi-tax-0.3"
 scenario:
   id: "20260901_antigravity-cli-1.1.23_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
   captured_from_utc: "2026-09-01T10:38:32.070Z"
-  captured_to_utc: "pending"
+  captured_to_utc: "2026-09-01T11:45:52.836Z"
   planned_repetitions: 3
-  valid_repetitions: 0
+  valid_repetitions: 3
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -34,7 +34,7 @@ account:
   usage_multiplier: "not_exposed"
   billing_mode: "included-quota"
   quota_shared_scope: "account"
-  plan_evidence_status: "private_evidence"
+  plan_evidence_status: "verified"
 
 route:
   category: "first-party-subscription"
@@ -110,25 +110,61 @@ measurement:
   context_total_definition: "context_window.total_input_tokens + context_window.total_output_tokens"
   total_input_is_subscription_cost: false
   latency_method: "not_exposed in the interactive status-line payload"
-  transcript_extraction: "status-line JSON plus public response screenshots"
+  transcript_extraction: "status-line JSON, exact response text files, one public response screenshot, and private visual originals"
   transcript_deduplication: "one target user message and one final assistant response per fresh process"
 
-aggregate: {}
+aggregate:
+  current_usage_input_tokens:
+    values: [13822, 13818, 13820]
+    min: 13818
+    median: 13820
+    max: 13822
+    mean: 13820
+  current_usage_cache_creation_input_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  current_usage_cache_read_input_tokens:
+    values: [0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  total_input_tokens:
+    values: [19648, 19648, 19648]
+    min: 19648
+    median: 19648
+    max: 19648
+    mean: 19648
+  output_tokens:
+    values: [64, 166, 172]
+    min: 64
+    median: 166
+    max: 172
+    mean: 134
+  context_total_tokens:
+    values: [19712, 19814, 19820]
+    min: 19712
+    median: 19814
+    max: 19820
+    mean: 19782
 
 quota:
   attribution: "contaminated"
   notes: "The account-level meter is shared across the alternating CLI/Desktop pair; snapshots are retained but no per-attempt quota delta is attributed solely to hi."
 
 evidence:
-  package_level: "C"
+  package_level: "A"
   visual_evidence_access: "private_evidence"
   field_statuses:
-    agent_version: "private_evidence"
-    subscription_plan: "private_evidence"
+    agent_version: "verified"
+    subscription_plan: "verified"
     usage_multiplier: "not_exposed"
     route: "self_reported"
-    model: "private_evidence"
-    reasoning_effort: "private_evidence"
+    model: "verified"
+    reasoning_effort: "verified"
     harness: "private_evidence"
     environment: "private_evidence"
     workspace_and_session: "private_evidence"
@@ -137,15 +173,26 @@ evidence:
   public_files:
     - "evidence/preregistration-superseded-1.1.22.txt"
     - "evidence/preregistration-replacement-1.1.23.txt"
+    - "evidence/statusline-instrumentation.md"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/pre-prompt.sanitized.jsonl"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/pre-prompt.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/response.png"
+    - "attempts/r3/pre-prompt.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
   withheld_private_evidence: true
   redactions:
     - "Account identifiers, local absolute paths, session IDs, and authentication material are omitted."
-    - "Raw status-line payloads remain outside Git; later public derivatives use a safe-field allowlist."
+    - "Raw status-line payloads remain outside Git; public derivatives use a safe-field allowlist."
+    - "The R3 response screenshot is a byte-identical public copy because it contains no private identifier; other visual originals remain private."
 
 comparison:
-  status: "controlled"
+  status: "other"
   reference_scenario: "20260901_antigravity-desktop-2.11.0_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
-  confounder: "not_applicable"
+  confounder: "Desktop per-conversation token measurement is not_exposed through an accepted official interface."
   notes: "T-35 paired surface study: vendor, account, requested model/effort, OS, prompt, empty workspace, and review posture are held fixed; client surface is the intended variable. Desktop token usage is not exposed by an accepted official interface, so no exact cross-surface token delta will be claimed."
 
 protocol:
