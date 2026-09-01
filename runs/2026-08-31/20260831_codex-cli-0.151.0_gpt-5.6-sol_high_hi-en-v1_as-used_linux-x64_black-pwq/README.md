@@ -84,6 +84,8 @@ cli_total_excluding_cached
 
 ## 已知边界
 
+- T-01 Claim Issue 在采集完成后补建；场景本身已在 R1 前通过 `evidence/preregistration.txt` 本地预注册。
+- R1 前在空工作区运行过一次本地 `codex debug prompt-input` 诊断，用于记录模型可见的 skills 和 harness 分类；它没有创建工作区文件或发送模型请求。
 - Quota 没有预注册；截图中偶然出现的百分比不进入结果，也不归因于三次 `hi`。
 - ChatGPT Plus 档位由公开状态图中的 `(Plus)` 核验，账户标识已遮挡。
 - `as-used` harness 会随 Codex 运行时和本地配置变化；结果只代表本次登记的版本和时间窗口。

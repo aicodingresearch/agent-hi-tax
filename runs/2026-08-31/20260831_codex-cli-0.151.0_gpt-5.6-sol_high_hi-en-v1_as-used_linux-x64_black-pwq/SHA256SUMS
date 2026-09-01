@@ -1,4 +1,4 @@
-2656e8a5d9e78399de1661b3dc7480410a16c7d18b979bda8c6b47da77393952  ./README.md
+297f12d24e12a9a24cccd77f12049662271332266782ef4b5285bc50868eb9aa  ./README.md
 11cc05b7f02331a374df47c90bdb230018345aaaab6b3f1a7d6ae5e5cbbeeb93  ./RESULTS.csv
 5c64037b84237924acc96936b71ab554c2e0e6adcb3200c6155cda4bf31b6bf5  ./attempts/r1/events.sanitized.jsonl
 ec898d243e89d1d8636261d9eaccfbd842330aa1456d30774ea393e08665d633  ./attempts/r1/response.png
@@ -17,11 +17,11 @@ b51676e5dea1caaa6ab3ae72bcc42b74339ccdfc996c21ade83aa9e21d70724e  ./attempts/r3/
 2fbb3c9e1d4256a07f30ee92df56e40791a45e78ff826b325e91a67b0841203d  ./attempts/r3/usage.png
 a6599989ee3f63d82c15ae941127fbc81eaf6508ec46552fc54e0c2a40deb734  ./evidence/environment.redacted.png
 d7ccf5da197b52cd8c2770067a511f62211862b543de3aea2a9c70015343499b  ./evidence/harness-prompt-input.txt
-2a7b462c1dd2fe47f822d50e14f820590346f9f7fbba84834765b757dccf9340  ./evidence/preflight.txt
+71e40f8f41be1017a63cb77511bdabf636d5c7243e5e319e4bda5e5ff197f403  ./evidence/preflight.txt
 ba59402761c78a3686a0192a52c9de03433457efc314bf29a29afc415fd2d808  ./evidence/preregistration.txt
 ec2b5fae2e6efb1520167d23071c371dac085c38bac5d8af1bb056d9f100bdaa  ./evidence/private-evidence.md
 0b62a2bc77690abcc8b48e0df9cc399f89156b87540099ceb85c68075453b34c  ./evidence/redaction-audit.txt
 fa5e7da0e85163c40fa525a3166d67e858d70ea53e152ba204d089ea8ad020f4  ./evidence/skills-prompt-input.txt
 71e6363f212a9bb234a0492c2cab706f8f1f4bf7d393c91cfad76f0e9dccffb5  ./launch-command.txt
-01ece15ce4113ce3333d3938b6e658c6caeba6315b997341873e9bfdac7a2336  ./manifest.yaml
+52c517b0b6fc264d0d2b11d59406f54a9b11cbf92efb1ce8dac5f0e5ee20b4ac  ./manifest.yaml
 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4  ./prompt.txt

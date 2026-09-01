@@ -69,7 +69,7 @@ harness:
   session_state: "fresh"
   prior_human_chat_turns: 0
   workspace_type: "empty-directory"
-  environment_context_injected: "true"
+  environment_context_injected: true
   instruction_files: []
   built_in_tools: "not_exposed"
   plugins_enabled: []
@@ -82,7 +82,7 @@ harness:
   mcp_servers_enabled: []
   hooks_enabled: []
   hook_model_calls_observed: 0
-  hook_model_call_assessment: "configuration inspection before R1; confirm after retained rollout inspection"
+  hook_model_call_assessment: "configuration and retained rollout inspection after all three attempts"
   network_mode: "restricted"
   permission_mode: "Workspace (Ask for approval)"
   filesystem_profile_observed: "workspace-write with restricted filesystem profile"
@@ -205,5 +205,7 @@ evidence:
     - "Account email, Session IDs, and continuation identifiers are covered with fully opaque terminal-background rectangles."
 
 protocol:
-  deviations: []
-  notes: "Pre-registered before R1. The model-visible prompt contains a 50-entry recommended plugin catalog and generic apps instructions; these are injected context, not installed or enabled plugins, apps, or MCP servers. Pre-prompt /status and post-response /quit were local CLI operations and produced no additional model request. Quota percentages were incidentally visible but excluded because quota was not preregistered."
+  deviations:
+    - "The T-01 Claim Issue was opened after collection; the scenario itself was preregistered locally before R1."
+    - "A local codex debug prompt-input diagnostic ran from the R1 workspace before the target prompt; it created no workspace file and sent no model request."
+  notes: "The model-visible prompt contains a 50-entry recommended plugin catalog and generic apps instructions; these are injected context, not installed or enabled plugins, apps, or MCP servers. Pre-prompt /status and post-response /quit were local CLI operations and produced no additional model request. Quota percentages were incidentally visible but excluded because quota was not preregistered."

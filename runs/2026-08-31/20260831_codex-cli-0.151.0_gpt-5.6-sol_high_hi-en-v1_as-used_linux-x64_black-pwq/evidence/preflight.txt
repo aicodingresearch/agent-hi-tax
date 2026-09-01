@@ -1,3 +1,5 @@
+Captured at UTC: 2026-08-31T14:29:45Z
+
 command -v codex
 codex
 
