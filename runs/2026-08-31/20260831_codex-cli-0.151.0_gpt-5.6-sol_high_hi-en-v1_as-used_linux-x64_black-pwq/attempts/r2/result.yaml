@@ -1,0 +1,48 @@
+attempt: 2
+status: "valid"
+started_at_utc: "2026-08-31T15:11:31.714Z"
+assistant_message_at_utc: "2026-08-31T15:11:34.343Z"
+usage_recorded_at_utc: "2026-08-31T15:11:34.418Z"
+response_latency_ms: 2629
+latency_method: "assistant-message-event"
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+
+usage:
+  source: "event-log-and-exit-ui"
+  input_tokens_including_cached: 17902
+  cached_input_tokens: 11008
+  non_cached_input_tokens: 6894
+  output_tokens: 13
+  reasoning_output_tokens: 0
+  context_total_tokens: 17915
+  cli_total_excluding_cached: 6907
+  cli_total_source: "exit-ui-and-event-log"
+  cache_write_input_tokens: 0
+  model_context_window_event: 258400
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "usage.png"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    quota: "not_provided"
+
+deviations: []

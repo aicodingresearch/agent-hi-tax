@@ -1,0 +1,39 @@
+Redaction method: deterministic ImageMagick pixel edit
+Resizing: none
+Blur or mosaic: none
+Generative editing: none
+Fill color: #0c0c0c, matching the terminal background
+
+environment.redacted.png
+- Source: 1-status.png, 1113 x 626
+- Output: 1113 x 626
+- Masks: x=228..455 y=388..411; x=228..570 y=426..450
+
+attempts/r1/response.png
+- Source: 1-response.png, 1113 x 645
+- Masks: x=228..455 y=293..316; x=228..570 y=331..356
+
+attempts/r2/response.png
+- Source: 2-response.png, 1113 x 645
+- Masks: x=228..455 y=293..316; x=228..570 y=331..356
+
+attempts/r3/response.png
+- Source: 3-response.png, 1113 x 645
+- Masks: x=228..455 y=293..316; x=228..570 y=331..356
+
+attempts/r1/usage.png
+- Source: 1-usage.png, 1113 x 645
+- Masks: x=228..455 y=331..354; x=228..570 y=369..394; x=688..1045 y=595..621
+
+attempts/r2/usage.png
+- Source: 2-usage.png, 1113 x 645
+- Masks: x=228..455 y=159..182; x=228..570 y=197..222; x=688..1045 y=424..452
+
+attempts/r3/usage.png
+- Source: 3-usage.png, 1113 x 645
+- Masks: x=228..455 y=293..316; x=228..570 y=331..356; x=688..1045 y=558..585
+
+Verification:
+- All public images were visually reviewed together and retain their source dimensions.
+- Account email, Session IDs, and continuation identifiers are not visible.
+- Model, effort, Plus plan, prompt, complete replies, and usage numbers remain visible.

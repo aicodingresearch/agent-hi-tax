@@ -372,6 +372,8 @@ One PR contains one scenario and all of its repeated runs. In the PR, state:
 - the verification script output;
 - why the shared quota is attributable, or why it was marked contaminated.
 
+Every scenario PR must link its claim issue with a closing keyword such as `Closes #123`. GitHub then closes the claim automatically when the PR is merged into the default branch. Closing a PR without merging it does not mean the scenario is complete: if a replacement PR is planned, keep the claim open and link the replacement before closing the old PR; if the contribution is abandoned, close the claim with a short reason.
+
 The repository's [Pull Request template](.github/pull_request_template.md) already includes these fields and the pre-submission checklist. We recommend opening a Draft PR first and marking it Ready for review only after automated verification passes and the screenshots have been visually inspected. Automated verification can only check structure, arithmetic, hashes, and textual privacy clues; it cannot prove that screenshot masking is correct and does not replace human review.
 
 Review focuses on internal consistency, field states, redaction, and whether overclaiming was avoided — not on requiring every product to expose exactly the same data.

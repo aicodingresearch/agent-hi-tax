@@ -26,6 +26,14 @@ If the user supplies only the URL, route by authoritative PR state:
 - a merged PR enters the points action;
 - a draft PR or a closed but unmerged PR is reported as not eligible, and the Agent stops without publishing or changing the repository.
 
+### A draft PR is never reviewed
+
+Review eligibility is a property of the PR, not of how the review was requested. **A draft PR is not eligible under any invocation** — URL-only routing, the recommended review input below, or an explicit human instruction naming the PR. The Agent reports the draft state, names the one thing that would unblock it (the contributor marking the PR Ready for review), and stops without publishing a comment or changing the repository. Publishing a verdict on a draft and disclaiming the draft state inside the comment is not an accepted substitute; that path still puts a verdict on the record that the gate then has to discount by hand.
+
+Two existing rules make this a consequence rather than a new restriction. [Every review names the head commit it was performed at](review-process.md#decision-rules) and is redone after a new commit, so a verdict written against a still-moving draft is scheduled to be discarded before it is written. And [CONTRIBUTING](../CONTRIBUTING.md#submitting-a-pull-request) asks the contributor to mark a PR Ready for review only after automated verification passes and every screenshot has been visually re-checked — reviewing earlier spends review effort on checks the contributor still owes.
+
+A maintainer may of course look at a draft and comment on it. That is a pre-review consultation: ordinary comments, never a structured verdict comment, and it counts toward no review gate.
+
 There are two different URL roles. A **target PR URL** identifies work and is sufficient for automatic routing. This **runbook URL** identifies instructions, not a target; if it is the only URL and the surrounding context does not identify exactly one PR, the Agent asks for the target PR URL rather than guessing.
 
 ### Recommended review input
@@ -87,7 +95,7 @@ For scenario-data PRs, L1 requires two independent structured reviews and L2 add
 The Agent performs these steps in order:
 
 1. Resolve the PR URL and record its current head SHA, base SHA, author, changed files, draft state, CI checks, and mergeability. Review the exact head, not a moving branch name.
-2. Before reading any existing review or PR conversation comment, read from the PR's base branch: `CONTRIBUTING.md`, `docs/review-process.md`, `.github/CODEOWNERS`, the applicable task in `docs/wanted-scenarios.md`, and any linked claim or proposal. Read the PR body, diff, and submitted files, but keep other reviewers' findings unopened until this review is published.
+2. For an initial independent review, before reading any existing review or PR conversation comment, read from the PR's base branch: `CONTRIBUTING.md`, `docs/review-process.md`, `.github/CODEOWNERS`, the applicable task in `docs/wanted-scenarios.md`, and any linked claim or proposal. Read the PR body, diff, and submitted files, but keep other reviewers' findings unopened until this review is published. For an explicitly requested same-reviewer re-review, first resolve the current PR state, then read that reviewer's prior verdict and the contributor responses needed to verify the revision; disclose this and do not claim another independent review.
 3. Classify the PR using [PR type triage](#pr-type-triage), then select review dimensions:
    - scenario data: redaction, cross-evidence consistency, protocol conformance, and restraint of claims;
    - protocol/software/documentation: behavioral correctness, conflicts with authoritative rules, bilingual and link consistency, and executable/security boundaries;
@@ -98,7 +106,8 @@ The Agent performs these steps in order:
 6. Reach an independent verdict under the applicable level. For AI-assisted review, record the Agent product, exact model, and reasoning effort; use `not exposed` rather than guessing.
 7. For an eligible scenario-data delivery, include a points recommendation in `Advisory`: identify the task, candidate value, stacking or non-stacking decision, and evidence boundary. For protocol, documentation, software, or ledger-only PRs, write `points: not_applicable` unless an explicit priced task says otherwise.
 8. Publish the applicable structured verdict comment. Scenario-data reviews use the template in `docs/review-process.md`. A non-data review retains the version, verdict, head, reviewer, date, findings, verification, `Could not verify`, and Advisory fields, but uses the dimensions above instead of manufacturing `n/a` rows in the data-evidence table. An AI reviewer posts a comment only and never uses GitHub's formal **Approve** or **Request changes** action.
-9. After publishing, the Agent may read other verdict comments and report the aggregate gate for this PR type: required independent verdicts, formal CODEOWNER approval, CI, resolved threads, and merge state. A review is redone if the PR head changes.
+9. On re-review after a contributor update, preserve the earlier verdict comment and publish a new structured follow-up after the update. Never edit the earlier comment to change its verdict or findings. The follow-up links the earlier verdict in `Supersedes`, identifies the state re-reviewed (including a PR-description-only update when the head is unchanged), and discloses that the preceding discussion was read. Count it as the same reviewer, not as another independent L1 review.
+10. After publishing, the Agent may read other verdict comments and report the aggregate gate for this PR type: required independent verdicts, formal CODEOWNER approval, CI, resolved threads, and merge state. A review is redone if the PR head changes. For each reviewer, use the latest valid superseding verdict for the reviewed state while retaining earlier comments as history.
 
 For a suspected sensitive disclosure, follow the privacy exception in `docs/review-process.md`: do not quote or locate the value publicly; raise the detail through the private channel.
 
@@ -151,9 +160,11 @@ After this runbook is merged, validate the minimal contract without repeating it
 
 1. Give an open scenario-data PR URL only. The Agent must classify it as data, preserve reviewer independence, use the data dimensions, and publish one correctly versioned verdict.
 2. Give an open protocol/documentation or ledger PR URL only. The Agent must use the non-data dimensions, avoid the data evidence table, avoid claiming an automatic L1 two-review requirement, and mark points `not_applicable`.
-3. Give an eligible merged scenario PR URL that has no ledger row or pending ledger PR. The Agent must calculate once and create exactly one bilingual ledger-update PR.
-4. Give the same merged scenario PR URL again while its ledger PR is open and after it is merged. The outcomes must be `ALREADY_PENDING` and `ALREADY_RECORDED`, with no duplicate row or PR.
-5. Give a merged points-ledger or non-priced documentation PR URL. The outcome must be `NOT_APPLICABLE`, with no repository change.
+3. Give a PR with a published REQUEST_CHANGES verdict, then have the contributor push a new head or update only the PR description. The same reviewer must leave the old verdict unchanged and post a new superseding verdict after the contributor's update; the gate must count that reviewer once.
+4. Give a draft PR URL, first alone and then with an explicit instruction to review it and post a verdict. Both times the Agent must report the draft state and stop, with no comment published; the explicit instruction must not unlock a disclaimered verdict.
+5. Give an eligible merged scenario PR URL that has no ledger row or pending ledger PR. The Agent must calculate once and create exactly one bilingual ledger-update PR.
+6. Give the same merged scenario PR URL again while its ledger PR is open and after it is merged. The outcomes must be `ALREADY_PENDING` and `ALREADY_RECORDED`, with no duplicate row or PR.
+7. Give a merged points-ledger or non-priced documentation PR URL. The outcome must be `NOT_APPLICABLE`, with no repository change.
 
 The bootstrap prompt used to introduce this page is not evidence that the URL-only contract passes; only these post-merge tests are.
 
