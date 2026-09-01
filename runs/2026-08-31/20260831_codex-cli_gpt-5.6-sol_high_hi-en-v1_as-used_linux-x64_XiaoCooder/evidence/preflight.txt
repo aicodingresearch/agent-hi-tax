@@ -1,0 +1,9 @@
+  codex_executable: /usr/local/bin/codex
+  codex_version: codex-cli 0.149.1
+  os_product: Linux
+  os_version: 5.15.0-171-generic
+  os_build: #181-Ubuntu SMP Fri Feb 6 22:44:50 UTC 2026
+  architecture: x86_64
+  captured_at_utc: 2026-08-31T08:01:47Z
+  source: preflight command output
+  public_sanitization: home directory replaced with ~; shell prompt removed
