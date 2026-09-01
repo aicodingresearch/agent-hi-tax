@@ -31,11 +31,13 @@
 
 - **"意见相左"指 Verdict 行不同。** 两份都是 REQUEST_CHANGES、但提出的问题完全不同，不算相左——那是两张清单，贡献者应当把两张都修掉。
 - **每份评审都要写明所针对的 head commit。** force-push 或追加提交之后，受影响的评审针对新的 head 重做；针对旧树写下的判定不自动延续。
+- **draft PR 不评审。** 评审从贡献者把 PR 转为 Ready for review 那一刻开始；明确要求评审一个 draft 也不改变这一点——针对移动中的 head 写下的判定注定要重做，而[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)把自动核验和逐张复看截图放在这次状态切换之前，而不是之后。看 draft 并留下普通评论当然欢迎：那是评审前的沟通，不是 verdict，不计入任何门禁。
+- **复审采用追加评论，不改写 verdict 历史。** 贡献者针对 verdict 推送 commit 或更新 PR 描述后，旧 verdict comment 保持不变；评审者在贡献者更新之后另发一条新的结构化 verdict，即使 head SHA 没有变化也一样。新评论在 `Supersedes` 中链接旧评论，说明复核了什么，并披露已经读过前序讨论。门禁以这条新评论作为该 reviewer 的当前 verdict，但它仍是同一份评审，不得重复计入 L1 独立评审数。旧 verdict 只允许修正不改变结论或 findings 的错字、链接或格式；维护者明确要求修正历史记录时，必须保留编辑说明。
 - **目标响应时间约为 3 个工作日**，与 [SECURITY.md](../SECURITY.zh-CN.md) 里的响应窗口一致。
 
 ## 评审的独立性
 
-两份评审并行派发，各自独立形成结论后再发布。不读 PR 评论区已有的评审意见，是[意见模板](#意见模板)中的一条硬要求，而不是礼节：看过他人意见之后写下的评审必须披露这一点，并且不计入两份独立评审的下限。
+两份评审并行派发，各自独立形成结论后再发布。不读 PR 评论区已有的评审意见，是[意见模板](#意见模板)中的一条硬要求，而不是礼节：看过他人意见之后写下的评审必须披露这一点，并且不计入两份独立评审的下限。明确要求由同一 reviewer 复审时，可以读取该 reviewer 自己的旧 verdict 与贡献者后续回复，因为这一步是在核验修订，不是在新增一份独立评审；follow-up 必须披露这一边界。
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。
 
@@ -51,6 +53,7 @@ Reviewed under: docs/review-process.md @ <template commit>
 Reviewed at head: <commit SHA>
 Reviewer: <human name, or agent product + model + reasoning effort>
 Date: <YYYY-MM-DD>
+Supersedes (re-review only): <prior verdict comment URL>
 
 | Dimension | Result |
 | --- | --- |
@@ -71,10 +74,11 @@ Advisory (optional): <任务与分值判定建议，仅供维护者参考>
 git log -1 --format=%h -- docs/review-process.md
 ```
 
-有四条要求不是可选项：
+有五条要求不是可选项：
 
 - **评审评论的第一行必须声明所依据的评审模板版本**，以上述 commit 标识为准。本页后续改版不追溯已发布的评审：每份评审按它声明的版本裁定，除非维护者明确要求按新版复审。
 - **发布自己的评审之前，不得阅读该 PR 评论区已有的任何评审意见，必须独立得出结论。** 评审基于 PR 的 diff 和文件本身进行，不打开 PR 会话页。如果你确实看到了他人的意见，必须在评论中披露：这份评审不计入两份独立评审的下限，只作参考。
+- **复审必须另发新评论，并写明它 supersede 哪条旧 verdict。** 贡献者已经依据旧 verdict 行动后，不得把旧评论原地改成另一种结论。旧评论保留为贡献者回复的可见原因，新评论作为该 reviewer 的当前 verdict。
 - **AI 协助的评审必须署明 agent 产品、具体模型和 reasoning effort。** 产品没有暴露模型或 effort 时写 `not exposed`，不要臆测。这与本仓对证据字段的诚实规则是同一条口径：拿不到的值就记为拿不到，绝不推断。
 - **"Could not verify" 是必填栏。** 写清你这份评审实际能确立的边界。它至少包含只有贡献者才能核验的那一类主张——例如已发布图片与其脱敏所依据的私有原图之间的对应关系，或者提交之前是否还有被丢弃的 attempts。一份默默略过自身局限的评审是在夸大自己，而这正是本项目要求贡献者避免的那种失误。
 
