@@ -4,7 +4,7 @@ Raw screenshots and rollouts remain outside Git. These SHA-256 values identify t
 
 | Private original | SHA-256 | Public derivative | Treatment |
 | --- | --- | --- | --- |
-| `r1/status.png` | `92d429c4d48e4098b2d56633b108d2e986ee50dc96f8fa967e1b377b4af4847c` | `environment.redacted.png` | Crop plus opaque masks covering the Agents.md, Account, Collaboration mode, and Session values |
+| `r1/status.png` | `92d429c4d48e4098b2d56633b108d2e986ee50dc96f8fa967e1b377b4af4847c` | `environment.redacted.png` | Crop plus opaque masks covering the Agents.md value, account email, Collaboration mode, and Session value; `(Plus)` remains visible |
 | `r2/status.png` | `a0faf692878e227d9faa69fb5de3d7c7b1b5ddb325954ea8216e152b62feff09` | not published | Withheld as redundant scene-level status evidence |
 | `r3/status.png` | `73ade98218aecb46ec0fd6fbaa1353d6d3c0fc7f81a01e80f4e694c3faa66feb` | not published | Withheld as redundant scene-level status evidence |
 | `plan.raw.png` | `82e523e99708dc8715cde9af88fddd7d79be3bd27d643d4c1c1eb8d792251dab` | `plan.png` | Crop retaining only the current Plus plan card |

@@ -27,4 +27,3 @@ Quota: not_measured
 codex --no-alt-screen --model gpt-5.6-sol --config 'model_reasoning_effort="high"' --cd "<RUN_DIR>"
 
 Only the equal-length r1/r2/r3 workspace suffix changes between attempts. No account identifier, email address, Session ID, hostname, private home path, or authentication material is included here.
-

@@ -61,4 +61,3 @@ No explicit hooks were observed. No hook model calls were identified.
 The preflight doctor report warned that the Responses WebSocket was unavailable because the configured proxy URL scheme was unsupported; HTTPS fallback remained available. The same fallback warning appeared consistently in R1, R2, and R3 before each completed reply.
 
 Local paths were replaced with <CODEX_HOME>. No account email, Session ID, hostname, home path, authentication material, or resume command is included.
-

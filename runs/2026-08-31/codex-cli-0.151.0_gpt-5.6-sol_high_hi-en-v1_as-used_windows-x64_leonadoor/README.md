@@ -83,7 +83,7 @@ cli_total_excluding_cached
 
 - [预注册记录](evidence/preregistration.txt)
 - [环境预检转录](evidence/preflight.txt)
-- 一张已遮挡 Agents.md、账号、Collaboration mode 与 Session 值的[场景状态图](evidence/environment.redacted.png)
+- 一张已遮挡 Agents.md、账号邮箱、Collaboration mode 与 Session 值，同时保留 Account 行 `(Plus)` 标签的[场景状态图](evidence/environment.redacted.png)
 - 一张只保留当前 Plus 套餐卡片的[订阅证据裁图](evidence/plan.png)
 - 三次包含精确输入、传输回退警告和完整回复的截图
 - 三次仅保留完整 Token usage 行的截图
@@ -94,7 +94,7 @@ cli_total_excluding_cached
 ## 已知边界
 
 - Quota 预注册为 `not_measured`；截图中偶然出现的百分比不进入结果，也不归因于三次 `hi`。
-- ChatGPT Plus 由运行时 `/status` 和私有套餐页面交叉核验；公开 Plus 裁图不含账号标识，不能独立把套餐卡绑定到执行账号，该绑定由贡献者声明并保留在私有原图中。
+- ChatGPT Plus 由公开运行时 `/status` 图中 Account 行保留的 `(Plus)` 标签与公开套餐页面裁图交叉支持；邮箱和其他账号标识均已遮挡。
 - `as-used` harness 包含全局 `AGENTS.md`、6 个 skills 和 `codegraph` MCP；结果不能分摊到其中某一个组件。
 - 三次 input token 完全一致，且提取到的注入消息除等长工作区后缀外一致；没有在运行前取得完整配置文件的哈希，因此不以配置哈希单独证明场景恒定。
 - 延迟只作本场景描述性元数据，不用于跨产品比较。

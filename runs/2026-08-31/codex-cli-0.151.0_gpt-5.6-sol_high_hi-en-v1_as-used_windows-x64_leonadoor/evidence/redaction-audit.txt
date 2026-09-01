@@ -6,13 +6,14 @@ Generative editing: none
 environment.redacted.png
 - Private source: r1/status.png
 - Source dimensions: 1115 x 628
-- Mask 1 before crop: x=210..539, y=370..411 (Agents.md and Account values)
-- Mask 2 before crop: x=210..709, y=410..461 (Collaboration mode and Session values; overlaps mask 1 at y=410..411)
+- Mask 1 before crop: x=210..539, y=370..391 (Agents.md value)
+- Mask 2 before crop: x=210..449, y=392..411 (Account email only; preserves the `(Plus)` plan label)
+- Mask 3 before crop: x=210..709, y=410..461 (Collaboration mode and Session values; overlaps mask 2 at y=410..411)
 - Fill color: RGB (12, 12, 12), fully opaque terminal background
 - Crop: x=10..749, y=195..524
 - Output dimensions: 740 x 330
 - Verification: visual inspection confirms no account email or Session ID remains visible.
-- Verification: version, model, effort, directory, permission mode, and quota bars remain visible.
+- Verification: version, model, effort, directory, permission mode, the Account line's `(Plus)` plan label, and quota bars remain visible.
 - Evidence boundary: Collaboration mode is intentionally not visible in this public image. It is recorded in evidence/preflight.txt; the unredacted cross-check remains in the registered private original.
 
 plan.png
@@ -49,6 +50,7 @@ attempts/r1/usage.png, attempts/r2/usage.png, attempts/r3/usage.png
 
 Final visual review:
 - Account email is not visible.
+- The Account line's `(Plus)` plan label remains visible on the same in-session status screen.
 - Session and continuation identifiers are not visible.
 - No browser account identifier is visible.
 - Exact prompts, complete replies, transport warnings, token numbers, the unmasked environment fields listed above, and Plus-plan evidence remain visible where applicable.
