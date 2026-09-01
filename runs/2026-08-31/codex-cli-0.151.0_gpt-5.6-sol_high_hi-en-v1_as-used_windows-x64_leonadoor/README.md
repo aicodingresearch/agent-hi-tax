@@ -14,7 +14,7 @@
 - 会话：每次均为 fresh session
 - 工作区：每次均为独立空目录、非 Git 仓库
 - 权限：`Workspace (Ask for approval)`
-- Collaboration mode：`Default`
+- Collaboration mode：`Default`（记录于运行前的[环境预检转录](evidence/preflight.txt)；公开状态图中的该值已遮挡）
 - Profile：`as-used`
 - 全局规则：`<CODEX_HOME>/AGENTS.md`，806 bytes，SHA-256 `a071ae5c25478e84abf40c0b9454d937b3c10786e38890b887445d3426ae4afb`
 - Plugins：没有已安装插件
@@ -83,7 +83,7 @@ cli_total_excluding_cached
 
 - [预注册记录](evidence/preregistration.txt)
 - [环境预检转录](evidence/preflight.txt)
-- 一张已遮挡邮箱与 Session ID 的[场景状态图](evidence/environment.redacted.png)
+- 一张已遮挡 Agents.md、账号、Collaboration mode 与 Session 值的[场景状态图](evidence/environment.redacted.png)
 - 一张只保留当前 Plus 套餐卡片的[订阅证据裁图](evidence/plan.png)
 - 三次包含精确输入、传输回退警告和完整回复的截图
 - 三次仅保留完整 Token usage 行的截图
@@ -94,7 +94,7 @@ cli_total_excluding_cached
 ## 已知边界
 
 - Quota 预注册为 `not_measured`；截图中偶然出现的百分比不进入结果，也不归因于三次 `hi`。
-- ChatGPT Plus 由运行时 `/status` 和私有套餐页面交叉核验；账号标识已从公开图中遮挡。
+- ChatGPT Plus 由运行时 `/status` 和私有套餐页面交叉核验；公开 Plus 裁图不含账号标识，不能独立把套餐卡绑定到执行账号，该绑定由贡献者声明并保留在私有原图中。
 - `as-used` harness 包含全局 `AGENTS.md`、6 个 skills 和 `codegraph` MCP；结果不能分摊到其中某一个组件。
 - 三次 input token 完全一致，且提取到的注入消息除等长工作区后缀外一致；没有在运行前取得完整配置文件的哈希，因此不以配置哈希单独证明场景恒定。
 - 延迟只作本场景描述性元数据，不用于跨产品比较。

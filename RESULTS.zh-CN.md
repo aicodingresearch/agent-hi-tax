@@ -8,9 +8,9 @@
 
 [返回项目首页](README.zh-CN.md) | [查看场景目录](runs/README.zh-CN.md) | [阅读贡献与口径规则](CONTRIBUTING.zh-CN.md)
 
-- 场景数：8
+- 场景数：9
 - Agent 产品数：4
-- 有效 attempts：24
+- 有效 attempts：27
 
 ## 阅读规则
 
@@ -30,8 +30,8 @@
 | [Google Antigravity CLI 1.1.22](runs/2026-08-30/antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-30</sub> | Gemini 3.7 Flash (High)<br><sub>high</sub> | Google AI Pro<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Windows 11 x64</sub> | 3 | 19,570 | 19,638 (19,611–19,709) | 68 (41–139) | — | A · 公开视觉<br><sub>quota: contaminated</sub> |
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-14/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-14</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>官方订阅</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 13,950 | 13,964 (13,963–13,964) | 14 (13–14) | 3.561 (3.308–3.657) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: contaminated</sub> |
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-30/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-29</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Windows 11 x64</sub> | 3 | 15,340 | 15,353 (15,353–15,354) | 13 (13–14) | 1.994 (1.87–2.816) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
-| [OpenAI Codex CLI 0.151.0](runs/2026-08-31/codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_leonadoor/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Windows 11 Professional x64</sub> | 3 | 16,055 | 16,068 (16,068–16,069) | 13 (13–14) | 9.333 (8.872–10.31) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.149.1](runs/2026-08-31/20260831_codex-cli_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_XiaoCooder/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Linux x86_64</sub> | 3 | 19,160 (17,609–19,160) | 19,173 (17,631–19,173) | 13 (13–22) | — | B · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0](runs/2026-08-31/codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_leonadoor/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Windows 11 Professional x64</sub> | 3 | 16,055 | 16,068 (16,068–16,069) | 13 (13–14) | 9.333 (8.872–10.31) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [WorkBuddy 5.3.13](runs/2026-08-15/workbuddy-5.3.13_auto_craft_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | glm-5.2 (R1,R2); deepseek-v4-flash (R3)<br><sub>—</sub> | —<br><sub>官方产品</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 33,043 (32,119–33,193) | 33,479 (32,501–33,824) | 436 (382–631) | 8.47 (7.893–11.628) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: per_attempt_native_credit_verified</sub> |
 
 ## 更新这个页面

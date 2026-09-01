@@ -204,11 +204,12 @@ evidence:
     - "attempts/r3/events.sanitized.jsonl"
   withheld_private_evidence: true
   redactions:
-    - "The public environment image masks the account email and Session ID with fully opaque terminal-background rectangles."
+    - "The public environment image masks the Agents.md, Account, Collaboration mode, and Session values with fully opaque terminal-background rectangles. Collaboration mode is recorded in evidence/preflight.txt; the unredacted cross-check remains private."
     - "The public plan image is a deterministic crop retaining only the Plus plan card and excluding browser chrome."
     - "Each public response image is a deterministic crop retaining the exact hi, transport warning, and complete reply while excluding account and session fields."
     - "Each public usage image is a deterministic crop retaining only the complete Token usage line."
     - "Local configuration paths are represented with <CODEX_HOME>; run paths contain no home-directory identifier."
+    - "The public Plus-plan crop contains no account identifier, so its binding to the run account is contributor-attested and retained only in the private originals."
 
 protocol:
   deviations: []

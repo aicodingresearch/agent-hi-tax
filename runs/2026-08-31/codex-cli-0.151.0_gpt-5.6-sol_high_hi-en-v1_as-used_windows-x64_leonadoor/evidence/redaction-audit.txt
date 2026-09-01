@@ -6,13 +6,14 @@ Generative editing: none
 environment.redacted.png
 - Private source: r1/status.png
 - Source dimensions: 1115 x 628
-- Mask 1 before crop: x=210..539, y=370..411 (account value)
-- Mask 2 before crop: x=210..709, y=410..461 (Session value)
+- Mask 1 before crop: x=210..539, y=370..411 (Agents.md and Account values)
+- Mask 2 before crop: x=210..709, y=410..461 (Collaboration mode and Session values; overlaps mask 1 at y=410..411)
 - Fill color: RGB (12, 12, 12), fully opaque terminal background
 - Crop: x=10..749, y=195..524
 - Output dimensions: 740 x 330
 - Verification: visual inspection confirms no account email or Session ID remains visible.
-- Verification: version, model, effort, directory, permission mode, collaboration mode, and quota bars remain visible.
+- Verification: version, model, effort, directory, permission mode, and quota bars remain visible.
+- Evidence boundary: Collaboration mode is intentionally not visible in this public image. It is recorded in evidence/preflight.txt; the unredacted cross-check remains in the registered private original.
 
 plan.png
 - Private source: plan.raw.png
@@ -44,9 +45,10 @@ attempts/r1/usage.png, attempts/r2/usage.png, attempts/r3/usage.png
 - Crop: x=5..1104, y=388..411
 - Output dimensions: 1100 x 24 each
 - Verification: every image contains only its complete Token usage line; the resume command below it is excluded.
+- Expected duplicate: R1 and R3 are byte-identical because they display the same Token usage line and use the same crop coordinates. Their registered private source images have distinct SHA-256 hashes.
 
 Final visual review:
 - Account email is not visible.
 - Session and continuation identifiers are not visible.
 - No browser account identifier is visible.
-- Exact prompts, complete replies, transport warnings, token numbers, environment fields, and Plus-plan evidence remain visible where applicable.
+- Exact prompts, complete replies, transport warnings, token numbers, the unmasked environment fields listed above, and Plus-plan evidence remain visible where applicable.

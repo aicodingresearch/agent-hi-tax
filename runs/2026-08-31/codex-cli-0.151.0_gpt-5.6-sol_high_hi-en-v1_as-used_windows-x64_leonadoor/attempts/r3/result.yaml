@@ -4,7 +4,7 @@ started_at_utc: "2026-08-31T13:36:07.284Z"
 assistant_message_at_utc: "2026-08-31T13:36:16.156Z"
 usage_recorded_at_utc: "2026-08-31T13:36:16.191Z"
 response_latency_ms: 8872
-latency_method: "assistant-message-event"
+latency_method: "human user-message event to assistant-message event"
 model_observed: "gpt-5.6-sol"
 effort_observed: "high"
 
@@ -48,4 +48,3 @@ evidence:
     quota: "not_provided"
 
 deviations: []
-
