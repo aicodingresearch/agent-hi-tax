@@ -1,0 +1,17 @@
+Agent: OpenAI Codex CLI 0.151.0-alpha.7.2
+Executable: codex
+Operating system: macOS 27.0 (build 26A5421a)
+Architecture: arm64
+Locale: C.UTF-8
+Timezone: Asia/Shanghai
+Authentication: ChatGPT subscription login; exact plan not exposed
+Route: first-party subscription, native protocol
+Requested model: gpt-5.6-sol
+Requested effort: high
+Harness profile: as-used
+Workspace: three separate empty, non-Git directories
+Session state: fresh for each valid run
+Prompt: hi-en-v1, UTF-8, 2 bytes, no leading or trailing whitespace
+Launch arguments held constant: --no-alt-screen, --skip-git-repo-check, --model gpt-5.6-sol, model_reasoning_effort=high, separate --cd directory
+Usage collection: local Codex rollout event log, reduced to target turn fields
+Visual evidence: not captured
