@@ -1,0 +1,54 @@
+attempt: 1
+status: "valid"
+started_at_utc: "not_provided"
+assistant_message_at_utc: "not_provided"
+usage_recorded_at_utc: "not_provided"
+response_latency_ms: "not_provided"
+response_latency_display_seconds: "not_provided"
+latency_method: "not_provided"
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+usage:
+  source: "exit-ui"
+  provider_schema: "openai"
+  input_tokens_including_cached: 19160
+  cached_input_tokens: 11008
+  non_cached_input_tokens: 8152
+  cli_total_excluding_cached: 8165
+  cli_total_source: "exit-ui"
+  cache_write_input_tokens: "not_exposed"
+  model_context_window_event: "not_exposed"
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_applicable"
+  output_tokens: 13
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: 19173
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: "not_exposed"
+  iterations_observation: "not_exposed"
+  web_search_requests: "not_exposed"
+  web_fetch_requests: "not_exposed"
+response:
+  file: "response.txt"
+  exact_text_sha256: "a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4"
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "usage.png"
+  sanitized_events: "not_provided"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "not_provided"
+    quota: "not_measured"
+deviations: []
