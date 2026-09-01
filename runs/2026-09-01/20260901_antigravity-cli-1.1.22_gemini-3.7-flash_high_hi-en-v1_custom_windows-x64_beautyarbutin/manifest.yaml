@@ -1,0 +1,152 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260901_antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-09-01T10:30:42.721Z"
+  captured_to_utc: "pending"
+  planned_repetitions: 3
+  valid_repetitions: 0
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "Google Antigravity CLI"
+  vendor: "Google"
+  distribution: "first-party"
+  surface: "cli"
+  version: "1.1.22"
+  build: "not_exposed"
+  executable: "agy"
+
+environment:
+  os: "Windows 11"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "Google AI Pro"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "private_evidence"
+
+route:
+  category: "first-party-subscription"
+  provider: "Google"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "gemini-3.7-flash-high"
+  observed: "Gemini 3.7 Flash (High)"
+  observation_method: "startup UI and status-line JSON"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "interactive-tui"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "custom"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "agy-customizations (built-in)"
+    - "antigravity-guide (built-in)"
+    - "generative_ui (built-in)"
+    - "migrate-workflows (built-in)"
+    - "permissioned-github (built-in)"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "no user hooks configured; one interactive turn per fresh process"
+  network_mode: "enabled"
+  permission_mode: "product default request-review posture; no explicit toolPermission key"
+  filesystem_profile_observed: "product default"
+  settings_sources:
+    - "<USERPROFILE>/.gemini/antigravity-cli/settings.json (SHA-256 78e5f45ff1c8c96ee087cee6bad1aa5af0d1d08bd82f14751e104774213de9c7)"
+    - "Antigravity CLI built-in defaults"
+    - "passive documented status-line command <EVIDENCE_ROOT>/capture-statusline.ps1 (SHA-256 e04087dc9110807ee89d05a121c1dd59a7b59af0d0a936e34532ac2687de06f5)"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "status-line context_window.current_usage.input_tokens"
+  secondary_metric: "status-line context_window.current_usage.output_tokens"
+  native_input_definition: "current_usage.input_tokens; cache-read and cache-creation fields retained separately"
+  total_input_definition: "context_window.total_input_tokens"
+  context_total_definition: "context_window.total_input_tokens + context_window.total_output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "not_exposed in the interactive status-line payload"
+  transcript_extraction: "status-line JSON plus public response screenshots"
+  transcript_deduplication: "one target user message and one final assistant response per fresh process"
+
+aggregate: {}
+
+quota:
+  attribution: "contaminated"
+  notes: "The account-level meter is shared across the alternating CLI/Desktop pair; snapshots are retained but no per-attempt quota delta is attributed solely to hi."
+
+evidence:
+  package_level: "C"
+  visual_evidence_access: "private_evidence"
+  field_statuses:
+    agent_version: "private_evidence"
+    subscription_plan: "private_evidence"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "private_evidence"
+    reasoning_effort: "private_evidence"
+    harness: "private_evidence"
+    environment: "private_evidence"
+    workspace_and_session: "private_evidence"
+    skills_and_hooks: "private_evidence"
+    mcp_plugins_and_hooks: "private_evidence"
+  public_files:
+    - "evidence/preregistration.txt"
+  withheld_private_evidence: true
+  redactions:
+    - "Account identifiers, local absolute paths, session IDs, and authentication material are omitted."
+    - "Raw status-line payloads remain outside Git; later public derivatives use a safe-field allowlist."
+
+comparison:
+  status: "controlled"
+  reference_scenario: "20260901_antigravity-desktop-2.11.0_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
+  confounder: "not_applicable"
+  notes: "T-35 paired surface study: vendor, account, requested model/effort, OS, prompt, empty workspace, and review posture are held fixed; client surface is the intended variable. Desktop token usage is not exposed by an accepted official interface, so no exact cross-surface token delta will be claimed."
+
+protocol:
+  deviations: []
+  notes: "T-35 claim #42. Pair order is CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3, Desktop R3. The contributor performs all experiment-critical interactions and screenshots manually."

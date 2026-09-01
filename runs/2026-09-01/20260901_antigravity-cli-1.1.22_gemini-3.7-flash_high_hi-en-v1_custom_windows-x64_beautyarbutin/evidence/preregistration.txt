@@ -1,0 +1,74 @@
+Preregistered at UTC: 2026-09-01T10:30:42.721Z
+Task: T-35, CLI side of the paired surface study
+Claim issue: aicodingresearch/agent-hi-tax#42
+
+No formal hi request for this T-35 pair had been sent at the time of this
+preregistration. Earlier T-24 data are not reused.
+
+## Frozen product and environment
+
+Product: Google Antigravity CLI
+Version: 1.1.22
+Surface: interactive CLI TUI
+Model: Gemini 3.7 Flash
+Reasoning effort: high
+Account and subscription: same Google AI Pro account used by the paired desktop side
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Locale: zh-CN
+Time zone: Asia/Shanghai
+Harness profile: custom (as-used CLI plus passive documented status-line measurement)
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+Planned attempts: 3 sequential valid attempts
+Prompt: hi-en-v1, exact UTF-8 bytes 68 69, typed once per attempt
+
+## Frozen CLI harness and measurement
+
+CLI settings SHA-256: 78e5f45ff1c8c96ee087cee6bad1aa5af0d1d08bd82f14751e104774213de9c7
+Status-line capture script SHA-256: e04087dc9110807ee89d05a121c1dd59a7b59af0d0a936e34532ac2687de06f5
+Status-line capture scope: only the exact CLI r1, r2, and r3 workspace paths
+Telemetry: disabled
+Model setting: Gemini 3.7 Flash (High)
+MCP servers: none configured
+Imported plugins: none
+User rules, user skills, hooks, and instruction files: none identified
+Known built-in model-invocable skills:
+- agy-customizations
+- antigravity-guide
+- generative_ui
+- migrate-workflows
+- permissioned-github
+Built-in tool definitions: not_exposed
+Permission posture: product default request-review; no explicit toolPermission key
+Network: enabled
+
+The documented status-line command passively receives product-native state. It
+makes no network or model request, cannot modify the prompt/model context, and
+writes unmodified private payloads only outside Git. Public derivatives will
+retain only allowlisted token, model, plan, and quota fields.
+
+## Fixed paired procedure
+
+Pair order is fixed as CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3,
+Desktop R3. For each CLI attempt, launch a new `agy` process from that attempt's
+empty directory. Confirm model/effort and the zero-token status line before the
+prompt. Type exactly `hi` once, wait for the final response, capture the response
+with the token summary, open `/usage`, capture the native quota display, and exit
+without resuming or continuing the conversation.
+
+Only the attempt directory and the intended surface change. Any model, effort,
+settings hash, script hash, permission posture, built-in inventory, plugin, MCP,
+skill, hook, account, or prompt change invalidates the affected attempt and
+requires a replacement preregistration before continuing.
+
+## Frozen measurement scope
+
+The official CLI status-line JSON provides current input/output/cache tokens and
+context-window total input/output tokens. Response latency and thinking tokens
+remain not_exposed. Quota is account-scoped and the two surfaces are deliberately
+alternated, so quota attribution is contaminated; no percentage-point change is
+converted into tokens, credits, or money.
+
+The desktop side has no accepted official per-conversation token interface.
+Opaque SQLite/Protobuf decoding is excluded by repository policy, so the paired
+analysis will not claim an exact Desktop-vs-CLI token delta.

@@ -1,0 +1,15 @@
+# Run manually in PowerShell. Replace only <CLI_RUN_DIR> for r1, r2, and r3.
+# Frozen CLI settings SHA-256:
+# 78e5f45ff1c8c96ee087cee6bad1aa5af0d1d08bd82f14751e104774213de9c7
+# Frozen capture script SHA-256:
+# e04087dc9110807ee89d05a121c1dd59a7b59af0d0a936e34532ac2687de06f5
+Set-Location -LiteralPath "<CLI_RUN_DIR>"
+agy
+
+# In the interactive TUI:
+# 1. Confirm Gemini 3.7 Flash and high.
+# 2. Confirm the status line reports total-in=0 and total-out=0.
+# 3. Type the exact two characters hi once and submit.
+# 4. Wait for the final reply and capture it with the token summary.
+# 5. Open /usage and capture the native quota display.
+# 6. Exit; do not resume or continue the conversation.
