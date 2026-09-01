@@ -1,0 +1,63 @@
+Captured before the formal runs at UTC: 2026-08-31T13:22:18Z
+
+## Codex CLI
+
+Executable: codex (sanitized command name)
+Version: codex-cli 0.151.0
+Authentication: Logged in using ChatGPT
+
+## Operating system
+
+Caption: Microsoft Windows 11 Professional, Chinese edition
+Version: 10.0.26200
+Build number: 26200
+Architecture: 64-bit / x64
+Locale: zh-CN
+IANA time zone used in manifest: Asia/Shanghai
+
+## Fixed configuration
+
+Global config source: <CODEX_HOME>/config.toml
+Workspace config: not present
+Configured model: gpt-5.6-sol
+Configured reasoning effort: high
+Harness profile: as-used
+Session state: fresh
+Workspace type: independent empty non-Git directory per attempt
+Permission mode observed in every pre-prompt /status: Workspace (Ask for approval)
+Collaboration mode observed in every pre-prompt /status: Default
+
+## Global instruction file
+
+Path: <CODEX_HOME>/AGENTS.md
+Size: 806 bytes
+SHA-256: a071ae5c25478e84abf40c0b9454d937b3c10786e38890b887445d3426ae4afb
+
+The retained rollouts show the same instruction content in all three attempts, followed by attempt-specific environment context whose r1/r2/r3 paths have equal length.
+
+## Enabled MCP servers
+
+- codegraph
+
+## Installed plugins
+
+No installed plugins were reported by `codex plugin list`.
+
+## Skills observed in the injected harness
+
+- imagegen
+- openai-docs
+- plugin-creator
+- skill-creator
+- skill-installer
+- plugin-management:plugin-management
+
+## Hooks
+
+No explicit hooks were observed. No hook model calls were identified.
+
+## Network observation
+
+The preflight doctor report warned that the Responses WebSocket was unavailable because the configured proxy URL scheme was unsupported; HTTPS fallback remained available. The same fallback warning appeared consistently in R1, R2, and R3 before each completed reply.
+
+Local paths were replaced with <CODEX_HOME>. No account email, Session ID, hostname, home path, authentication material, or resume command is included.
