@@ -1,0 +1,20 @@
+Extraction method
+codex --model gpt-5.6-sol --config 'model_reasoning_effort="high"' debug prompt-input
+
+The diagnostic was run from the R1 empty workspace before the target prompt.
+Only categorical harness facts were retained. The complete prompt input, local
+paths, plugin descriptions, and account data were not retained.
+
+Installed plugins: 0
+Configured MCP servers: 0
+Configured hooks: 0
+Recommended plugin catalog entries injected into context: 50
+Apps instructions injected into context: true
+Environment context injected: true
+Sandbox mode: workspace-write
+Permission profile: managed
+Filesystem profile: restricted
+Network mode: restricted
+
+The recommended plugin catalog and apps instructions are model-visible context,
+but they do not mean that those plugins or apps are installed or enabled.

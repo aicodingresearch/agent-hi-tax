@@ -1,0 +1,16 @@
+Task: T-01 independent replication
+Preregistered at: 2026-08-31T14:29:45Z
+Agent: OpenAI Codex CLI 0.151.0
+Requested model: gpt-5.6-sol
+Requested reasoning effort: high
+Route: first-party ChatGPT subscription
+Subscription: ChatGPT Plus
+Session state: fresh
+Workspace: empty non-Git directory, one per attempt
+Harness profile: as-used
+Prompt case: hi-en-v1
+Planned repetitions: 3 sequential valid attempts
+Quota measurement: not measured
+
+The launch command is fixed before R1. Model, effort, route, permission mode,
+and observed harness state must remain consistent across all valid attempts.

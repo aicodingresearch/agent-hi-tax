@@ -1,0 +1,38 @@
+Captured at UTC: 2026-08-31T14:29:45Z
+
+command -v codex
+codex
+
+codex --version
+codex-cli 0.151.0
+
+uname -s
+Linux
+
+uname -r
+6.6.87.2-microsoft-standard-WSL2
+
+uname -m
+x86_64
+
+locale
+LANG=C.UTF-8
+
+timezone
+Asia/Singapore
+
+codex mcp list
+No MCP servers configured.
+
+codex plugin list
+No installed plugins observed.
+
+Workspace instruction files
+No AGENTS.md or CLAUDE.md observed in the tested empty workspaces.
+
+Known configuration sources
+<CODEX_HOME>/config.toml
+CLI launch arguments
+
+Preflight values were transcribed and sanitized before entering Git. Absolute
+executable and configuration paths are reduced to command names or placeholders.
