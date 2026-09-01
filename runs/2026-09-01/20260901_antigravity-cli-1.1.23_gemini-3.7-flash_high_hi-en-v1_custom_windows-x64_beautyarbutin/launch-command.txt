@@ -1,0 +1,19 @@
+# Run manually in PowerShell. Replace only <CLI_RUN_DIR> for r1, r2, and r3.
+# Frozen Antigravity CLI version: 1.1.23
+# Frozen executable SHA-256:
+# bffa9c1227a517d0dbd7ddfc71a64bf6473c52fab95369cabe09ff42bd9b3b3e
+# Frozen CLI settings SHA-256:
+# 78e5f45ff1c8c96ee087cee6bad1aa5af0d1d08bd82f14751e104774213de9c7
+# Frozen capture script SHA-256:
+# e04087dc9110807ee89d05a121c1dd59a7b59af0d0a936e34532ac2687de06f5
+Set-Location -LiteralPath "<CLI_RUN_DIR>"
+agy
+
+# In the interactive TUI:
+# 1. Confirm version 1.1.23, Gemini 3.7 Flash, and high.
+# 2. Confirm the displayed directory is the intended CLI r1/r2/r3 directory.
+# 3. Confirm the status line reports total-in=0 and total-out=0.
+# 4. Type the exact two characters hi once and submit.
+# 5. Wait for the final reply and capture it with the token summary.
+# 6. Open /usage and capture the native quota display.
+# 7. Exit; do not resume or continue the conversation.
