@@ -8,9 +8,9 @@
 
 [Project home](README.md) | [Scenario catalog](runs/README.md) | [Contribution & semantics rules](CONTRIBUTING.md)
 
-- Scenarios: 8
-- Agent products: 4
-- Valid attempts: 24
+- Scenarios: 9
+- Agent products: 5
+- Valid attempts: 27
 
 ## How to read this table
 
@@ -27,6 +27,7 @@
 | [Claude Code 2.1.119](runs/2026-08-30/claude-code-2.1.119_glm-5.2_high_hi-en-v1_as-used_windows-x64_ahmedalattar416/README.md)<br><sub>2026-08-30</sub> | GLM-5.2<br><sub>high</sub> | 智谱开放平台 API pay-as-you-go<br><sub>third-party gateway</sub> | as-used · fresh<br><sub>Windows x86_64</sub><br><sub>confounded</sub> | 3 | 23,552 | 23,563 (23,563–23,564) | 11 (11–12) | 5 s<br><sub>UI whole seconds</sub> | B · public visuals<br><sub>quota: not_measured</sub> |
 | [Claude Code 2.1.220](runs/2026-08-15/claude-code-2.1.220_claude-fable-5_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | claude-fable-5<br><sub>high</sub> | Claude Max<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 25,008 (25,008–25,443) | 25,045 (25,045–25,473) | 37 (30–37) | 6 (5–8) s<br><sub>UI whole seconds</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
 | [Claude Code 2.1.220](runs/2026-08-15/claude-code-2.1.220_claude-opus-5_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | claude-opus-5<br><sub>high</sub> | Claude Max<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>mode-confounded comparison</sub> | 3 | 24,666 (24,600–24,837) | 24,679 (24,613–24,851) | 13 (13–14) | 5 (4–5) s<br><sub>UI whole seconds</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
+| [Google Antigravity 2.0 Desktop 2.11.0](runs/2026-09-01/20260901_antigravity-desktop-2.11.0_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin/README.md)<br><sub>2026-09-01</sub> | Gemini 3.7 Flash High<br><sub>high</sub> | Google AI Pro<br><sub>official subscription</sub> | custom · fresh<br><sub>Windows 11 x64</sub><br><sub>other</sub> | 3 | — | — | — | — | B · public visuals<br><sub>quota: contaminated</sub> |
 | [Google Antigravity CLI 1.1.22](runs/2026-08-30/antigravity-cli-1.1.22_gemini-3.7-flash_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-30</sub> | Gemini 3.7 Flash (High)<br><sub>high</sub> | Google AI Pro<br><sub>official subscription</sub> | as-used · fresh<br><sub>Windows 11 x64</sub> | 3 | 19,570 | 19,638 (19,611–19,709) | 68 (41–139) | — | A · public visuals<br><sub>quota: contaminated</sub> |
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-14/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-14</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 13,950 | 13,964 (13,963–13,964) | 14 (13–14) | 3.561 (3.308–3.657) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: contaminated</sub> |
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-30/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-29</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Windows 11 x64</sub> | 3 | 15,340 | 15,353 (15,353–15,354) | 13 (13–14) | 1.994 (1.87–2.816) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
