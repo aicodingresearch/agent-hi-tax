@@ -1,0 +1,234 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260902_workbuddy-5.3.8_auto_craft_hi-en-v1_as-used_windows-x64_daomuzhe23723"
+  captured_from_utc: "2026-09-02T06:21:27.902Z"
+  captured_to_utc: "2026-09-02T06:45:51.841Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@daomuzhe23723"
+
+agent:
+  product: "WorkBuddy"
+  vendor: "Tencent"
+  distribution: "first-party"
+  surface: "desktop-ide"
+  version: "5.3.8"
+  build: "5.3.8"
+  executable: "D:\\workbuddy\\WorkBuddy.exe"
+
+environment:
+  os: "Windows 11"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "first-party-product-login"
+  subscription_plan: "not_provided"
+  usage_multiplier: "not_provided"
+  billing_mode: "workbuddy-credit"
+  quota_shared_scope: "account"
+  plan_evidence_status: "not_provided"
+
+route:
+  category: "first-party-product"
+  provider: "Tencent WorkBuddy"
+  protocol: "native-auto-router"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic-observed"
+  fallback_policy: "automatic; exact routing policy not exposed"
+
+model:
+  requested: "Auto"
+  observed: "deepseek-v4-flash (R1,R2,R3)"
+  observation_method: "public response screenshots plus providerData.rawUsage from local WorkBuddy JSONL"
+
+reasoning:
+  effort_requested: "not_exposed"
+  effort_observed: "not_exposed"
+  mode: "craft"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: true
+  instruction_files: "global WorkBuddy identity, memory, and instruction context not exposed"
+  built_in_tools: "available in the product; exact per-request tool schema not exposed"
+  plugins_enabled:
+    - "weixinpay@workbuddy-builtin"
+    - "tencent-docs-plugin@workbuddy-builtin"
+    - "tencent-pptx@workbuddy-builtin"
+    - "agent-browser@codebuddy-plugins-official"
+    - "find-skills@codebuddy-plugins-official"
+  skills_enabled: "WorkBuddy skill surface available; exact per-request injection not exposed"
+  mcp_servers_enabled: "not_exposed"
+  hooks_enabled:
+    - "no user-configured WorkBuddy hook observed in settings; plugin-internal hooks not exposed"
+  external_observers:
+    - "local read-only WorkBuddy session acts as watcher: scans JSONL and SQLite after each completion and reports metrics without making any additional model call"
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "one provider message call and zero tool calls per attempt; verified in JSONL"
+  network_mode: "WorkBuddy-managed"
+  permission_mode: "fullAccess"
+  ui_scene: "日常办公"
+  native_mode: "craft"
+  filesystem_profile_observed: "not_exposed"
+  settings_sources:
+    - "WorkBuddy user settings"
+    - "WorkBuddy application defaults"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "manual_gui"
+
+measurement:
+  primary_metric: "input_tokens_including_cached"
+  secondary_metrics:
+    - "context_total_tokens"
+    - "workbuddy_credit"
+    - "actual_routed_model"
+  native_input_definition: "providerData.rawUsage.prompt_tokens; cached_input_tokens is a subset"
+  non_cached_input_definition: "prompt_tokens minus prompt_cache_hit_tokens"
+  context_total_definition: "prompt_tokens plus completion_tokens"
+  reasoning_definition: "completion_thinking_tokens is a subset of completion_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "WorkBuddy JSONL user and final assistant event timestamps"
+  transcript_extraction: "local read-only watcher parsed the fresh-session JSONL after completion"
+  transcript_deduplication: "deduplicate native calls by private providerData.messageId"
+  credit_crosscheck: "sum rawUsage.credit and compare with matching SQLite session_usage.credit_json entries"
+
+aggregate:
+  actual_models:
+    values: ["deepseek-v4-flash", "deepseek-v4-flash", "deepseek-v4-flash"]
+    counts:
+      deepseek-v4-flash: 3
+  input_tokens_including_cached:
+    values: [35981, 35981, 36465]
+    min: 35981
+    median: 35981
+    max: 36465
+    mean: 36142.333333
+  cached_input_tokens:
+    values: [0, 896, 896]
+    min: 0
+    median: 896
+    max: 896
+    mean: 597.333333
+  non_cached_input_tokens:
+    values: [35981, 35085, 35569]
+    min: 35085
+    median: 35569
+    max: 35981
+    mean: 35545.0
+  output_tokens:
+    values: [646, 404, 712]
+    min: 404
+    median: 646
+    max: 712
+    mean: 587.333333
+  reasoning_output_tokens:
+    values: [482, 263, 544]
+    min: 263
+    median: 482
+    max: 544
+    mean: 429.666667
+  context_total_tokens:
+    values: [36627, 36385, 37177]
+    min: 36385
+    median: 36627
+    max: 37177
+    mean: 36729.666667
+  response_latency_ms:
+    values: [10433, 7777, 10413]
+    min: 7777
+    median: 10413
+    max: 10433
+    mean: 9541.0
+  workbuddy_credit:
+    values: [3.25, 3.11, 3.23]
+    min: 3.11
+    median: 3.23
+    max: 3.25
+    mean: 3.196667
+
+quota:
+  attribution: "per_attempt_native_credit_verified"
+  notes: "Each attempt exposes exact WorkBuddy credit; only per-attempt credit is verified. Account-level balance deltas are contaminated by concurrent WorkBuddy usage (including the preparation and watcher conversation on the same account) and are NOT attributed."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "not_provided"
+    usage_multiplier: "not_provided"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "not_exposed"
+    environment: "verified"
+    workspace_and_session: "verified"
+    mcp_plugins_and_hooks: "self_reported"
+  public_files:
+    - "evidence/environment.redacted.png"
+    - "evidence/preflight.txt"
+    - "evidence/harness.txt"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/start.png"
+    - "attempts/r1/response.png"
+    - "attempts/r2/start.png"
+    - "attempts/r2/response.png"
+    - "attempts/r3/start.png"
+    - "attempts/r3/response.png"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions:
+    - "Environment screenshot is published as environment.redacted.png; the original contains no username, hostname, or home-path prefix, so the public copy is an unchanged pixel-exact duplicate."
+    - "No attempt screenshot or response text required redaction for usernames, emails, paths, or session identifiers."
+    - "Decoded RGB pixels outside declared rectangles and all alpha pixels match the private originals exactly; with zero declared rectangles, this is a pixel-exact identity."
+    - "Public events omit message IDs, request IDs, session IDs, user IDs, usernames, hostnames, and absolute paths."
+
+comparison:
+  status: "confounded"
+  reference_scenario: "20260815_workbuddy-5.3.13_auto_craft_hi-en-v1_as-used_mac-arm64"
+  confounder: "platform (windows-x64 vs mac-arm64) and product version (5.3.8 vs 5.3.13)"
+  notes: "This retest changes two variables at once relative to the reference sample; any numeric difference must not be attributed to a single cause. It is also the first Windows WorkBuddy package (relevant to T-16)."
+
+protocol:
+  deviations:
+    - "WorkBuddy is a desktop IDE: terminal commands prepared and verified empty directories, while folder selection, mode confirmation, and prompt submission were manual GUI actions."
+    - "The fixed requested model Auto routed all three attempts to deepseek-v4-flash; actual model is therefore an attempt result, not a fixed underlying-model scenario variable."
+    - "The UI label 日常办公 and native SQLite mode craft describe different product layers and are both retained."
+    - "Version 5.3.8 differs from the 5.3.13 reference sample: SQLite session_usage.credit_json keys are conversationRequestId (not messageId), and completed sessions are not soft-deleted after GUI workspace switching on 5.3.8."
+    - "Input context drifted across attempts (+484 tokens in R3); this is attributed to account-level memory/profile injection between attempts, not to a protocol violation."
+    - "Global context was observed in replies: R2 referenced the workspace basename, and R3 restated the user's long-term memory profile (resume parsing, iFLYTEK competition, CBDB research)."
+    - "Subscription plan and account-level quota were not captured; exact per-attempt WorkBuddy credit remains verified."
+    - "The external watcher is an observer, not a WorkBuddy hook; it reads completed records and makes no model call."
+  notes: "This package measures the WorkBuddy Auto routing harness on Windows 5.3.8, not a controlled single-model benchmark."

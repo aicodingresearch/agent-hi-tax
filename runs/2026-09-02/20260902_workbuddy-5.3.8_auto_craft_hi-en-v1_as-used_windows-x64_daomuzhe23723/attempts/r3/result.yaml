@@ -1,0 +1,74 @@
+attempt: "r3"
+status: "valid"
+started_at_utc: "2026-09-02T06:45:41.428Z"
+assistant_message_at_utc: "2026-09-02T06:45:51.841Z"
+usage_recorded_at_utc: "2026-09-02T06:45:51.839Z"
+response_latency_ms: 10413
+response_latency_display_seconds: 10
+latency_method: "workbuddy-jsonl-event-timestamps"
+
+model_requested: "Auto"
+model_observed: "deepseek-v4-flash"
+effort_observed: "not_exposed"
+# 5.3.8 sessions 字段在会话结束后异步最终化；最终态 mode='craft'（工作模式）/ model='auto'（requested）。
+mode_observed: "craft"
+
+usage:
+  source: "workbuddy-providerData.rawUsage-plus-sqlite-crosscheck"
+  provider_schema: "workbuddy"
+  input_tokens_including_cached: 36465
+  cached_input_tokens: 896
+  non_cached_input_tokens: 35569
+  cli_total_excluding_cached: "not_applicable"
+  cache_write_input_tokens: 0
+  model_context_window_event: "not_exposed"
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  total_input_tokens: 36465
+  output_tokens: 712
+  reasoning_output_tokens: 544
+  non_reasoning_output_tokens: 168
+  context_total_tokens: 37177
+  provider_total_tokens: 37177
+  api_calls: 1
+  workbuddy_credit: 3.23
+  credit_unit: "workbuddy_credit"
+  credit_crosscheck: "matched"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "17f8e3c3f46e2dfbb86b37750ca492498b74ceb04439a36695833378e1bf618f"
+  private_exact_text_sha256: "17f8e3c3f46e2dfbb86b37750ca492498b74ceb04439a36695833378e1bf618f"
+  redacted: false
+
+activity:
+  tool_calls: 0
+  web_used: false
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "per_attempt_native_credit_verified"
+
+evidence:
+  # 以下文件由人工截图后放入本目录（待填：start.png / response.png 尚未放置）
+  start_screenshot: "start.png"
+  response_screenshot: "response.png"
+  usage_screenshot: "response.png"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    credit: "verified"
+    quota: "not_provided"
+
+deviations:
+  - note: "输入上下文跨 attempt 非恒定：prompt_tokens 由 R1/R2 的 35981 增至 36465（+484），同账号记忆系统在三次 attempt 之间注入了更新的 profile/记忆内容，属真实环境噪声；非 protocol violation，已照实记录。"
+  - note: "三次 assistant 输出互不相同（sha256 各异），R3 ai-title='开始新的对话'、回复 281 字符，命中身份设定对话路径；模型行为随机性 + 注入差异，符合 Auto 复测预期。"
+  - note: "5.3.8 session_usage.credit_json key = conversationRequestId，与 JSONL providerData.conversationRequestId 对应（c89eb2b3...）；credit=3.23 与 SQLite 求和 3.23 一致。"

@@ -1,0 +1,24 @@
+context_profile=as-used
+surface=desktop-ide
+prompt_submit_method=manual_gui
+requested_model=Auto
+ui_scene=日常办公
+native_mode=craft
+permission_mode=fullAccess
+use_sandbox_cli=1
+session_state=fresh
+workspace_type=independent-empty-directory
+prior_human_chat_turns=0
+mcp_servers=not_exposed
+skills=available-but-exact-per-request-injection-not-exposed
+user_configured_workbuddy_hooks=not_observed
+plugin_internal_hooks=not_exposed
+external_observer=local-read-only-workbuddy-watcher
+external_observer_model_calls=0
+environment_context_injected=true
+
+Global context observations:
+- R2 referenced the workspace basename (agent-hi-tax-lab) even though the directory was empty.
+- R3 restated the user's long-term memory profile (resume PDF parsing, iFLYTEK competition, CBDB research).
+
+The external observer scans completed WorkBuddy JSONL and SQLite records after the model response, records native usage, and sends a notification. It does not call a language model and is not a WorkBuddy Stop hook.
