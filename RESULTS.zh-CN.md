@@ -38,11 +38,11 @@
 
 ## 更新这个页面
 
-本页由场景包自动生成。新增或修改场景后运行：
+本页由场景包生成，并在场景合并后于 main 分支上重建。不要手工编辑，也不要放进场景 Pull Request。重建命令：
 
 ```sh
 python3 scripts/build-results-index.py
 ./scripts/verify-all.sh
 ```
 
-Pull Request 会检查本页是否与全部场景包保持一致。
+改动本页的 Pull Request 会被检查，以保证它与全部场景包一致。
