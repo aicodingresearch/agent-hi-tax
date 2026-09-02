@@ -19,7 +19,7 @@ Agent Hi Tax 是一个轻松但尽量可复核的观察项目。它不是模型�
 3. 先固定场景和 launch command，再顺序执行至少 3 次 fresh attempt；不要边测边改模型、effort、权限模式或插件状态。
 4. 原始截图和原始 session/transcript 先留在 Git 仓库外；只有脱敏副本和最小机器事件可以进入 PR。
 5. 复制[场景模板](templates/scenario-manifest.yaml)、[单次模板](templates/attempt-result.yaml)，并参考与自己产品最接近的[六个已公开场景包](runs/README.zh-CN.md)。
-6. 生成哈希，运行 `./scripts/verify-all.sh`，再使用仓库的 Pull Request 模板提交。
+6. 生成哈希，运行 `./scripts/verify-packages.sh`，再使用仓库的 Pull Request 模板提交。
 
 不必为了追求 Level A 而解析不理解的内部日志。只有截图时可以诚实提交 Level B；字段拿不到就使用固定缺失状态。未经脱敏的原图、账号信息和 session 标识绝不能先上传、再等待维护者删除。
 
@@ -220,11 +220,12 @@ find . -type f ! -name SHA256SUMS -print0 \
 cd -
 
 ./scripts/verify-run-package.sh runs/YYYY-MM-DD/<scenario-id>
-python3 scripts/build-results-index.py
-./scripts/verify-all.sh
+./scripts/verify-packages.sh
 ```
 
-Linux 没有 `shasum` 时可使用 `sha256sum`。任何公开文件变化后都要重新生成哈希。汇总页由全部场景的 manifest 与 `RESULTS.csv` 自动生成，一条命令同时产出英文 [RESULTS.md](RESULTS.md) 与中文 [RESULTS.zh-CN.md](RESULTS.zh-CN.md)；新增或修改场景后必须重建，Pull Request 会用 `verify-all.sh` 检查两者是否漂移。
+Linux 没有 `shasum` 时可使用 `sha256sum`。任何公开文件变化后都要重新生成哈希。
+
+汇总页由全部场景的 manifest 与 `RESULTS.csv` 生成，英文 [RESULTS.md](RESULTS.md) 与中文 [RESULTS.zh-CN.md](RESULTS.zh-CN.md) 各一份。**不要把它们放进场景 Pull Request。** 场景合并后由 `main` 上重建，所以不动它们才是对的——这样两个同期提交的贡献也不会在同一个生成文件上撞车。Pull Request 检查会替你运行 `verify-packages.sh`，并在 job summary 里列出你的场景将给索引新增哪几行。
 
 ## Token 与额度口径
 
@@ -372,6 +373,8 @@ runs/YYYY-MM-DD/<scenario-id>/
 - 校验脚本输出；
 - 为什么共享额度可归因，或为什么被标为 contaminated。
 
+每个场景 PR 都必须用 `Closes #123` 这样的关闭关键字关联认领 Issue。PR 合并到默认分支后，GitHub 会自动关闭该认领。未合并而关闭 PR 不代表场景已经完成：如果准备提交替代 PR，应保持认领 Issue 开启，并在关闭旧 PR 前关联替代 PR；如果明确放弃贡献，则应简要说明原因并关闭认领 Issue。
+
 仓库的 [Pull Request 模板](.github/pull_request_template.md)已经包含这些字段和提交前检查项。建议先开 Draft PR，等自动验证通过并完成截图目视检查后再标记 Ready for review。自动验证只能检查结构、算术、哈希和文本隐私线索，不能证明截图遮挡正确，也不能替代人工核对。
 
 审核重点是内部一致性、字段状态、脱敏和是否避免过度结论，不是要求每个产品都暴露完全相同的数据。
@@ -389,7 +392,7 @@ runs/YYYY-MM-DD/<scenario-id>/
 - [ ] 缺失或冲突字段已使用固定状态；
 - [ ] 公开文件没有凭据、邮箱、绝对 home 路径或会话恢复标识；
 - [ ] `SHA256SUMS` 是最后生成的；
-- [ ] 已重建根级索引（`RESULTS.md` 与 `RESULTS.zh-CN.md`）；
-- [ ] `verify-all.sh` 通过。
+- [ ] 生成的根级索引（`RESULTS.md` 与 `RESULTS.zh-CN.md`）未被改动；
+- [ ] `verify-packages.sh` 通过。
 
 重复测试非常欢迎。不同贡献者、不同设备、不同订阅和不同时间的独立复测，正是这个项目逐渐变得有价值的方式。

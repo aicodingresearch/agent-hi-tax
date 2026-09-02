@@ -10,10 +10,51 @@ permissions:
   contents: read
 
 jobs:
+  # The job name is the required status check on main, so it always runs and
+  # always reaches a conclusion. Whether the generated index has to match is
+  # decided per change set inside the job, never with a path filter on the
+  # trigger: a required check that is skipped never reports, and the pull
+  # request would wait for it forever.
   verify:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - name: Verify packages and generated index
-        run: ./scripts/verify-all.sh
+        with:
+          # The gate below diffs the checked-out commit against its first
+          # parent — for a pull request that is GitHub's merge commit, whose
+          # first parent is the base branch — so that parent's tree must be
+          # present locally.
+          fetch-depth: 2
+
+      - name: Verify run packages
+        run: ./scripts/verify-packages.sh
+
+      - name: Decide whether the results index must match
+        id: index-gate
+        run: |
+          required=$(./scripts/index-check-required.sh HEAD^1 HEAD)
+          echo "required=${required}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the results index is current
+        if: steps.index-gate.outputs.required == 'true'
+        run: python3 scripts/build-results-index.py --check
+
+      - name: Report the index this change set produces
+        run: |
+          python3 scripts/build-results-index.py >/dev/null
+          {
+            echo "## Results index"
+            echo
+            if git diff --quiet -- RESULTS.md RESULTS.zh-CN.md; then
+              echo "The committed index already matches the scenario packages."
+            else
+              echo "The committed index is behind the scenario packages."
+              echo "A maintainer refresh on \`main\` will apply the following:"
+              echo
+              echo '```diff'
+              git diff -- RESULTS.md RESULTS.zh-CN.md
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          git checkout -- RESULTS.md RESULTS.zh-CN.md

@@ -198,19 +198,18 @@ cd -
 
 Linux 上没有 `shasum` 可用 `sha256sum`。脚本报错就按提示修，修完重新生成哈希再跑。
 
-### 第 9 步：重建汇总索引
+### 第 9 步：校验全部场景包
 
 ```sh
-python3 scripts/build-results-index.py
-./scripts/verify-all.sh
+./scripts/verify-packages.sh
 ```
 
-两条都通过、`RESULTS.md` 与 `RESULTS.zh-CN.md` 已更新，才算打包完成。CI 会检查索引是否与场景包漂移。
+这一条通过就算打包完成。不要重建、也不要提交根级的 `RESULTS.md` 与 `RESULTS.zh-CN.md`——它们由场景包生成，在你的 PR 合并后由 `main` 上重建；PR 检查会告诉你这个场景将新增哪几行。
 
 ### 第 10 步：提交 Pull Request
 
 ```sh
-git add runs/ RESULTS.md RESULTS.zh-CN.md
+git add runs/
 git commit -m "data: add <场景一句话描述> sample"
 git push -u origin <分支名>
 ```
@@ -226,7 +225,7 @@ CI 自动检查包结构、算术一致性、哈希和文本隐私线索；维�
 - cached input 被重复相加（注意你的厂商是"子集"口径还是"相加"口径）；
 - 截图漏遮邮箱、用户名或 session ID；
 - `SHA256SUMS` 不是最后生成的（改了文件没重新生成）；
-- 忘记重建根级索引（`RESULTS.md` 与 `RESULTS.zh-CN.md`）；
+- 把生成的根级索引（`RESULTS.md` 与 `RESULTS.zh-CN.md`）也提交了，它们由 `main` 维护；
 - 把共享额度差值直接说成"这次 hi 的成本"而没有归因说明。
 
 ## 六、常见问题
@@ -262,7 +261,7 @@ CI 自动检查包结构、算术一致性、哈希和文本隐私线索；维�
 - [ ] 共享额度污染已标注；
 - [ ] 公开文件无凭据、邮箱、用户名、home 路径、会话恢复标识；截图逐张目视检查过；
 - [ ] `SHA256SUMS` 是最后生成的；
-- [ ] `RESULTS.md` 与 `RESULTS.zh-CN.md` 已重建，`./scripts/verify-all.sh` 通过；
+- [ ] `RESULTS.md` 与 `RESULTS.zh-CN.md` 未被改动，`./scripts/verify-packages.sh` 通过；
 - [ ] PR 模板填写完整，一个 PR 只有一个场景。
 
 ---
