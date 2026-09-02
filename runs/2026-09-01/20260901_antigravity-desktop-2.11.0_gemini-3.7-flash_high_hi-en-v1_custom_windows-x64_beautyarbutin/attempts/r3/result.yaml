@@ -1,0 +1,66 @@
+attempt: 3
+status: "valid"
+started_at_utc: "not_exposed"
+assistant_message_at_utc: "not_exposed"
+usage_recorded_at_utc: "not_applicable"
+response_latency_ms: "not_exposed"
+response_latency_display_seconds: "not_exposed"
+latency_method: "not_exposed"
+
+model_observed: "Gemini 3.7 Flash High"
+effort_observed: "high"
+
+usage:
+  source: "not_exposed"
+  provider_schema: "not_exposed"
+  input_tokens_including_cached: "not_exposed"
+  cached_input_tokens: "not_exposed"
+  non_cached_input_tokens: "not_exposed"
+  cli_total_excluding_cached: "not_applicable"
+  cli_total_source: "not_applicable"
+  cache_write_input_tokens: "not_exposed"
+  model_context_window_event: "not_exposed"
+  input_tokens: "not_exposed"
+  cache_creation_input_tokens: "not_exposed"
+  cache_read_input_tokens: "not_exposed"
+  total_input_tokens: "not_exposed"
+  output_tokens: "not_exposed"
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "Fast"
+  iterations: "not_exposed"
+  iterations_observation: "not_exposed"
+  web_search_requests: "not_exposed"
+  web_fetch_requests: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "c9104c1b8196155c01bda325613912e5d8d1a1aacdf2b1966095d59df121295b"
+
+activity:
+  tool_calls: "not_exposed"
+  approvals: "not_exposed"
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+
+evidence:
+  start_screenshot: "start.png"
+  response_screenshot: "response.png"
+  usage_screenshot: "not_provided"
+  sanitized_events: "not_provided"
+  quota_preview_status: "unverified_cache_state; retained only as launch/model evidence"
+  visible_prompt_time_local_minute: "19:49"
+  visible_response_time_local_minute: "19:49"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "not_exposed"
+    timing: "not_exposed"
+    quota: "not_provided"
+
+deviations:
+  - "Formal pre/post quota snapshots were not captured. The unrefreshed launch preview is excluded from quota.before and quota.after."

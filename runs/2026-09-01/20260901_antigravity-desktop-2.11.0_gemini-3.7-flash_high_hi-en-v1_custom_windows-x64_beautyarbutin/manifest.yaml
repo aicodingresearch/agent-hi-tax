@@ -1,0 +1,168 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260901_antigravity-desktop-2.11.0_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-09-01T10:32:25.701Z"
+  captured_to_utc: "2026-09-01T11:50:03.890Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "Google Antigravity 2.0 Desktop"
+  vendor: "Google"
+  distribution: "first-party"
+  surface: "desktop"
+  version: "2.11.0"
+  build: "not_exposed"
+  executable: "Antigravity.exe"
+
+environment:
+  os: "Windows 11"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "first-party-product-login"
+  subscription_plan: "Google AI Pro"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "private_evidence"
+
+route:
+  category: "first-party-subscription"
+  provider: "Google"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "not_exposed"
+
+model:
+  requested: "Gemini 3.7 Flash High"
+  observed: "Gemini 3.7 Flash High"
+  observation_method: "official desktop UI"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "desktop-agent-chat"
+  service_tier: "not_exposed"
+  speed: "Fast"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "custom"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled:
+    - "agy-customizations (built-in)"
+    - "antigravity-guide (built-in)"
+    - "generative_ui (built-in)"
+    - "migrate-workflows (built-in)"
+    - "permissioned-github (built-in)"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "no user hooks identified; one desktop chat turn per fresh project conversation"
+  network_mode: "enabled"
+  permission_mode: "Security Preset Default; Artifact Review Policy Always Ask"
+  filesystem_profile_observed: "Default"
+  settings_sources:
+    - "<APPDATA>/Antigravity/User/settings.json (SHA-256 4a2865f2dbcd5d3c221a443c00e246bdc46fd1cf442c77d96dd762f2a2fd652b)"
+    - "Antigravity Desktop built-in defaults"
+    - "official per-project settings UI for r1, r2, and r3 (private evidence)"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "not_exposed by an accepted official desktop interface"
+  secondary_metric: "not_applicable"
+  native_input_definition: "not_exposed"
+  total_input_definition: "not_applicable"
+  context_total_definition: "not_applicable"
+  total_input_is_subscription_cost: false
+  latency_method: "not_exposed"
+  transcript_extraction: "manual official-UI response screenshots; opaque local database fields are excluded"
+  transcript_deduplication: "one target user message and one final assistant response per fresh project conversation"
+
+aggregate:
+  token_measurement: "not_exposed"
+  response_latency: "not_exposed"
+  quota_measurement: "not_measured"
+
+quota:
+  attribution: "contaminated"
+  notes: "No formal Desktop before/after snapshots were captured. Unrefreshed rounded launch previews are retained as model/launch evidence but excluded from quota values; the account meter is also shared across the alternating pair."
+
+evidence:
+  package_level: "B"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "private_evidence"
+    subscription_plan: "private_evidence"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "private_evidence"
+    environment: "private_evidence"
+    workspace_and_session: "private_evidence"
+    skills_and_hooks: "private_evidence"
+    mcp_plugins_and_hooks: "private_evidence"
+  public_files:
+    - "evidence/preregistration.txt"
+    - "evidence/preregistration-cli-1.1.23-replacement.txt"
+    - "evidence/preflight.txt"
+    - "evidence/measurement-boundary.md"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/start.png"
+    - "attempts/r1/response.png"
+    - "attempts/r2/start.png"
+    - "attempts/r2/response.png"
+    - "attempts/r3/start.png"
+    - "attempts/r3/response.png"
+  withheld_private_evidence: true
+  redactions:
+    - "Account identifiers, local absolute paths, conversation IDs, and authentication material are omitted."
+    - "All six published attempt screenshots are byte-identical copies; visual review found no private identifier, path, session ID, or credential."
+
+comparison:
+  status: "other"
+  reference_scenario: "20260901_antigravity-cli-1.1.23_gemini-3.7-flash_high_hi-en-v1_custom_windows-x64_beautyarbutin"
+  confounder: "Desktop per-conversation token measurement is not_exposed through an accepted official interface."
+  notes: "T-35 paired surface study: vendor, account, requested model/effort, OS, prompt, empty workspace, and review posture are held fixed; client surface is the intended variable. Desktop token usage is not exposed by an accepted official interface, so no exact cross-surface token delta will be claimed."
+
+protocol:
+  deviations:
+    - "Before any formal prompt, a CLI launch-only preflight revealed an automatic paired-side update from 1.1.22 to 1.1.23. The Desktop configuration did not change; this manifest's reference was replacement-preregistered to the 1.1.23 CLI scene before collection."
+    - "Formal Desktop pre/post quota snapshots were not captured. The rounded launch previews were not explicitly refreshed and are excluded from quota.before and quota.after."
+  notes: "T-35 claim #42. Pair order is CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3, Desktop R3. The contributor performs all experiment-critical interactions and screenshots manually."

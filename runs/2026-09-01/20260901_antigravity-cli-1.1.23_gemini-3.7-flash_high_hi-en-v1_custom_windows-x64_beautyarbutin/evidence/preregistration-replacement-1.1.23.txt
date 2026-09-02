@@ -1,0 +1,70 @@
+Replacement preregistered at UTC: 2026-09-01T10:38:32.070Z
+Task: T-35, CLI side of the paired surface study
+Claim issue: aicodingresearch/agent-hi-tax#42
+Supersedes the 1.1.22 preregistration for all future formal attempts.
+
+No formal `hi` request for this T-35 pair had been sent at the time of this
+replacement. A launch-only preflight showed that the installed official CLI had
+automatically updated from 1.1.22 to 1.1.23. That preflight was also opened from
+the home directory instead of a formal run directory. The contributor exited
+without submitting a prompt.
+
+The status-line collector is allowlisted to the exact CLI r1/r2/r3 paths. It
+therefore wrote no formal raw evidence for the launch-only preflight. This event
+is not an attempt and is retained privately as version-mismatch preflight
+evidence. The original 1.1.22 preregistration remains in this package as an audit
+record and is explicitly superseded.
+
+## Replacement-frozen product and environment
+
+Product: Google Antigravity CLI
+Version: 1.1.23
+Executable SHA-256: bffa9c1227a517d0dbd7ddfc71a64bf6473c52fab95369cabe09ff42bd9b3b3e
+Surface: interactive CLI TUI
+Model: Gemini 3.7 Flash
+Reasoning effort: high
+Account and subscription: same Google AI Pro account used by the paired desktop side
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Locale: zh-CN
+Time zone: Asia/Shanghai
+Harness profile: custom (as-used CLI plus passive documented status-line measurement)
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+Planned attempts: 3 sequential valid attempts
+Prompt: hi-en-v1, exact UTF-8 bytes 68 69, typed once per attempt
+
+## Configuration continuity
+
+CLI settings SHA-256: 78e5f45ff1c8c96ee087cee6bad1aa5af0d1d08bd82f14751e104774213de9c7
+Status-line capture script SHA-256: e04087dc9110807ee89d05a121c1dd59a7b59af0d0a936e34532ac2687de06f5
+Status-line capture scope: only the exact CLI r1, r2, and r3 workspace paths
+Model setting: Gemini 3.7 Flash (High)
+Telemetry: disabled
+MCP servers: none configured
+Imported plugins: none
+User rules, user skills, hooks, and instruction files: none identified
+Known built-in model-invocable skills:
+- agy-customizations
+- antigravity-guide
+- generative_ui
+- migrate-workflows
+- permissioned-github
+Permission posture: product default request-review; no explicit toolPermission key
+
+The settings and collector hashes are unchanged from the original preregistration.
+Only the installed CLI version changed. Any further version, model, effort,
+settings, collector, permission, plugin, MCP, skill, hook, account, or prompt
+change requires stopping and replacement-preregistering again before collection.
+
+## Fixed paired procedure and measurement
+
+The order remains CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3, Desktop R3.
+Each CLI launch must start from its exact empty r1/r2/r3 directory and visibly
+show version 1.1.23, Gemini 3.7 Flash (High), and zero status-line tokens before
+the contributor types exactly `hi` once.
+
+The official status-line JSON supplies current input/output/cache tokens and
+context-window total input/output tokens. Latency and thinking tokens remain
+not_exposed. Account quota is contaminated by the deliberately alternating pair.
+The paired Desktop side has no accepted official per-conversation token field,
+so no exact Desktop-vs-CLI token delta will be claimed.

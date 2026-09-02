@@ -1,0 +1,75 @@
+Preregistered at UTC: 2026-09-01T10:32:25.701Z
+Task: T-35, Desktop side of the paired surface study
+Claim issue: aicodingresearch/agent-hi-tax#42
+
+No formal hi request for this T-35 pair had been sent at the time of this
+preregistration. Earlier T-24 data are not reused.
+
+## Frozen product and environment
+
+Product: Google Antigravity 2.0 Desktop
+Version: 2.11.0
+Surface: desktop application agent chat
+Model: Gemini 3.7 Flash
+Reasoning effort: high
+Speed label: Fast
+Account and subscription: same Google AI Pro account used by the paired CLI side
+AI Credit Overages: off
+Operating system: Windows 11 10.0.26200, build 26200, x64
+Locale: zh-CN
+Time zone: Asia/Shanghai
+Harness profile: custom (pair-matched project permission/review settings)
+Session state: fresh
+Workspace: independent empty non-Git directory per attempt
+Planned attempts: 3 sequential valid attempts
+Prompt: hi-en-v1, exact UTF-8 bytes 68 69, typed once per attempt
+
+## Frozen Desktop harness
+
+Application user-settings SHA-256: 4a2865f2dbcd5d3c221a443c00e246bdc46fd1cf442c77d96dd762f2a2fd652b
+Executable SHA-256: e4b0a4077543627765a412ca4ac0e746ec670caa71ec8d56c69ac8d806743b83
+R1/R2/R3 project Security Preset: Default
+R1/R2/R3 Artifact Review Policy: Always Ask
+R1 project-settings screenshot SHA-256: 273be33c13bd180e5af484d3999131bdebf8a7dffb7e43e9f497f15e605a81ec
+R2 project-settings screenshot SHA-256: 58638ad6008989f7dceaaf91fdf6b60b333e81c3a87785bc7981447d238ac987
+R3 project-settings screenshot SHA-256: 31abab1d5872db596924f18165105c706a33052ccb8aa72d97f0e6afb5515bc6
+Customizations enabled: none
+MCP servers: none installed
+User plugins and hooks: none identified
+Known built-in model-invocable skills:
+- agy-customizations
+- antigravity-guide
+- generative_ui
+- migrate-workflows
+- permissioned-github
+Built-in tool definitions: not_exposed
+Network: enabled
+
+## Fixed paired procedure
+
+Pair order is fixed as CLI R1, Desktop R1, CLI R2, Desktop R2, CLI R3,
+Desktop R3. For each Desktop attempt, open its pre-created project bound only
+to the corresponding empty directory and start a new conversation. Confirm
+Gemini 3.7 Flash High, capture a pre-prompt quota view, type exactly `hi` once,
+wait for the final response, capture the response, capture the post-response
+quota view, record the conversation identifier privately if exposed, then end
+without adding another turn or reusing the conversation.
+
+Only the attempt directory and the intended surface change. Any model, effort,
+project security/review setting, built-in inventory, plugin, MCP, skill, hook,
+account, or prompt change invalidates the affected attempt and requires a
+replacement preregistration before continuing.
+
+## Frozen measurement scope
+
+The official Desktop 2.0 UI does not expose per-conversation token counts or
+response duration. Token and latency fields are therefore not_exposed. The
+repository forbids client reverse engineering; opaque SQLite/Protobuf fields
+will not be decoded or reported. Only official UI evidence is used.
+
+The quota meter is account-scoped, rounded, and shared by both deliberately
+alternated surfaces. Before/after views are retained as native snapshots, but
+quota attribution is contaminated and no percentage-point change is converted
+into tokens, credits, or money. Consequently this pair will characterize the
+visible harness and evidence differences but will not claim an exact
+Desktop-vs-CLI token delta.
