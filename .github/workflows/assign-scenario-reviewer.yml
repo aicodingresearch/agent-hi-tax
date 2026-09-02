@@ -143,6 +143,8 @@ jobs:
             const processZhUrl = `${repositoryUrl}/blob/${pr.base.sha}/docs/review-process.zh-CN.md#L11-L101`;
             const body = [
               marker,
+              "## Scenario review requested / 场景评审邀请",
+              "",
               `@${selected}, you have been selected to independently review this scenario PR. / 现邀请你对这个场景 PR 进行独立评审。`,
               "",
               `Before starting, confirm that \`Verify run data / verify\` has passed. Start from the [Agent review entry and copyable prompt](${entryUrl}) ([中文](${entryZhUrl})). The detailed criteria and verdict template are in the [PR review process](${processUrl}) ([中文](${processZhUrl})).`,
