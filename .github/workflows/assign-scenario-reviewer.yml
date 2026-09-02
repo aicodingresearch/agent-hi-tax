@@ -2,10 +2,13 @@ name: Assign scenario reviewer
 
 on:
   pull_request_target:
+    branches:
+      - main
     types:
       - opened
       - ready_for_review
       - reopened
+      - synchronize
     paths:
       - "runs/**"
 
@@ -30,6 +33,24 @@ jobs:
             const { owner, repo } = context.repo;
             const pr = context.payload.pull_request;
             const configPath = ".github/scenario-reviewers.json";
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            const newScenarioPattern = /^runs\/\d{4}-\d{2}-\d{2}\/[^/]+\/manifest\.yaml$/;
+            const newScenarios = files.filter(
+              (file) => file.status === "added" && newScenarioPattern.test(file.filename),
+            );
+
+            if (newScenarios.length === 0) {
+              core.info("No new scenario manifest was added; no reviewer is needed");
+              return;
+            }
+
+            core.info(`Detected ${newScenarios.length} new scenario manifest(s)`);
 
             // Always read trusted configuration from the PR's base commit.
             const configResponse = await github.rest.repos.getContent({
