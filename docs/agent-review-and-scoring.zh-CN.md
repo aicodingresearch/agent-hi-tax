@@ -99,7 +99,7 @@ Agent 按以下顺序执行：
    - 协议/软件/文档：行为正确性、与权威规则的冲突、中英文和链接一致性、可执行性与安全边界；
    - 积分台账：源 PR 资格、重新计算的分值与不叠加依据、中英文 append-only 一致性和防重复、校验结果；
    - 混合 PR：合并全部适用维度，并明确写出决策级别。
-4. 在 PR head 运行 `./scripts/verify-all.sh`，再运行变更文件需要的专项检查。绿色检查只构成结构证据，绝不替代评审。
+4. 在 PR head 运行 `./scripts/verify-packages.sh`（若该 PR 改动了生成的索引，则运行 `./scripts/verify-all.sh`），再运行变更文件需要的专项检查。绿色检查只构成结构证据，绝不替代评审。
 5. 对发布证据的场景数据或混合 PR，按原尺寸逐张打开全部公开图片，再交叉核对图片、`RESULTS.csv`、`manifest.yaml`、attempt result、events 或 usage 记录、哈希、包 README 与 PR 声称。不得把数据包检查表强套在没有发布场景证据的 PR 上。
 6. 按适用级别独立形成 verdict。AI 协助评审必须写出 Agent 产品、准确模型和 reasoning effort；没有暴露的值写 `not exposed`，不得猜测。
 7. 对符合条件的场景数据交付，在 `Advisory` 中给出任务、候选分值、叠加或不叠加判断及证据边界。仅协议、文档、软件或台账的 PR 写 `points: not_applicable`，除非已有明确计价任务。
@@ -135,7 +135,7 @@ Agent 汇报：
 5. 匹配所有可能适用的任务和计价桶。执行递减、pair 完成条件、proposal 定价、adapter 与 probe 加分，以及已有叠加规则。不得默默叠加两个普通任务分值。确有歧义时返回 `NEEDS_MAINTAINER_DECISION`，只问维护者一个具体问题；未得到答复前不创建台账变更。
 6. 核实是否遗漏了本可取得的证据。诚实使用 `self_reported`、`not_exposed` 或标注 confounded 本身不扣分。能够提供却主动省略证据时返回 `AWARD_DEFERRED`，写清需要补什么，暂不追加台账行。
 7. 只有前述检查得到“符合条件且尚未登记”的分值后，才在 `docs/wanted-scenarios.md` 和 `docs/wanted-scenarios.zh-CN.md` 各追加一行。记录日期、贡献者、任务、已合并 PR、分值、必要时关联 claim 或 proposal，并用足够的备注保存归一化与不叠加裁决。历史台账行绝不修改；更正通过追加冲销行完成。
-8. 从最新 `main` 创建工作分支，运行 `./scripts/verify-all.sh` 和 `git diff --check`，只提交台账文件，push 分支并创建 PR。绝不直接 push `main`，也不得使用 admin bypass 跳过 PR、CI 或评审门禁。
+8. 从最新 `main` 创建工作分支，运行 `./scripts/verify-packages.sh` 和 `git diff --check`，只提交台账文件，push 分支并创建 PR。绝不直接 push `main`，也不得使用 admin bypass 跳过 PR、CI 或评审门禁。
 9. 汇报台账 commit 与 PR URL。该 PR 正常合并后，再确认中英文台账行已进入 `main`，并确认工作区没有本任务产生的未提交文件。
 
 ### 计分完成输出

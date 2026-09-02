@@ -10,7 +10,7 @@ For the one-PR-URL Agent workflow that routes both review and post-merge points 
 
 ## What review covers
 
-Automated verification already runs on every PR. `./scripts/verify-all.sh` checks package structure, the arithmetic of derived fields, `SHA256SUMS`, textual privacy clues, and whether the generated indexes still match the data — see [the pre-submission section of CONTRIBUTING](../CONTRIBUTING.md#submitting-a-pull-request). Reviewers do not repeat that work, and a green check is not an opinion about the submission.
+Automated verification already runs on every PR. `./scripts/verify-packages.sh` checks package structure, the arithmetic of derived fields, `SHA256SUMS`, and textual privacy clues; a PR that touches the generated indexes is additionally held to `./scripts/verify-all.sh`, which requires them to match the data exactly — see [the pre-submission section of CONTRIBUTING](../CONTRIBUTING.md#submitting-a-pull-request). Reviewers do not repeat that work, and a green check is not an opinion about the submission.
 
 Review exists for the four things a script cannot do:
 

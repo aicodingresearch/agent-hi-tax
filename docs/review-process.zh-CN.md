@@ -10,7 +10,7 @@
 
 ## 评审覆盖什么
 
-每个 PR 都会先跑自动校验。`./scripts/verify-all.sh` 检查场景包结构、派生字段的算术、`SHA256SUMS`、文本中的隐私线索，以及生成的索引是否仍与数据一致——见[贡献指南「提交 Pull Request」一节](../CONTRIBUTING.zh-CN.md#提交-pull-request)。评审不重复这部分工作，绿色的检查标记也不构成对这份提交的任何意见。
+每个 PR 都会先跑自动校验。`./scripts/verify-packages.sh` 检查场景包结构、派生字段的算术、`SHA256SUMS` 和文本中的隐私线索；若 PR 改动了生成的索引，还会额外用 `./scripts/verify-all.sh` 要求索引与数据逐字一致——见[贡献指南「提交 Pull Request」一节](../CONTRIBUTING.zh-CN.md#提交-pull-request)。评审不重复这部分工作，绿色的检查标记也不构成对这份提交的任何意见。
 
 评审存在的意义，是脚本做不到的四件事：
 

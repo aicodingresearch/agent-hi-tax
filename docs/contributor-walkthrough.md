@@ -198,19 +198,18 @@ cd -
 
 On Linux, where `shasum` is unavailable, use `sha256sum`. If the script reports errors, fix them as instructed, regenerate the hashes, and run it again.
 
-### Step 9: Rebuild the results index
+### Step 9: Verify every package
 
 ```sh
-python3 scripts/build-results-index.py
-./scripts/verify-all.sh
+./scripts/verify-packages.sh
 ```
 
-Only when both pass and `RESULTS.md` and `RESULTS.zh-CN.md` have been updated is packaging complete. CI checks whether the indexes have drifted from the scenario packages.
+Packaging is complete once this passes. Do not rebuild or commit the root-level `RESULTS.md` and `RESULTS.zh-CN.md` — they are generated from the scenario packages and refreshed on `main` after your PR merges. The PR check shows you the rows your scenario will add.
 
 ### Step 10: Submit the Pull Request
 
 ```sh
-git add runs/ RESULTS.md RESULTS.zh-CN.md
+git add runs/
 git commit -m "data: add <one-line scenario description> sample"
 git push -u origin <branch-name>
 ```
@@ -226,7 +225,7 @@ Common rework items — scan for these yourself before submitting:
 - cached input double-counted (check whether your vendor uses "subset" or "additive" semantics);
 - screenshots with an unredacted email address, username, or session ID;
 - `SHA256SUMS` not generated last (files edited without regenerating);
-- forgetting to rebuild the root-level indexes (`RESULTS.md` and `RESULTS.zh-CN.md`);
+- committing the generated root-level indexes (`RESULTS.md` and `RESULTS.zh-CN.md`), which are maintained on `main`;
 - stating a shared-quota difference as "the cost of this hi" without an attribution note.
 
 ## FAQ
@@ -262,7 +261,7 @@ Usually about 30 minutes. For a first contribution, allow about 1 hour, which is
 - [ ] shared-quota contamination annotated;
 - [ ] Public files free of credentials, email addresses, usernames, home paths, and session-restore identifiers; every screenshot visually inspected;
 - [ ] `SHA256SUMS` generated last;
-- [ ] `RESULTS.md` and `RESULTS.zh-CN.md` rebuilt, `./scripts/verify-all.sh` passing;
+- [ ] `RESULTS.md` and `RESULTS.zh-CN.md` left untouched, `./scripts/verify-packages.sh` passing;
 - [ ] PR template filled in completely, one scenario per PR.
 
 ---
