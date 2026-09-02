@@ -37,11 +37,11 @@
 
 ## Updating this page
 
-This page is generated from the scenario packages. After adding or modifying a scenario, run:
+This page is generated from the scenario packages and is rebuilt on the main branch after a scenario is merged. Do not edit it by hand, and do not include it in a scenario Pull Request. To rebuild it:
 
 ```sh
 python3 scripts/build-results-index.py
 ./scripts/verify-all.sh
 ```
 
-Pull Requests are checked to keep this page consistent with all scenario packages.
+A Pull Request that touches this page is checked to keep it consistent with all scenario packages.

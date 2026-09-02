@@ -19,7 +19,7 @@ For your first contribution, follow this order:
 3. Pin the scenario and launch command first, then execute at least 3 fresh attempts sequentially; do not change the model, effort, permission mode, or plugin state mid-test.
 4. Keep raw screenshots and raw session/transcripts outside the Git repository at first; only redacted copies and minimal machine events may enter the PR.
 5. Copy the [scenario template](templates/scenario-manifest.yaml) and the [attempt template](templates/attempt-result.yaml), and refer to whichever of the [six published scenario packages](runs/README.md) is closest to your product.
-6. Generate hashes, run `./scripts/verify-all.sh`, and submit using the repository's Pull Request template.
+6. Generate hashes, run `./scripts/verify-packages.sh`, and submit using the repository's Pull Request template.
 
 Do not parse internal logs you do not understand just to chase Level A. If all you have is screenshots, honestly submit Level B; when a field cannot be obtained, use the fixed missing-value states. Unredacted original images, account information, and session identifiers must never be uploaded first with the expectation that maintainers will delete them later.
 
@@ -220,11 +220,12 @@ find . -type f ! -name SHA256SUMS -print0 \
 cd -
 
 ./scripts/verify-run-package.sh runs/YYYY-MM-DD/<scenario-id>
-python3 scripts/build-results-index.py
-./scripts/verify-all.sh
+./scripts/verify-packages.sh
 ```
 
-On Linux without `shasum`, use `sha256sum`. Regenerate the hashes after any public file changes. The index pages [RESULTS.md](RESULTS.md) (English) and `RESULTS.zh-CN.md` (Chinese) are generated automatically from every scenario's manifest and `RESULTS.csv`; a single run of `python3 scripts/build-results-index.py` writes both. They must be rebuilt after adding or modifying a scenario, and the Pull Request check uses `verify-all.sh` to verify that neither has drifted.
+On Linux without `shasum`, use `sha256sum`. Regenerate the hashes after any public file changes.
+
+The index pages [RESULTS.md](RESULTS.md) (English) and `RESULTS.zh-CN.md` (Chinese) are generated from every scenario's manifest and `RESULTS.csv`. **Do not include them in a scenario Pull Request.** They are rebuilt on `main` once your scenario is merged, so leaving them untouched is correct — and it is what keeps two contributions submitted around the same time from colliding on one generated file. The Pull Request check runs `verify-packages.sh` and reports, in the job summary, the rows your scenario will add to the index.
 
 ## Token and quota semantics
 
@@ -391,7 +392,7 @@ Pre-submission checklist:
 - [ ] Missing or conflicting fields use the fixed states;
 - [ ] Public files contain no credentials, email addresses, absolute home paths, or session-resume identifiers;
 - [ ] `SHA256SUMS` was generated last;
-- [ ] The root `RESULTS.md` and `RESULTS.zh-CN.md` indexes have been rebuilt;
-- [ ] `verify-all.sh` passes.
+- [ ] The generated root indexes `RESULTS.md` and `RESULTS.zh-CN.md` are untouched;
+- [ ] `verify-packages.sh` passes.
 
 Replications are very welcome. Independent replications by different contributors, on different devices, with different subscriptions, and at different times are exactly how this project gradually becomes valuable.

@@ -122,12 +122,14 @@ TEXTS = {
         ),
         "update_heading": "## Updating this page",
         "update_body": (
-            "This page is generated from the scenario packages. After "
-            "adding or modifying a scenario, run:"
+            "This page is generated from the scenario packages and is "
+            "rebuilt on the main branch after a scenario is merged. Do not "
+            "edit it by hand, and do not include it in a scenario Pull "
+            "Request. To rebuild it:"
         ),
         "update_footer": (
-            "Pull Requests are checked to keep this page consistent with "
-            "all scenario packages."
+            "A Pull Request that touches this page is checked to keep it "
+            "consistent with all scenario packages."
         ),
     },
     "zh": {
@@ -164,8 +166,11 @@ TEXTS = {
             "| 总输入 | Context total | Output | 延迟 | 证据 / 额度归因 |"
         ),
         "update_heading": "## 更新这个页面",
-        "update_body": "本页由场景包自动生成。新增或修改场景后运行：",
-        "update_footer": "Pull Request 会检查本页是否与全部场景包保持一致。",
+        "update_body": (
+            "本页由场景包生成，并在场景合并后于 main 分支上重建。"
+            "不要手工编辑，也不要放进场景 Pull Request。重建命令："
+        ),
+        "update_footer": "改动本页的 Pull Request 会被检查，以保证它与全部场景包一致。",
     },
 }
 
