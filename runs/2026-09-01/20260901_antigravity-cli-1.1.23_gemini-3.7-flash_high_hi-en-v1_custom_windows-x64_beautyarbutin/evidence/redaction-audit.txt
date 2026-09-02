@@ -1,0 +1,9 @@
+Public evidence audit for the T-35 Antigravity CLI side
+
+- Raw screenshots and raw status-line JSON remain outside Git.
+- Public JSONL files were constructed with a safe-field allowlist.
+- Omitted raw fields: cwd, session_id, conversation_id, transcript_path, workspace, email, terminal_width, agent_state, sandbox.
+- attempts/r3/response.png is byte-identical to its private original and contains no account identifier, local path, session ID, or credential.
+- R1/R2 response screenshots, all pre-prompt screenshots, and all usage screenshots are withheld as private evidence.
+- Public text files were scanned for account-email patterns, Windows absolute paths, home-directory paths, UUID-shaped session identifiers, and credential-like strings.
+- No blur, crop, generative edit, or semantic rewrite was applied to the published screenshot.
