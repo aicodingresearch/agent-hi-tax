@@ -8,9 +8,9 @@
 
 [Project home](README.md) | [Scenario catalog](runs/README.md) | [Contribution & semantics rules](CONTRIBUTING.md)
 
-- Scenarios: 10
+- Scenarios: 11
 - Agent products: 5
-- Valid attempts: 30
+- Valid attempts: 33
 
 ## How to read this table
 
