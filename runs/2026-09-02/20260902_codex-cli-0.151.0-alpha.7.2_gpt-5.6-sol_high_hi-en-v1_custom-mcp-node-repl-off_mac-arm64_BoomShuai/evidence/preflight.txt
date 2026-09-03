@@ -1,0 +1,22 @@
+Agent Hi Tax T-31 public-safe preflight
+Captured before the first target model request.
+
+Claim: https://github.com/aicodingresearch/agent-hi-tax/issues/54
+Agent: OpenAI Codex CLI 0.151.0-alpha.7.2
+Model / effort: gpt-5.6-sol / high
+Subscription: ChatGPT Pro subscription login
+Route: first-party subscription / native protocol
+OS: macOS 26.6 (build 25G72), arm64
+Locale: C.UTF-8
+Timezone: Asia/Shanghai
+Prompt: hi-en-v1; exact bytes 68 69; SHA-256 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+Sandbox / approval: workspace-write / never
+Workspaces: six independent directories verified empty and outside Git before collection
+Global AGENTS.md: present but empty; SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+Plugins: 11 enabled on both sides
+Skills: 202 model-visible names on both sides; SHA-256 e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+Other MCP entries: computer-use and cua_repl disabled on both sides
+MCP on: node_repl enabled; tools/list returned 3 registered tools with nonempty schemas; canonical tools hash 3ff64c325e18992b39da03e361b06ca830b26b4e8b0447f46d3f2d0f72c68ca6
+MCP off: node_repl disabled by per-launch config override
+Normalized message input: ordered role/content projection identical on both diagnostic sides; SHA-256 de090327ea6619dd48e84cf465e46ffe5627e9a15e361f4d4dba00032ee26f2e
+Raw config, complete prompt-input records, transport environment, absolute paths, and identifying account evidence remain outside Git.

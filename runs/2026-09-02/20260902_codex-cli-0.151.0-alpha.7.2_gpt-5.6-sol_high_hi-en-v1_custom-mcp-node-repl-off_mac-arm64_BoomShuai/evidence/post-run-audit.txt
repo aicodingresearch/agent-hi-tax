@@ -1,0 +1,43 @@
+T-31 post-run consistency and extraction audit — MCP OFF
+
+Six valid retained rollouts were inspected locally for this side: r1, r2, r3,
+r5, r6, and r7. Public files contain only the safe fields listed in manifest.yaml.
+
+For each valid attempt on this side:
+- one session_meta record;
+- one turn_context record;
+- exactly one target user message equal to the UTF-8 bytes 68 69 (`hi`);
+- exactly one final assistant message;
+- exactly one final native token-count record;
+- zero tool calls and zero approvals;
+- exit status 0;
+- top-level workspace entries after the run: 0;
+- immediately preceding node_repl enabled state: false.
+
+Original r1-r3 stderr contained only `Reading additional input from stdin...`.
+The retained rollout target remained exactly `hi`; no stdin bytes were appended.
+Supplemental r5-r7 stderr was empty because those processes ran in a native Terminal.
+
+Cross-pair controls across all twelve valid attempts:
+- Agent/version/model/effort: Codex CLI 0.151.0-alpha.7.2 / gpt-5.6-sol / high;
+- base-instructions SHA-256: a91357a1cd2727a0be06d461248d6e3a7274746e38108f548a3adf2cc2430415;
+- normalized developer/user role-content SHA-256: 5d4835ebc49f343dd58294d2c87cb014f7c51e29956cb2174ca75fa9c6db3e33;
+- sorted 202-skill inventory SHA-256: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2;
+- prompt, account, OS, sandbox, approval policy, plugins, rules, hooks, session state,
+  and workspace profile were held fixed.
+
+The role-content projection does not include separately transported tool schemas.
+The intended variable was independently verified: MCP ON returned three registered
+tools with nonempty object input schemas and canonical hash
+3ff64c325e18992b39da03e361b06ca830b26b4e8b0447f46d3f2d0f72c68ca6;
+MCP OFF reported node_repl disabled. No target run invoked any tool.
+
+All twelve valid attempts reported input_tokens=20435 and
+cache_write_input_tokens=0. Paired ON-minus-OFF input deltas were six zeros.
+The r7 cache split differed by 256 tokens while total input remained equal; this
+anomaly is retained. Output wording varied naturally, with no consistent paired
+direction. Latency and startup timing are descriptive only.
+
+The ON-side supplemental r4 failure is retained separately and excluded from model
+statistics because exit 127 occurred before any target event. The visual plan was
+amended before the next target request, and complete valid visual pairs use r5-r7.

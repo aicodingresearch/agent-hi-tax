@@ -1,0 +1,44 @@
+Visual evidence audit — T-31 MCP OFF
+
+Scenario-level subscription image
+
+file: evidence/subscription.png
+dimensions: 3840 x 2100
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+visible support: ChatGPT Pro plan and USD 200/month
+privacy: no email, name, username, account ID, payment detail, host, path, or session ID is visible
+processing: exact-byte copy; no pixel editing
+
+Valid supplemental attempt images
+
+file: attempts/r5/response.png
+dimensions: 1696 x 656
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 799ed140e6062677153af31ea10e6b40610b087e63262ba92d5735bba0acb41e
+visible support: side/attempt, CLI version, model, high effort, MCP state, schema summary, exact hi, normalized command, complete reply, all native usage fields, and exit 0
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+file: attempts/r6/response.png
+dimensions: 1690 x 658
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: e42635f384eee7e410747210154d446a52660edf187950cbb7b639d2ed2d4737
+visible support: side/attempt, CLI version, model, high effort, MCP state, schema summary, exact hi, normalized command, complete reply, all native usage fields, and exit 0
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+file: attempts/r7/response.png
+dimensions: 1696 x 654
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: b5527b9ba5d9a8ac3883a3e3ed76b319b97edff5e1cdd776442e627f9d3ac9df
+visible support: side/attempt, CLI version, model, high effort, MCP state, schema summary, exact hi, normalized command, complete reply, all native usage fields, and exit 0
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+Every attempt image was visually cross-checked against its retained native event stream.
+Only standard PNG DPI metadata is present; no author, creator, description, source URL, or account metadata is embedded.

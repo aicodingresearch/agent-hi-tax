@@ -1,0 +1,55 @@
+T-31 workspace and launch checks — MCP OFF
+
+r1
+start_utc: 2026-09-02T07:28:54Z
+end_utc: 2026-09-02T07:29:01Z
+workspace: <LAB_ROOT>/t31-node-repl-off-BoomShuai-r1
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: false
+exit status: 0
+
+r2
+start_utc: 2026-09-02T07:29:34Z
+end_utc: 2026-09-02T07:29:41Z
+workspace: <LAB_ROOT>/t31-node-repl-off-BoomShuai-r2
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: false
+exit status: 0
+
+r3
+start_utc: 2026-09-02T07:30:17Z
+end_utc: 2026-09-02T07:30:25Z
+workspace: <LAB_ROOT>/t31-node-repl-off-BoomShuai-r3
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: false
+exit status: 0
+
+r5
+start_utc: 2026-09-02T08:11:45Z
+end_utc: 2026-09-02T08:11:52Z
+workspace: <LAB_ROOT>/t31-node-repl-off-BoomShuai-r5
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: false
+exit status: 0
+
+r6
+start_utc: 2026-09-02T08:22:21Z
+end_utc: 2026-09-02T08:22:35Z
+workspace: <LAB_ROOT>/t31-node-repl-off-BoomShuai-r6
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: false
+exit status: 0
+
+r7
+start_utc: 2026-09-02T08:24:34Z
+end_utc: 2026-09-02T08:24:44Z
+workspace: <LAB_ROOT>/t31-node-repl-off-BoomShuai-r7
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: false
+exit status: 0

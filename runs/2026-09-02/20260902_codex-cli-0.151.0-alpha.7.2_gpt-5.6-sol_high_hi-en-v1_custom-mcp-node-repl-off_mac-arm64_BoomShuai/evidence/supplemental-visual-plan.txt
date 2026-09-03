@@ -1,0 +1,30 @@
+Agent Hi Tax T-31 supplemental visual-evidence plan
+Created after the original r1-r3 pair and before any supplemental target request.
+
+created_at_utc: 2026-09-02T07:42:06Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/54
+reason: add public screenshots produced immediately after native runs in the same terminal
+original_attempts_retained: on-r1-r3 and off-r1-r3 remain valid and will not be replaced
+supplemental_attempts_planned: on-r4-r6 and off-r4-r6; all outcomes will be retained
+execution_order: on-r4, off-r4, on-r5, off-r5, on-r6, off-r6
+execution_mode: sequential; never parallel
+
+The Agent version, account, model, high effort, exact two-byte hi argument, OS,
+sandbox, approval mode, plugins, skills, rules, hooks, fresh-session rule, empty
+workspace rule, and per-side node_repl override remain exactly as preregistered.
+These runs are added only to connect the native reply and usage to reviewed public
+terminal images. They are not selected based on token values and do not erase or
+supersede any original observation.
+
+Amendment before the next supplemental target request
+amended_at_utc: 2026-09-02T08:06:35Z
+observed_outcome: on-r4 exited 127 before any target request because the standalone
+  Terminal PATH did not contain the ChatGPT app's bundled Codex executable; its
+  empty event stream, stderr, exit code, and screenshot are retained as invalid
+  infrastructure-failure evidence and will not enter model-result statistics
+correction: invoke /Applications/ChatGPT.app/Contents/Resources/codex explicitly
+corrected_capture_script_sha256: 048fce739355aa79e2fc90ce19c1450dbdafacd5e8f38ff74cba35f1ba47a588
+revised_valid_attempts_planned: on-r5-r7 and off-r5-r7
+revised_execution_order: on-r5, off-r5, on-r6, off-r6, on-r7, off-r7
+selection_rule: retain every revised attempt regardless of result; do not rerun or
+  overwrite on-r4
