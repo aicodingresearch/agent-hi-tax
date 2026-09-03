@@ -123,7 +123,7 @@ jobs:
               throw new Error("GitHub rejected every configured reviewer");
             }
 
-            const marker = `<!-- scenario-review-assignment:${selected.toLowerCase()} -->`;
+            const marker = `<!-- scenario-review-assignment:${selected.toLowerCase()} head:${pr.head.sha.toLowerCase()} -->`;
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner,
               repo,
