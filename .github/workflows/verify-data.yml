@@ -30,6 +30,9 @@ jobs:
       - name: Verify run packages
         run: ./scripts/verify-packages.sh
 
+      - name: Test review notification logic
+        run: python3 -m unittest tests/test_notify_review_escalation.py
+
       - name: Decide whether the results index must match
         id: index-gate
         run: |
