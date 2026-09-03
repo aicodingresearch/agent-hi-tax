@@ -163,6 +163,18 @@ class ReviewGateTests(unittest.TestCase):
             legacy_key("Claude Code x GLM-5.2 x high"), "agent:zhipu-glm"
         )
 
+    def test_kimi_family_is_canonical_and_wins_over_product_name(self):
+        parsed, reason = parse_verdict_with_reason(
+            record(1, reviewer="WorkBuddy / Kimi / high", key="agent:moonshot-kimi"),
+            HEAD,
+        )
+        self.assertIsNone(reason)
+        self.assertEqual(parsed.model_family, "moonshot-kimi")
+        self.assertEqual(
+            legacy_key("Codex-compatible client / Kimi K2.5"),
+            "agent:moonshot-kimi",
+        )
+
     def test_pull_request_review_timestamp_is_supported(self):
         value = record(1)
         value["submitted_at"] = value.pop("created_at")

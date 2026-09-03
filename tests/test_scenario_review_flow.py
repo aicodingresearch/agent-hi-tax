@@ -10,6 +10,9 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from scenario_review_flow import (  # noqa: E402
+    Assignment,
+    MaintainerRequest,
+    allowed_assignment_families,
     assignment_records,
     changes_protected_protocol,
     choose_candidates,
@@ -22,7 +25,7 @@ from scenario_review_flow import (  # noqa: E402
     process_pull,
     request_first,
 )
-from review_gate import parse_verdict  # noqa: E402
+from review_gate import parse_time, parse_verdict  # noqa: E402
 
 
 HEAD = "a" * 40
@@ -39,13 +42,27 @@ def config():
             "black-pwq",
             "leonadoor",
         ],
-        "reviewer_profiles": {
-            "beautyarbutin": "openai-gpt",
-            "XiaoCooder": "openai-gpt",
-            "AHMEDALATTAR416": "zhipu-glm",
-            "black-pwq": "openai-gpt",
-            "leonadoor": "openai-gpt",
-            "keting": "anthropic-claude",
+        "reviewer_capabilities": {
+            "beautyarbutin": [
+                {"agent_product": "codex", "model_family": "openai-gpt"}
+            ],
+            "XiaoCooder": [
+                {"agent_product": "codex", "model_family": "openai-gpt"}
+            ],
+            "AHMEDALATTAR416": [
+                {"agent_product": "claude-code", "model_family": "zhipu-glm"}
+            ],
+            "black-pwq": [
+                {"agent_product": "codex", "model_family": "openai-gpt"}
+            ],
+            "leonadoor": [
+                {"agent_product": "codex", "model_family": "openai-gpt"}
+            ],
+            "keting": [
+                {"agent_product": "claude-code", "model_family": "anthropic-claude"},
+                {"agent_product": "workbuddy", "model_family": "moonshot-kimi"},
+                {"agent_product": "codex", "model_family": "openai-gpt"},
+            ],
         },
         "second_reviewers": ["keting", "AHMEDALATTAR416"],
         "glm_first_fallback_reviewers": [
@@ -153,9 +170,12 @@ class FakeClient:
                 ]
                 return {}
             if method == "POST":
-                reviewer = payload["reviewers"][0]
-                self.requested = [reviewer]
-                self.request_history.append(reviewer)
+                current = {login.lower() for login in self.requested}
+                for reviewer in payload["reviewers"]:
+                    if reviewer.lower() not in current:
+                        self.requested.append(reviewer)
+                        self.request_history.append(reviewer)
+                        current.add(reviewer.lower())
                 return {}
         if path == f"/commits/{self.value['head']['sha']}/status" and method == "GET":
             return {"statuses": list(reversed(self.statuses))}
@@ -261,18 +281,46 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         parsed = parse_verdict(verdict("beautyarbutin", "openai-gpt"), HEAD)
         candidates = choose_candidates(normalized_config(config()), parsed, "contributor")
         self.assertEqual(
-            candidates,
-            [("keting", "anthropic-claude"), ("AHMEDALATTAR416", "zhipu-glm")],
+            [
+                (item.login, item.agent_product, item.model_family)
+                for item in candidates
+            ],
+            [
+                ("keting", "claude-code", "anthropic-claude"),
+                ("AHMEDALATTAR416", "claude-code", "zhipu-glm"),
+            ],
         )
 
     def test_glm_first_routes_to_codex_and_excludes_owner(self):
         parsed = parse_verdict(verdict("AHMEDALATTAR416", "zhipu-glm"), HEAD)
         candidates = choose_candidates(normalized_config(config()), parsed, "XiaoCooder")
         self.assertEqual(
-            {login for login, _ in candidates},
+            {item.login for item in candidates},
             {"beautyarbutin", "black-pwq", "leonadoor"},
         )
-        self.assertNotIn("keting", {login for login, _ in candidates})
+        self.assertNotIn("keting", {item.login for item in candidates})
+
+    def test_same_reviewer_can_offer_multiple_capabilities(self):
+        parsed = parse_verdict(verdict("XiaoCooder", "anthropic-claude"), HEAD)
+        candidates = choose_candidates(normalized_config(config()), parsed, "contributor")
+        keting = next(item for item in candidates if item.login == "keting")
+        self.assertEqual(
+            (keting.agent_product, keting.model_family),
+            ("workbuddy", "moonshot-kimi"),
+        )
+
+    def test_legacy_assignment_uses_only_first_configured_capability(self):
+        legacy = Assignment(
+            reviewer="keting",
+            stage="second",
+            head=HEAD,
+            created_at=parse_time(NOW),
+            comment_id=1,
+        )
+        self.assertEqual(
+            allowed_assignment_families(normalized_config(config()), legacy),
+            {"anthropic-claude"},
+        )
 
     def test_new_scenario_assigns_first_reviewer_but_never_owner(self):
         client = FakeClient(pull(number=1))
@@ -280,6 +328,10 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         assignment = latest_assignment(assignment_records(client.comments_data), "first", HEAD)
         self.assertEqual(assignment.reviewer, "beautyarbutin")
         self.assertNotEqual(assignment.reviewer, "keting")
+        self.assertEqual(
+            (assignment.agent_product, assignment.model_family),
+            ("codex", "openai-gpt"),
+        )
         self.assertEqual(client.statuses[-1]["state"], "pending")
 
     def test_owner_is_excluded_even_if_misconfigured_as_first_reviewer(self):
@@ -561,7 +613,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertEqual(client.requested, [])
         self.assertEqual(client.statuses[-1]["state"], "failure")
 
-    def test_two_independent_approvals_request_one_maintainer(self):
+    def test_two_independent_approvals_request_both_maintainers(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
         client.add_verdict("beautyarbutin", "openai-gpt")
@@ -574,8 +626,12 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             for comment in client.comments_data
             if "scenario-maintainer-request" in comment["body"]
         )
-        self.assertIn("xiaocooder", maintainer["body"].lower())
-        self.assertEqual(client.requested, ["XiaoCooder"])
+        self.assertIn(
+            "scenario-maintainer-request:beautyarbutin,xiaocooder",
+            maintainer["body"].lower(),
+        )
+        self.assertIn("@beautyarbutin @XiaoCooder", maintainer["body"])
+        self.assertEqual(client.requested, ["beautyarbutin", "XiaoCooder"])
 
     def test_second_reviewer_must_use_assigned_model_family(self):
         client = FakeClient(pull(number=1))
@@ -602,6 +658,21 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             latest_assignment(assignment_records(client.comments_data), "second", HEAD)
         )
 
+    def test_assigned_reviewer_can_submit_a_human_only_verdict(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        human = verdict("beautyarbutin", "openai-gpt")
+        human["body"] = human["body"].replace(
+            "Reviewer: Agent / model / high",
+            "Reviewer: beautyarbutin (human-only)",
+        ).replace("agent:openai-gpt", "human:beautyarbutin")
+        client.comments_data.append(human)
+        process_pull(client, client.value)
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertIsNotNone(second)
+
     def test_first_not_exposed_family_does_not_route_second_review(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
@@ -623,7 +694,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertEqual(current.reviewer, "keting")
         revised = config()
         revised["second_reviewers"] = ["AHMEDALATTAR416"]
-        revised["reviewer_profiles"].pop("keting")
+        revised["reviewer_capabilities"].pop("keting")
         with patch(
             "scenario_review_flow.load_config",
             return_value=normalized_config(revised),
@@ -669,6 +740,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             if "scenario-maintainer-request" in comment["body"]
         )
         self.assertNotIn("scenario-maintainer-request:beautyarbutin", maintainer_comment["body"])
+        self.assertEqual(client.requested, ["XiaoCooder"])
 
     def test_formal_maintainer_approval_is_not_re_requested(self):
         client = FakeClient(pull(number=1))
@@ -697,16 +769,13 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         before = len(client.request_history)
         process_pull(client, client.value)
         self.assertEqual(len(client.request_history), before)
+        self.assertEqual(client.requested, [])
         maintenance = assignment_records([maintainer_comment])
         self.assertEqual(maintenance, [])
 
     def test_formal_approval_must_match_maintainer_and_head(self):
-        from scenario_review_flow import Assignment
-        from review_gate import parse_time
-
-        assignment = Assignment(
-            reviewer="XiaoCooder",
-            stage="maintainer",
+        request = MaintainerRequest(
+            reviewers=("beautyarbutin", "XiaoCooder"),
             head=HEAD,
             created_at=parse_time(NOW),
             comment_id=1,
@@ -717,7 +786,22 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             "commit_id": "c" * 40,
             "user": {"login": "XiaoCooder"},
         }
-        self.assertFalse(has_formal_approval([wrong], assignment, HEAD))
+        self.assertIsNone(has_formal_approval([wrong], request, HEAD))
+
+    def test_unrequested_formal_approval_does_not_finish_maintainer_review(self):
+        request = MaintainerRequest(
+            reviewers=("beautyarbutin", "XiaoCooder"),
+            head=HEAD,
+            created_at=parse_time(NOW),
+            comment_id=1,
+        )
+        unrelated = {
+            "state": "APPROVED",
+            "submitted_at": "2026-09-03T11:00:00Z",
+            "commit_id": HEAD,
+            "user": {"login": "someone-else"},
+        }
+        self.assertIsNone(has_formal_approval([unrelated], request, HEAD))
 
 
 if __name__ == "__main__":

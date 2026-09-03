@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from notify_review_escalation import GitHubClient, required_env  # noqa: E402
 from review_gate import (  # noqa: E402
+    CANONICAL_AGENT_KEYS,
     ParsedVerdict,
     evaluate_review_gate,
     parse_time,
@@ -35,8 +36,13 @@ ASSIGNMENT_RE = re.compile(
 STAGE_RE = re.compile(
     r"<!--\s*scenario-review-stage:(first|second)\s*-->", re.IGNORECASE
 )
+CAPABILITY_RE = re.compile(
+    r"<!--\s*scenario-review-capability:([a-z0-9][a-z0-9-]*)"
+    r"\s+model-family:([a-z0-9][a-z0-9-]*)\s*-->",
+    re.IGNORECASE,
+)
 MAINTAINER_RE = re.compile(
-    r"<!--\s*scenario-maintainer-request:([A-Za-z0-9-]+)"
+    r"<!--\s*scenario-maintainer-request:([A-Za-z0-9-]+(?:,[A-Za-z0-9-]+)*)"
     r"\s+head:([0-9a-f]{7,40})\s*-->",
     re.IGNORECASE,
 )
@@ -63,10 +69,27 @@ PROTECTED_PROTOCOL_FILES = {
 
 
 @dataclass(frozen=True)
+class Capability:
+    login: str
+    agent_product: str
+    model_family: str
+
+
+@dataclass(frozen=True)
 class Assignment:
     reviewer: str
     stage: str
     head: str | None
+    created_at: datetime
+    comment_id: int
+    agent_product: str | None = None
+    model_family: str | None = None
+
+
+@dataclass(frozen=True)
+class MaintainerRequest:
+    reviewers: tuple[str, ...]
+    head: str
     created_at: datetime
     comment_id: int
 
@@ -111,6 +134,7 @@ def assignment_records(comments: Iterable[dict[str, Any]]) -> list[Assignment]:
         body = str(comment.get("body") or "")
         stage_match = STAGE_RE.search(body)
         stage = stage_match.group(1).lower() if stage_match else "first"
+        capability_match = CAPABILITY_RE.search(body)
         for match in ASSIGNMENT_RE.finditer(body):
             assignments.append(
                 Assignment(
@@ -119,6 +143,16 @@ def assignment_records(comments: Iterable[dict[str, Any]]) -> list[Assignment]:
                     head=match.group(2),
                     created_at=parse_time(str(comment["created_at"])),
                     comment_id=int(comment.get("id") or 0),
+                    agent_product=(
+                        capability_match.group(1).lower()
+                        if capability_match
+                        else None
+                    ),
+                    model_family=(
+                        capability_match.group(2).lower()
+                        if capability_match
+                        else None
+                    ),
                 )
             )
     return assignments
@@ -165,8 +199,8 @@ def assigned_verdict(
 
 def maintainer_assignment(
     comments: Iterable[dict[str, Any]], current_head: str
-) -> Assignment | None:
-    matches: list[Assignment] = []
+) -> MaintainerRequest | None:
+    matches: list[MaintainerRequest] = []
     for comment in comments:
         login = str((comment.get("user") or {}).get("login") or "").lower()
         if login not in TRUSTED_ASSIGNERS:
@@ -175,9 +209,8 @@ def maintainer_assignment(
         for match in MAINTAINER_RE.finditer(body):
             if head_matches(current_head, match.group(2)):
                 matches.append(
-                    Assignment(
-                        reviewer=match.group(1),
-                        stage="maintainer",
+                    MaintainerRequest(
+                        reviewers=tuple(match.group(1).split(",")),
                         head=match.group(2),
                         created_at=parse_time(str(comment["created_at"])),
                         comment_id=int(comment.get("id") or 0),
@@ -191,20 +224,21 @@ def maintainer_assignment(
 
 
 def has_formal_approval(
-    reviews: Iterable[dict[str, Any]], assignment: Assignment, current_head: str
-) -> bool:
+    reviews: Iterable[dict[str, Any]], request: MaintainerRequest, current_head: str
+) -> str | None:
+    requested = {login.lower() for login in request.reviewers}
     for review in reviews:
         login = str((review.get("user") or {}).get("login") or "").lower()
         submitted = review.get("submitted_at")
         commit_id = str(review.get("commit_id") or "")
-        if login != assignment.reviewer.lower() or review.get("state") != "APPROVED":
+        if login not in requested or review.get("state") != "APPROVED":
             continue
-        if not submitted or parse_time(str(submitted)) < assignment.created_at:
+        if not submitted or parse_time(str(submitted)) < request.created_at:
             continue
         if not commit_id or not head_matches(current_head, commit_id):
             continue
-        return True
-    return False
+        return login
+    return None
 
 
 def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
@@ -218,27 +252,88 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(value.get(name), list) or not value[name]:
             raise RuntimeError(f"{CONFIG_PATH} must contain a non-empty {name} list")
         value[name] = list(dict.fromkeys(str(item).strip() for item in value[name] if str(item).strip()))
-    profiles = value.get("reviewer_profiles")
-    if not isinstance(profiles, dict):
-        raise RuntimeError(f"{CONFIG_PATH} must contain reviewer_profiles")
-    value["reviewer_profiles"] = {
-        str(login).lower(): str(family).lower() for login, family in profiles.items()
+    capabilities = value.get("reviewer_capabilities")
+    if not isinstance(capabilities, dict):
+        raise RuntimeError(f"{CONFIG_PATH} must contain reviewer_capabilities")
+    canonical_families = {
+        key.removeprefix("agent:")
+        for key in CANONICAL_AGENT_KEYS
+        if key != "agent:not-exposed"
     }
+    normalized_capabilities: dict[str, list[dict[str, str]]] = {}
+    for login, entries in capabilities.items():
+        if not isinstance(entries, list) or not entries:
+            raise RuntimeError(f"reviewer_capabilities for {login} must be a non-empty list")
+        normalized_entries = []
+        seen = set()
+        for entry in entries:
+            if not isinstance(entry, dict):
+                raise RuntimeError(f"reviewer capability for {login} must be an object")
+            agent_product = str(entry.get("agent_product") or "").lower()
+            model_family = str(entry.get("model_family") or "").lower()
+            if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", agent_product):
+                raise RuntimeError(f"invalid agent_product for {login}: {agent_product}")
+            if model_family not in canonical_families:
+                raise RuntimeError(f"invalid model_family for {login}: {model_family}")
+            pair = (agent_product, model_family)
+            if pair not in seen:
+                normalized_entries.append(
+                    {"agent_product": agent_product, "model_family": model_family}
+                )
+                seen.add(pair)
+        normalized_capabilities[str(login).lower()] = normalized_entries
+    value["reviewer_capabilities"] = normalized_capabilities
     configured = {
         login.lower()
         for name in required_lists
         for login in value[name]
     }
-    missing = configured - set(value["reviewer_profiles"])
+    missing = configured - set(value["reviewer_capabilities"])
     if missing:
-        raise RuntimeError(f"reviewer_profiles missing: {sorted(missing)}")
+        raise RuntimeError(f"reviewer_capabilities missing: {sorted(missing)}")
     return value
+
+
+def capabilities_for(config: dict[str, Any], login: str) -> list[Capability]:
+    return [
+        Capability(
+            login=login,
+            agent_product=entry["agent_product"],
+            model_family=entry["model_family"],
+        )
+        for entry in config["reviewer_capabilities"].get(login.lower(), [])
+    ]
+
+
+def assignment_supported(
+    assignment: Assignment, candidates: Iterable[Capability]
+) -> bool:
+    for capability in candidates:
+        if capability.login.lower() != assignment.reviewer.lower():
+            continue
+        if assignment.agent_product and assignment.agent_product != capability.agent_product:
+            continue
+        if assignment.model_family and assignment.model_family != capability.model_family:
+            continue
+        return True
+    return False
+
+
+def allowed_assignment_families(
+    config: dict[str, Any], assignment: Assignment
+) -> set[str]:
+    if assignment.model_family:
+        return {assignment.model_family}
+    # Markers created before capability pinning used the reviewer's single
+    # configured profile. Preserve that behavior by treating the first listed
+    # capability as the legacy default rather than granting every new option.
+    capabilities = capabilities_for(config, assignment.reviewer)
+    return {capabilities[0].model_family} if capabilities else set()
 
 
 def choose_candidates(
     config: dict[str, Any], first: ParsedVerdict, author: str
-) -> list[tuple[str, str]]:
-    profiles = config["reviewer_profiles"]
+) -> list[Capability]:
     if first.model_family == "zhipu-glm":
         pool = config["glm_first_fallback_reviewers"]
     else:
@@ -246,12 +341,15 @@ def choose_candidates(
     candidates = []
     for login in pool:
         lower = login.lower()
-        family = profiles[lower]
         if lower in {author.lower(), first.commenter.lower()}:
             continue
-        if family == first.model_family:
-            continue
-        candidates.append((login, family))
+        compatible = [
+            capability
+            for capability in capabilities_for(config, login)
+            if capability.model_family != first.model_family
+        ]
+        if compatible:
+            candidates.append(compatible[0])
     return candidates
 
 
@@ -301,19 +399,29 @@ def requested_reviews(
 
 
 def sync_review_request(client: GitHubClient, number: int, reviewer: str) -> None:
+    sync_review_requests(client, number, [reviewer])
+
+
+def sync_review_requests(
+    client: GitHubClient, number: int, reviewers: Iterable[str]
+) -> None:
+    desired = list(dict.fromkeys(reviewers))
+    desired_lower = {login.lower() for login in desired}
     current, teams = requested_reviews(client, number)
-    remove = [login for login in current if login.lower() != reviewer.lower()]
+    remove = [login for login in current if login.lower() not in desired_lower]
     if remove or teams:
         client.request(
             f"/pulls/{number}/requested_reviewers",
             method="DELETE",
             payload={"reviewers": remove, "team_reviewers": teams},
         )
-    if reviewer.lower() not in {login.lower() for login in current}:
+    current_lower = {login.lower() for login in current}
+    add = [login for login in desired if login.lower() not in current_lower]
+    if add:
         client.request(
             f"/pulls/{number}/requested_reviewers",
             method="POST",
-            payload={"reviewers": [reviewer]},
+            payload={"reviewers": add},
         )
 
 
@@ -357,6 +465,7 @@ def assignment_body(
     pull: dict[str, Any],
     reviewer: str,
     stage: str,
+    agent_product: str,
     required_family: str,
     re_review: bool,
 ) -> str:
@@ -371,6 +480,7 @@ def assignment_body(
         [
             f"<!-- scenario-review-assignment:{reviewer.lower()} head:{head} -->",
             f"<!-- scenario-review-stage:{stage} -->",
+            f"<!-- scenario-review-capability:{agent_product} model-family:{required_family} -->",
         ]
     )
     if re_review:
@@ -380,6 +490,7 @@ def assignment_body(
                 "## Scenario re-review requested / 场景复审邀请",
                 "",
                 f"@{reviewer}, the PR head changed to `{head[:12]}`. Please re-review this head.",
+                f"Continue with `{agent_product}` and model family `{required_family}`.",
                 "You may consult your own prior verdict and the author's response, but do not read findings from other reviewers before publishing.",
                 "",
                 "```text",
@@ -388,7 +499,7 @@ def assignment_body(
             ]
         )
     family_text = (
-        f" Use `{required_family}` for this review. / 本轮请使用 `{required_family}`。"
+        f" Use `{agent_product}` with model family `{required_family}` for this review. / 本轮请使用 `{agent_product}` 和模型家族 `{required_family}`。"
         if required_family
         else ""
     )
@@ -413,7 +524,7 @@ def assignment_body(
 def request_from_candidates(
     client: GitHubClient,
     pull: dict[str, Any],
-    candidates: list[tuple[str, str]],
+    candidates: list[Capability],
     stage: str,
     previous: Assignment | None,
 ) -> tuple[Assignment, dict[str, Any]]:
@@ -421,12 +532,12 @@ def request_from_candidates(
     ordered = rotated(candidates, number)
     if not ordered:
         raise RuntimeError(f"No {stage} reviewer is available")
-    reviewer, family = ordered[0]
+    capability = ordered[0]
+    reviewer = capability.login
     existing = latest_assignment(
         assignment_records(client.comments(number)), stage, pull["head"]["sha"]
     )
-    candidate_logins = {login.lower() for login, _ in candidates}
-    if existing and existing.reviewer.lower() in candidate_logins:
+    if existing and assignment_supported(existing, candidates):
         return existing, {}
     # Do not fall through to another person after an ambiguous API failure:
     # the first request may have succeeded even if its response was lost.
@@ -438,7 +549,8 @@ def request_from_candidates(
         pull,
         reviewer,
         stage,
-        family,
+        capability.agent_product,
+        capability.model_family,
         re_review=previous is not None and previous.reviewer.lower() == reviewer.lower(),
     )
     try:
@@ -454,6 +566,8 @@ def request_from_candidates(
             head=pull["head"]["sha"],
             created_at=parse_time(str(comment["created_at"])),
             comment_id=int(comment["id"]),
+            agent_product=capability.agent_product,
+            model_family=capability.model_family,
         ),
         comment,
     )
@@ -466,16 +580,18 @@ def request_first(
     assignments: list[Assignment],
 ) -> Assignment:
     author = pull["user"]["login"].lower()
-    profiles = config["reviewer_profiles"]
     candidates = [
-        (login, profiles[login.lower()])
+        capabilities_for(config, login)[0]
         for login in config["reviewers"]
         if login.lower() not in {author, "keting"}
     ]
     previous = latest_assignment(assignments, "first")
     if previous:
         previous_match = [
-            item for item in candidates if item[0].lower() == previous.reviewer.lower()
+            item
+            for item in candidates
+            if item.login.lower() == previous.reviewer.lower()
+            and assignment_supported(previous, [item])
         ]
         if previous_match:
             candidates = previous_match
@@ -502,7 +618,10 @@ def request_second(
     previous = latest_assignment(assignments, "second")
     if previous:
         previous_match = [
-            item for item in candidates if item[0].lower() == previous.reviewer.lower()
+            item
+            for item in candidates
+            if item.login.lower() == previous.reviewer.lower()
+            and assignment_supported(previous, [item])
         ]
         if previous_match:
             candidates = previous_match
@@ -512,50 +631,51 @@ def request_second(
     return assignment
 
 
-def ensure_maintainer(
+def ensure_maintainers(
     client: GitHubClient,
     pull: dict[str, Any],
     config: dict[str, Any],
     comments: list[dict[str, Any]],
     reviews: list[dict[str, Any]],
-    reviewers: set[str],
 ) -> None:
     current = maintainer_assignment(comments, pull["head"]["sha"])
-    configured_maintainers = {login.lower() for login in config["maintainers"]}
     author = pull["user"]["login"].lower()
+    desired = [
+        login for login in config["maintainers"] if login.lower() != author
+    ]
+    desired_lower = {login.lower() for login in desired}
+    if not desired:
+        raise RuntimeError("No maintainer is available after excluding the PR author")
     if (
         current
-        and current.reviewer.lower() in configured_maintainers
-        and current.reviewer.lower() != author
+        and {login.lower() for login in current.reviewers} == desired_lower
     ):
         if has_formal_approval(reviews, current, pull["head"]["sha"]):
+            clear_review_requests(client, int(pull["number"]))
             return
-        sync_review_request(client, int(pull["number"]), current.reviewer)
+        sync_review_requests(client, int(pull["number"]), desired)
         return
-    pool = [login for login in config["maintainers"] if login.lower() != author]
-    preferred = [login for login in pool if login.lower() not in reviewers]
-    ordered = preferred or pool
-    candidates = [(login, "") for login in ordered]
-    if not candidates:
-        raise RuntimeError("No maintainer is available after excluding the PR author")
     number = int(pull["number"])
-    login, _ = rotated(candidates, number)[0]
     current = maintainer_assignment(client.comments(number), pull["head"]["sha"])
     if (
         current
-        and current.reviewer.lower() in configured_maintainers
-        and current.reviewer.lower() != author
+        and {login.lower() for login in current.reviewers} == desired_lower
     ):
-        sync_review_request(client, number, current.reviewer)
+        if has_formal_approval(reviews, current, pull["head"]["sha"]):
+            clear_review_requests(client, number)
+            return
+        sync_review_requests(client, number, desired)
         return
     try:
-        sync_review_request(client, number, login)
+        sync_review_requests(client, number, desired)
     except Exception as error:
-        raise RuntimeError(f"Could not request maintainer @{login}: {error}") from error
+        logins = ", ".join(f"@{login}" for login in desired)
+        raise RuntimeError(f"Could not request maintainers {logins}: {error}") from error
     marker = (
-        f"<!-- scenario-maintainer-request:{login.lower()} "
+        f"<!-- scenario-maintainer-request:{','.join(login.lower() for login in desired)} "
         f"head:{pull['head']['sha'].lower()} -->"
     )
+    mentions = " ".join(f"@{login}" for login in desired)
     try:
         client.add_comment(
             number,
@@ -564,14 +684,14 @@ def ensure_maintainer(
                     marker,
                     "## Maintainer final review requested / 维护者终审邀请",
                     "",
-                    f"@{login}, `review-gate` has recorded two independent current-head APPROVE verdicts.",
-                    "Please perform the final human check and use GitHub's formal Approve action if the PR is ready. Do not approve your own PR.",
+                    f"{mentions}, `review-gate` has recorded two independent current-head APPROVE verdicts.",
+                    "The first eligible Maintainer to finish may use GitHub's formal Approve action. After one approval, the other Review Request is no longer needed and will be removed automatically.",
                 ]
             ),
         )
     except Exception as error:
         raise RuntimeError(
-            f"@{login} may be requested but its maintainer comment failed: {error}"
+            f"Maintainers may be requested but the maintainer comment failed: {error}"
         ) from error
 
 
@@ -596,13 +716,12 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     assignments = assignment_records(comments)
     current_head = pull["head"]["sha"]
     first = latest_assignment(assignments, "first", current_head)
-    profiles = config["reviewer_profiles"]
-    valid_first_reviewers = {
-        login.lower()
+    first_candidates = [
+        capabilities_for(config, login)[0]
         for login in config["reviewers"]
         if login.lower() not in {pull["user"]["login"].lower(), "keting"}
-    }
-    if first and first.reviewer.lower() not in valid_first_reviewers:
+    ]
+    if first and not assignment_supported(first, first_candidates):
         first = request_first(client, pull, config, assignments)
         post_status(client, pull, "pending", f"Reassigned first review to @{first.reviewer}")
         return None
@@ -630,19 +749,16 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         sync_review_request(client, number, first.reviewer)
         post_status(client, pull, "pending", f"Waiting for @{first.reviewer} to re-review changes")
         return None
-    expected_first_family = profiles[first.reviewer.lower()]
-    if first_verdict.model_family not in {expected_first_family, "human"}:
+    expected_first_families = allowed_assignment_families(config, first)
+    if first_verdict.model_family not in expected_first_families | {"human"}:
         post_status(client, pull, "failure", "First verdict did not use its assigned model family")
         return None
 
     second = latest_assignment(assignments, "second", current_head)
-    valid_second_reviewers = {
-        login.lower()
-        for login, _ in choose_candidates(
-            config, first_verdict, pull["user"]["login"]
-        )
-    }
-    if second and second.reviewer.lower() not in valid_second_reviewers:
+    second_candidates = choose_candidates(
+        config, first_verdict, pull["user"]["login"]
+    )
+    if second and not assignment_supported(second, second_candidates):
         second = request_second(client, pull, config, first_verdict, assignments)
         post_status(client, pull, "pending", f"Reassigned second review to @{second.reviewer}")
         return str(number) if second.reviewer.lower() == "keting" else None
@@ -670,8 +786,8 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         post_status(client, pull, "pending", f"Waiting for @{second.reviewer} to re-review changes")
         return None
 
-    expected_second_family = profiles[second.reviewer.lower()]
-    if second_verdict.model_family not in {expected_second_family, "human"}:
+    expected_second_families = allowed_assignment_families(config, second)
+    if second_verdict.model_family not in expected_second_families | {"human"}:
         post_status(client, pull, "failure", "Second verdict did not use its assigned model family")
         return None
 
@@ -685,13 +801,12 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         return None
 
     post_status(client, pull, "success", "Two independent current-head APPROVE verdicts recorded")
-    ensure_maintainer(
+    ensure_maintainers(
         client,
         pull,
         config,
         comments,
         reviews,
-        {first.reviewer.lower(), second.reviewer.lower()},
     )
     return None
 

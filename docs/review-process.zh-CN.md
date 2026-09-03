@@ -40,9 +40,13 @@
 
 两份评审改为顺序派发。第一名 Reviewer 先发布当前 head 的 verdict，再决定是否邀请第二人。首评为 `REQUEST_CHANGES` 时仍由原 Reviewer 跟进复审；首评为隐私 verdict 时停止流程；只有首评为 `APPROVE`，才邀请一名不同模型家族的第二 Reviewer。
 
+自动化按两个独立维度登记评审能力：**Agent 产品**（例如 Codex、Claude Code、WorkBuddy）和**模型家族**（例如 OpenAI/GPT、GLM、Claude、Kimi）。同一个 GitHub 账号可以登记多个“产品 + 模型家族”能力组合。每次分配都会在可信 marker 中固定本轮准确的能力组合；当同一账号有多个可用组合时，`.github/scenario-reviewers.json` 中的列表顺序表示其使用优先级。二评仍必须选择与已接受首评不同的模型家族。
+
 顺序派发不降低独立性要求。第二 Reviewer 必须从 diff 和文件独立检查，不得阅读第一人的 findings。看过他人意见之后写下的评审必须披露，并且不计入两份独立评审的下限。明确要求由同一 Reviewer 复审时，可以读取自己此前的 verdict 与贡献者后续回复，因为这一步是在核验修订，不是在新增一份独立评审；follow-up 必须披露这一边界。
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。
+
+当前 head 获得两份合格的 APPROVE verdict 后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审，但只要求其中一份正式 Maintainer Approve。第一名合格 Maintainer 批准当前 head 后，这一步即完成；定时归约会撤销另一名 Maintainer 尚未完成的 Review Request。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。
 
 ## 意见模板
 
@@ -84,7 +88,7 @@ git log -1 --format=%h -- docs/review-process.md
 - **发布自己的评审之前，不得阅读该 PR 评论区已有的任何评审意见，必须独立得出结论。** 评审基于 PR 的 diff 和文件本身进行，不打开 PR 会话页。如果你确实看到了他人的意见，必须在评论中披露：这份评审不计入两份独立评审的下限，只作参考。
 - **复审必须另发新评论，并写明它 supersede 哪条旧 verdict。** 贡献者已经依据旧 verdict 行动后，不得把旧评论原地改成另一种结论。旧评论保留为贡献者回复的可见原因，新评论作为该 reviewer 的当前 verdict。
 - **AI 协助的评审必须署明 agent 产品、具体模型和 reasoning effort。** 产品没有暴露模型或 effort 时写 `not exposed`，不要臆测。这与本仓对证据字段的诚实规则是同一条口径：拿不到的值就记为拿不到，绝不推断。
-- **Independence key 在同一 Reviewer 的复审中保持稳定，并且有意比 Reviewer 行更粗。** 纯人工评审必须写 `human:<github-login>`；AI 协助评审必须且只能写 `agent:openai-gpt`、`agent:anthropic-claude`、`agent:zhipu-glm`、`agent:google-gemini` 或 `agent:not-exposed` 之一，模型版本与 effort 不另立 key。`agent:not-exposed` 诚实记录无法确认的边界，但不能满足自动两家族门禁。支持新家族前，必须同时更新规范 key 实现与 Reviewer profile 配置。只有 GitHub Reviewer 和通过校验的模型家族都不同时，两份 APPROVE 才分别计数。
+- **Independence key 在同一 Reviewer 的复审中保持稳定，并且有意比 Reviewer 行更粗。** 纯人工评审必须写 `human:<github-login>`；AI 协助评审必须且只能写 `agent:openai-gpt`、`agent:anthropic-claude`、`agent:zhipu-glm`、`agent:google-gemini`、`agent:moonshot-kimi` 或 `agent:not-exposed` 之一，模型版本与 effort 不另立 key。`agent:not-exposed` 诚实记录无法确认的边界，但不能满足自动两家族门禁。支持新家族前，必须同时更新规范 key 实现与 Reviewer capability 配置。只有 GitHub Reviewer 和通过校验的模型家族都不同时，两份 APPROVE 才分别计数。
 - **"Could not verify" 是必填栏。** 写清你这份评审实际能确立的边界。它至少包含只有贡献者才能核验的那一类主张——例如已发布图片与其脱敏所依据的私有原图之间的对应关系，或者提交之前是否还有被丢弃的 attempts。一份默默略过自身局限的评审是在夸大自己，而这正是本项目要求贡献者避免的那种失误。
 
 ## 隐私例外

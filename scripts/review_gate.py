@@ -21,6 +21,7 @@ CANONICAL_AGENT_KEYS = {
     "agent:anthropic-claude",
     "agent:zhipu-glm",
     "agent:google-gemini",
+    "agent:moonshot-kimi",
     "agent:not-exposed",
 }
 
@@ -60,6 +61,8 @@ def legacy_key(reviewer: str) -> str | None:
         return "agent:zhipu-glm"
     if "gemini" in value or "google" in value:
         return "agent:google-gemini"
+    if "kimi" in value or "moonshot" in value:
+        return "agent:moonshot-kimi"
     if "codex" in value or "openai" in value or re.search(r"\bgpt[- ]", value):
         return "agent:openai-gpt"
     if "claude" in value or "anthropic" in value:
