@@ -379,7 +379,7 @@ The repository's [Pull Request template](.github/pull_request_template.md) alrea
 
 Review focuses on internal consistency, field states, redaction, and whether overclaiming was avoided — not on requiring every product to expose exactly the same data.
 
-Every data PR receives **at least two independent reviews**, human or AI-assisted; an AI-assisted review names the agent product, the model, and the effort it was performed with. Reviews are posted as structured comments on the PR — the process and the verdict template are in [docs/review-process.md](docs/review-process.md). When the two verdicts disagree, a third review is added. Merging, awarding points, and the final read are the maintainer's; the target response time is about 3 working days.
+Every data PR receives **at least two independent reviews**, human or AI-assisted; an AI-assisted review names the agent product, model, effort, and model-family independence key. Reviews are posted as structured comments on the PR — the sequential process and verdict template are in [docs/review-process.md](docs/review-process.md). A `REQUEST_CHANGES` verdict stays with that reviewer until the revision is re-reviewed, while a privacy verdict stops the flow; merging, awarding points, and the final read remain the maintainer's. The target response time is about 3 working days.
 
 Pre-submission checklist:
 

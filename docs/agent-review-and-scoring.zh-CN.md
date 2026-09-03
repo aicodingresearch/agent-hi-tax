@@ -46,13 +46,14 @@
 评审 Agent：<产品，例如 Claude Code 或 Codex>
 评审模型：<准确模型，例如 claude-opus-5 或 gpt-5.6-sol>
 Reasoning effort：<准确 effort，例如 xhigh>
+Independence key：agent:<model-family>
 
 按本仓库的 Agent 评审与计分入口执行。评审当前精确 head；在发布本次
 独立 verdict 前，不得读取已有评审评论或其他 reviewer findings。只发布
 comment，不使用 GitHub 的正式 Approve 或 Request changes。
 ```
 
-Agent 产品、模型和 effort 必须描述真实运行环境。把它们写进 prompt 不会切换或配置运行时。用户填写的身份与产品实际暴露值冲突时，Agent 必须报告不一致并使用观察值；拿不到时写 `not exposed`，不得照抄或猜测。
+Agent 产品、模型、effort 和 Independence key 必须描述真实运行环境。把它们写进 prompt 不会切换或配置运行时。用户填写的身份与产品实际暴露值冲突时，Agent 必须报告不一致并使用观察值；拿不到时写 `not exposed`，不得照抄或猜测。
 
 合并后计分建议使用：
 

@@ -37,7 +37,9 @@
 
 ## 评审的独立性
 
-两份评审并行派发，各自独立形成结论后再发布。不读 PR 评论区已有的评审意见，是[意见模板](#意见模板)中的一条硬要求，而不是礼节：看过他人意见之后写下的评审必须披露这一点，并且不计入两份独立评审的下限。明确要求由同一 reviewer 复审时，可以读取该 reviewer 自己的旧 verdict 与贡献者后续回复，因为这一步是在核验修订，不是在新增一份独立评审；follow-up 必须披露这一边界。
+两份评审改为顺序派发。第一名 Reviewer 先发布当前 head 的 verdict，再决定是否邀请第二人。首评为 `REQUEST_CHANGES` 时仍由原 Reviewer 跟进复审；首评为隐私 verdict 时停止流程；只有首评为 `APPROVE`，才邀请一名不同模型家族的第二 Reviewer。
+
+顺序派发不降低独立性要求。第二 Reviewer 必须从 diff 和文件独立检查，不得阅读第一人的 findings。看过他人意见之后写下的评审必须披露，并且不计入两份独立评审的下限。明确要求由同一 Reviewer 复审时，可以读取自己此前的 verdict 与贡献者后续回复，因为这一步是在核验修订，不是在新增一份独立评审；follow-up 必须披露这一边界。
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。
 
@@ -52,6 +54,7 @@ Reviewed under: docs/review-process.md @ <template commit>
 
 Reviewed at head: <commit SHA>
 Reviewer: <human name, or agent product + model + reasoning effort>
+Independence key: human:<github-login> | agent:<model-family>
 Date: <YYYY-MM-DD>
 Supersedes (re-review only): <prior verdict comment URL>
 
@@ -74,12 +77,13 @@ Advisory (optional): <任务与分值判定建议，仅供维护者参考>
 git log -1 --format=%h -- docs/review-process.md
 ```
 
-有五条要求不是可选项：
+有六条要求不是可选项：
 
 - **评审评论的第一行必须声明所依据的评审模板版本**，以上述 commit 标识为准。本页后续改版不追溯已发布的评审：每份评审按它声明的版本裁定，除非维护者明确要求按新版复审。
 - **发布自己的评审之前，不得阅读该 PR 评论区已有的任何评审意见，必须独立得出结论。** 评审基于 PR 的 diff 和文件本身进行，不打开 PR 会话页。如果你确实看到了他人的意见，必须在评论中披露：这份评审不计入两份独立评审的下限，只作参考。
 - **复审必须另发新评论，并写明它 supersede 哪条旧 verdict。** 贡献者已经依据旧 verdict 行动后，不得把旧评论原地改成另一种结论。旧评论保留为贡献者回复的可见原因，新评论作为该 reviewer 的当前 verdict。
 - **AI 协助的评审必须署明 agent 产品、具体模型和 reasoning effort。** 产品没有暴露模型或 effort 时写 `not exposed`，不要臆测。这与本仓对证据字段的诚实规则是同一条口径：拿不到的值就记为拿不到，绝不推断。
+- **Independence key 在同一 Reviewer 的复审中保持稳定，并且有意比 Reviewer 行更粗。** 纯人工评审写 `human:<github-login>`；AI 协助评审按模型家族写，例如 `agent:openai-gpt`、`agent:anthropic-claude`、`agent:zhipu-glm` 或 `agent:google-gemini`，同一家族的模型版本与 effort 变化不另立 key。模型家族未暴露时写 `agent:not-exposed`。只有 GitHub Reviewer 和 key 都不同时，两份 APPROVE 才分别计数。
 - **"Could not verify" 是必填栏。** 写清你这份评审实际能确立的边界。它至少包含只有贡献者才能核验的那一类主张——例如已发布图片与其脱敏所依据的私有原图之间的对应关系，或者提交之前是否还有被丢弃的 attempts。一份默默略过自身局限的评审是在夸大自己，而这正是本项目要求贡献者避免的那种失误。
 
 ## 隐私例外

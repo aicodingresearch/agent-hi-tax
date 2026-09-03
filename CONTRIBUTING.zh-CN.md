@@ -379,7 +379,7 @@ runs/YYYY-MM-DD/<scenario-id>/
 
 审核重点是内部一致性、字段状态、脱敏和是否避免过度结论，不是要求每个产品都暴露完全相同的数据。
 
-每个数据 PR 都会收到**至少两份独立评审**，人工或 AI 协助；AI 协助的评审会署明所用的 agent 产品、模型与 effort。评审以结构化评论的形式发在 PR 下，流程与意见模板见 [docs/review-process.zh-CN.md](docs/review-process.zh-CN.md)。两份意见相左时追加第三份。合并、分值发放与最终把关由维护者负责，目标响应时间约 3 个工作日。
+每个数据 PR 都会收到**至少两份独立评审**，人工或 AI 协助；AI 协助的评审会署明所用的 agent 产品、模型、effort 与模型家族 Independence key。评审以结构化评论的形式发在 PR 下，顺序流程与意见模板见 [docs/review-process.zh-CN.md](docs/review-process.zh-CN.md)。`REQUEST_CHANGES` 由同一 Reviewer 跟进修订后的复审，隐私 verdict 会停止流程；合并、分值发放与最终把关仍由维护者负责，目标响应时间约 3 个工作日。
 
 提交前检查：
 

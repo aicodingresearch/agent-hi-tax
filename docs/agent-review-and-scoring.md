@@ -46,6 +46,7 @@ Target PR: https://github.com/aicodingresearch/agent-hi-tax/pull/<number>
 Reviewer Agent: <product, for example Claude Code or Codex>
 Reviewer model: <exact model, for example claude-opus-5 or gpt-5.6-sol>
 Reasoning effort: <exact effort, for example xhigh>
+Independence key: agent:<model-family>
 
 Follow the Agent review and scoring entry point in this repository. Review the
 exact current head. Do not read existing review comments or reviewer findings
@@ -53,7 +54,7 @@ before publishing this independent verdict. Post a comment only; do not use
 GitHub's formal Approve or Request changes action.
 ```
 
-The Agent product, model, and effort must describe the actual runtime. Writing them in a prompt does not switch or configure the runtime. If the supplied identity conflicts with what the product exposes, the Agent reports the mismatch and uses the observed value; if unavailable, it writes `not exposed` rather than copying or guessing.
+The Agent product, model, effort, and independence key must describe the actual runtime. Writing them in a prompt does not switch or configure the runtime. If the supplied identity conflicts with what the product exposes, the Agent reports the mismatch and uses the observed value; if unavailable, it writes `not exposed` rather than copying or guessing.
 
 For post-merge points, the recommended input is:
 

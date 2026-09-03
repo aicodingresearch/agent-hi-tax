@@ -151,6 +151,17 @@ class ReviewNotificationTests(unittest.TestCase):
             NOW - timedelta(hours=30),
         )
 
+    def test_team_review_request_with_null_user_is_ignored(self):
+        timeline = [
+            {
+                "event": "review_requested",
+                "created_at": (NOW - timedelta(hours=30)).isoformat(),
+                "requested_reviewer": None,
+                "requested_team": {"slug": "release-maintainers"},
+            }
+        ]
+        self.assertIsNone(requested_at_from_timeline(timeline, ["black-pwq"]))
+
     def test_stale_assignment_alerts_without_verdict(self):
         assigned = comment("<!-- scenario-review-assignment:black-pwq -->")
         alert = classify_watchdog_alert(

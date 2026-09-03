@@ -218,7 +218,8 @@ def requested_at_from_timeline(
     for event in timeline:
         if event.get("event") != "review_requested":
             continue
-        login = str(event.get("requested_reviewer", {}).get("login", "")).lower()
+        requested_reviewer = event.get("requested_reviewer") or {}
+        login = str(requested_reviewer.get("login", "")).lower()
         if login in requested and event.get("created_at"):
             times.append(parse_time(str(event["created_at"])))
     return max(times, default=None)

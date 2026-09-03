@@ -37,7 +37,9 @@ Review exists for the four things a script cannot do:
 
 ## Reviewer independence
 
-The two reviews are dispatched in parallel and each reaches its own conclusion before publication. Not reading the reviews already posted on the PR is a hard requirement of [the verdict comment](#the-verdict-comment), not a courtesy: a review written after seeing another reviewer's findings must disclose that, and it does not count toward the two-independent-review minimum. An explicitly requested same-reviewer re-review may read that reviewer's earlier verdict and the contributor's subsequent response because it is validating a revision, not creating another independent review; the follow-up must disclose this boundary.
+The reviews are dispatched sequentially. The first reviewer publishes a current-head verdict before the second reviewer is selected. A first `REQUEST_CHANGES` stays with that reviewer until re-review; a privacy verdict stops the flow. Only a first `APPROVE` causes one reviewer from a different model family to be invited for the second review.
+
+Sequential dispatch does not relax independence. The second reviewer must work from the diff and files without reading the first reviewer's findings. A review written after seeing another reviewer's findings must disclose that, and it does not count toward the two-independent-review minimum. An explicitly requested same-reviewer re-review may read that reviewer's earlier verdict and the contributor's subsequent response because it is validating a revision, not creating another independent review; the follow-up must disclose this boundary.
 
 Reviews performed with AI assistance must come from **different model families**. Two reviews from the same family count as one, and the second one does not satisfy the L1 minimum.
 
@@ -52,6 +54,7 @@ Reviewed under: docs/review-process.md @ <template commit>
 
 Reviewed at head: <commit SHA>
 Reviewer: <human name, or agent product + model + reasoning effort>
+Independence key: human:<github-login> | agent:<model-family>
 Date: <YYYY-MM-DD>
 Supersedes (re-review only): <prior verdict comment URL>
 
@@ -74,12 +77,13 @@ Advisory (optional): <task and point-value suggestions, for the maintainer's ref
 git log -1 --format=%h -- docs/review-process.md
 ```
 
-Five requirements are not optional:
+Six requirements are not optional:
 
 - **The first line of a review comment must declare the template version it was written under**, identified by that commit. Later revisions of this page are not retroactive: each review is judged against the version it declared, unless the maintainer explicitly asks for a re-review under the current one.
 - **Do not read any review already posted on the PR before publishing your own; reach your conclusion independently.** Review from the diff and the files themselves, without opening the PR conversation page. If you did see another reviewer's findings, disclose it in your comment: that review no longer counts toward the two-independent-review minimum and stands as reference only.
 - **A re-review posts a new comment and names the verdict it supersedes.** Do not edit an earlier verdict into a different decision after the contributor has acted on it. Keep the old comment as the visible reason for the contributor's response, and use the new comment as that reviewer's current verdict.
 - **A review performed with AI assistance must name the agent product, the exact model, and the reasoning effort.** When the product does not expose the model or the effort, write `not exposed` — do not guess. This is the same honesty rule the repository applies to evidence fields: an unavailable value is recorded as unavailable, never inferred.
+- **The independence key is stable across re-reviews and deliberately coarser than the exact Reviewer line.** A human-only review uses `human:<github-login>`. An AI-assisted review uses a model-family key such as `agent:openai-gpt`, `agent:anthropic-claude`, `agent:zhipu-glm`, or `agent:google-gemini`; model versions and effort levels in the same family keep the same key. If the model family is not exposed, use `agent:not-exposed`. Two APPROVE verdicts count separately only when both the GitHub reviewers and their keys differ.
 - **"Could not verify" is a required line.** State the boundary of what your review could actually establish. At minimum it includes the class of claim that only the contributor can check — for example, that the published images correspond to the private originals they were masked from, or that no additional attempts were discarded before submission. A review that silently omits its own limits overstates itself, which is the same failure this project asks contributors to avoid.
 
 ## The privacy exception

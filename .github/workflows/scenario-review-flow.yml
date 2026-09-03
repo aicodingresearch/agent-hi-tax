@@ -1,0 +1,88 @@
+name: Manage scenario review flow
+
+# Structured issue comments advance immediately. The trusted schedule also
+# ingests legacy verdicts posted as Pull Request Review bodies; workflows
+# triggered directly by fork pull_request_review events have read-only tokens.
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+      - converted_to_draft
+  issue_comment:
+    types:
+      - created
+      - edited
+      - deleted
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: Optional PR number; empty scans every open scenario PR
+        required: false
+        type: number
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  group: scenario-review-flow-${{ github.event.pull_request.number || github.event.issue.number || inputs.pull_request_number || 'watchdog' }}
+  cancel-in-progress: false
+
+jobs:
+  manage:
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out trusted review automation
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+
+      - name: Assign reviewers and update review-gate
+        id: flow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+          INPUT_PR_NUMBER: ${{ inputs.pull_request_number }}
+        run: |
+          pr_number="$INPUT_PR_NUMBER"
+          if [ -z "$pr_number" ]; then
+            pr_number="$EVENT_PR_NUMBER"
+          fi
+
+          args=()
+          if [ -n "$pr_number" ]; then
+            args+=(--pull-request-number "$pr_number")
+          fi
+          python3 scripts/scenario_review_flow.py "${args[@]}"
+
+      - name: Email keting when selected for second review
+        if: steps.flow.outputs.notify_prs != ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          SMTP_HOST: ${{ secrets.APPROVAL_SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.APPROVAL_SMTP_PORT }}
+          SMTP_USER: ${{ secrets.APPROVAL_SMTP_USER }}
+          SMTP_AUTH_CODE: ${{ secrets.APPROVAL_SMTP_AUTH_CODE }}
+          NOTIFY_TO: ${{ secrets.APPROVAL_NOTIFY_TO }}
+          REVIEW_ESCALATION_HOURS: "24"
+          NOTIFY_PRS: ${{ steps.flow.outputs.notify_prs }}
+        run: |
+          IFS=',' read -r -a pull_requests <<< "$NOTIFY_PRS"
+          for pr_number in "${pull_requests[@]}"; do
+            python3 scripts/notify_review_escalation.py \
+              --mode assigned-to-keting \
+              --pull-request-number "$pr_number"
+          done

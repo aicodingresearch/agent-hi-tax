@@ -1,6 +1,6 @@
-# Every pull request requires a review from a maintainer.
-# See CONTRIBUTING.md for what review focuses on.
-*       @keting
+# Scenario reviewers are assigned sequentially by the trusted workflow. There
+# is no global code owner because keting must never be auto-requested for the
+# first scenario review.
 
 # Protocol-level files: changing these changes the meaning of every existing
 # scenario package, so they are called out explicitly.

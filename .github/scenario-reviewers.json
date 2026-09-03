@@ -5,5 +5,27 @@
     "AHMEDALATTAR416",
     "black-pwq",
     "leonadoor"
+  ],
+  "reviewer_profiles": {
+    "beautyarbutin": "openai-gpt",
+    "XiaoCooder": "openai-gpt",
+    "AHMEDALATTAR416": "zhipu-glm",
+    "black-pwq": "openai-gpt",
+    "leonadoor": "openai-gpt",
+    "keting": "anthropic-claude"
+  },
+  "second_reviewers": [
+    "keting",
+    "AHMEDALATTAR416"
+  ],
+  "glm_first_fallback_reviewers": [
+    "beautyarbutin",
+    "XiaoCooder",
+    "black-pwq",
+    "leonadoor"
+  ],
+  "maintainers": [
+    "beautyarbutin",
+    "XiaoCooder"
   ]
 }
