@@ -1,0 +1,168 @@
+name: Assign scenario reviewer
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+    paths:
+      - "runs/**"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: scenario-reviewer-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  assign:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request one reviewer and post the review instructions
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const configPath = ".github/scenario-reviewers.json";
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            const newScenarioPattern = /^runs\/\d{4}-\d{2}-\d{2}\/[^/]+\/manifest\.yaml$/;
+            const newScenarios = files.filter(
+              (file) => file.status === "added" && newScenarioPattern.test(file.filename),
+            );
+
+            if (newScenarios.length === 0) {
+              core.info("No new scenario manifest was added; no reviewer is needed");
+              return;
+            }
+
+            core.info(`Detected ${newScenarios.length} new scenario manifest(s)`);
+
+            // Always read trusted configuration from the PR's base commit.
+            const configResponse = await github.rest.repos.getContent({
+              owner,
+              repo,
+              path: configPath,
+              ref: pr.base.sha,
+            });
+
+            if (Array.isArray(configResponse.data) || configResponse.data.type !== "file") {
+              throw new Error(`${configPath} is not a file`);
+            }
+
+            const configText = Buffer.from(
+              configResponse.data.content,
+              configResponse.data.encoding,
+            ).toString("utf8");
+            const config = JSON.parse(configText);
+
+            if (!Array.isArray(config.reviewers)) {
+              throw new Error(`${configPath} must contain a reviewers array`);
+            }
+
+            const reviewers = [...new Set(
+              config.reviewers.map((login) => String(login).trim()).filter(Boolean),
+            )];
+            const author = pr.user.login.toLowerCase();
+            const candidates = reviewers.filter(
+              (login) => login.toLowerCase() !== author,
+            );
+
+            if (candidates.length === 0) {
+              throw new Error("No reviewer is available after excluding the PR author");
+            }
+
+            const pendingResponse = await github.rest.pulls.listRequestedReviewers({
+              owner,
+              repo,
+              pull_number: pr.number,
+            });
+            const pending = new Set(
+              pendingResponse.data.users.map((user) => user.login.toLowerCase()),
+            );
+            let selected = candidates.find((login) => pending.has(login.toLowerCase()));
+
+            if (!selected) {
+              // Consecutive PR numbers rotate the first choice through the pool.
+              const start = (pr.number - 1) % candidates.length;
+              for (let offset = 0; offset < candidates.length; offset += 1) {
+                const candidate = candidates[(start + offset) % candidates.length];
+                try {
+                  await github.rest.pulls.requestReviewers({
+                    owner,
+                    repo,
+                    pull_number: pr.number,
+                    reviewers: [candidate],
+                  });
+                  selected = candidate;
+                  break;
+                } catch (error) {
+                  if (error.status !== 422) {
+                    throw error;
+                  }
+                  core.warning(`Could not request @${candidate}: ${error.message}`);
+                }
+              }
+            }
+
+            if (!selected) {
+              throw new Error("GitHub rejected every configured reviewer");
+            }
+
+            const marker = `<!-- scenario-review-assignment:${selected.toLowerCase()} -->`;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: pr.number,
+              per_page: 100,
+            });
+
+            if (comments.some((comment) => comment.body?.includes(marker))) {
+              core.info(`@${selected} is already requested and has an instruction comment`);
+              return;
+            }
+
+            const repositoryUrl = `${context.serverUrl}/${owner}/${repo}`;
+            const entryUrl = `${repositoryUrl}/blob/${pr.base.sha}/docs/agent-review-and-scoring.md#L39-L56`;
+            const entryZhUrl = `${repositoryUrl}/blob/${pr.base.sha}/docs/agent-review-and-scoring.zh-CN.md#L39-L55`;
+            const processUrl = `${repositoryUrl}/blob/${pr.base.sha}/docs/review-process.md#L11-L101`;
+            const processZhUrl = `${repositoryUrl}/blob/${pr.base.sha}/docs/review-process.zh-CN.md#L11-L101`;
+            const body = [
+              marker,
+              "## Scenario review requested / 场景评审邀请",
+              "",
+              `@${selected}, you have been selected to independently review this scenario PR. / 现邀请你对这个场景 PR 进行独立评审。`,
+              "",
+              `Before starting, confirm that \`Verify run data / verify\` has passed. Start from the [Agent review entry and copyable prompt](${entryUrl}) ([中文](${entryZhUrl})). The detailed criteria and verdict template are in the [PR review process](${processUrl}) ([中文](${processZhUrl})).`,
+              "",
+              "Copy this minimal instruction into an Agent with GitHub access:",
+              "",
+              "```text",
+              `Review and post a verdict for ${pr.html_url} using the repository's Agent review entry point.`,
+              "```",
+              "",
+              "To preserve independence, do not read existing review comments before publishing your verdict. An AI-assisted review posts a structured comment only; it does not use GitHub's formal Approve or Request changes action.",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pr.number,
+              body,
+            });
+
+            core.notice(`Requested @${selected} to review PR #${pr.number}`);

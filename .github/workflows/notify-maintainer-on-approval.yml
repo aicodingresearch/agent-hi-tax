@@ -1,0 +1,251 @@
+name: Notify maintainer on first approval
+
+on:
+  issue_comment:
+    types:
+      - created
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: approval-email-${{ github.event.comment.id || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate the first current-head approval
+        id: approval
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            if (context.eventName === "workflow_dispatch") {
+              core.setOutput("send", "true");
+              core.setOutput("test", "true");
+              return;
+            }
+
+            const issue = context.payload.issue;
+            const comment = context.payload.comment;
+            if (!issue?.pull_request || !comment) {
+              core.info("The comment is not on a pull request");
+              return;
+            }
+
+            const trustedAssociations = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+            if (!trustedAssociations.has(comment.author_association)) {
+              core.info(`Ignoring comment from ${comment.author_association || "NONE"}`);
+              return;
+            }
+
+            function parseApproval(body) {
+              const normalized = String(body || "").replace(/\r\n/g, "\n");
+              const template = normalized.match(
+                /^Reviewed under: docs\/review-process\.md @ `?([0-9a-f]{7,40})`?[ \t]*$/im,
+              );
+              const verdicts = [...normalized.matchAll(
+                /^## Review verdict: (APPROVE|REQUEST_CHANGES|PRIVACY-CONCERN-RAISED-PRIVATELY)[ \t]*$/gm,
+              )];
+              const reviewedHead = normalized.match(
+                /^Reviewed at head: `?([0-9a-f]{7,40})`?[ \t]*$/im,
+              );
+              const reviewer = normalized.match(/^Reviewer:[ \t]*(.+?)[ \t]*$/im);
+
+              if (!template || verdicts.length !== 1 || !reviewedHead || !reviewer) {
+                return null;
+              }
+              if (verdicts[0][1] !== "APPROVE") {
+                return null;
+              }
+
+              return {
+                reviewedHead: reviewedHead[1].toLowerCase(),
+                reviewer: reviewer[1].trim(),
+              };
+            }
+
+            const approval = parseApproval(comment.body);
+            if (!approval) {
+              core.info("The comment is not a structured APPROVE verdict");
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const pullNumber = issue.number;
+            const pullResponse = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: pullNumber,
+            });
+            const pull = pullResponse.data;
+
+            if (pull.state !== "open" || pull.draft || pull.base.ref !== "main") {
+              core.info("The pull request is not an open, ready PR targeting main");
+              return;
+            }
+
+            const currentHead = pull.head.sha.toLowerCase();
+            if (!currentHead.startsWith(approval.reviewedHead)) {
+              core.info(`The verdict targets ${approval.reviewedHead}, not ${currentHead}`);
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number: pullNumber,
+              per_page: 100,
+            });
+            const newScenarioPattern = /^runs\/\d{4}-\d{2}-\d{2}\/[^/]+\/manifest\.yaml$/;
+            const addsScenario = files.some(
+              (file) => file.status === "added" && newScenarioPattern.test(file.filename),
+            );
+            if (!addsScenario) {
+              core.info("The pull request does not add a scenario manifest");
+              return;
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: pullNumber,
+              per_page: 100,
+            });
+            const commenter = comment.user.login.toLowerCase();
+            const assignmentMarker = `<!-- scenario-review-assignment:${commenter} -->`;
+            const assigned = comments.some((candidate) => {
+              const markerAuthor = candidate.user?.login?.toLowerCase();
+              const trustedMarkerAuthor =
+                markerAuthor === "keting" || markerAuthor === "github-actions[bot]";
+              return trustedMarkerAuthor && candidate.body?.includes(assignmentMarker);
+            });
+            if (!assigned) {
+              core.info(`@${comment.user.login} was not assigned by the scenario workflow`);
+              return;
+            }
+
+            const earlierApproval = comments.some((candidate) => {
+              if (candidate.id === comment.id || candidate.id > comment.id) {
+                return false;
+              }
+              if (!trustedAssociations.has(candidate.author_association)) {
+                return false;
+              }
+              const parsed = parseApproval(candidate.body);
+              if (!parsed || !currentHead.startsWith(parsed.reviewedHead)) {
+                return false;
+              }
+              const earlierCommenter = candidate.user.login.toLowerCase();
+              const earlierMarker = `<!-- scenario-review-assignment:${earlierCommenter} -->`;
+              return comments.some((markerComment) => {
+                const markerAuthor = markerComment.user?.login?.toLowerCase();
+                const trustedMarkerAuthor =
+                  markerAuthor === "keting" || markerAuthor === "github-actions[bot]";
+                return trustedMarkerAuthor && markerComment.body?.includes(earlierMarker);
+              });
+            });
+            if (earlierApproval) {
+              core.info("A valid APPROVE has already been recorded for the current head");
+              return;
+            }
+
+            core.setOutput("send", "true");
+            core.setOutput("test", "false");
+            core.setOutput("pr_number", String(pullNumber));
+            core.setOutput("pr_title", pull.title);
+            core.setOutput("pr_url", pull.html_url);
+            core.setOutput("head_sha", pull.head.sha);
+            core.setOutput("reviewer", approval.reviewer);
+            core.setOutput("comment_url", comment.html_url);
+
+      - name: Send email
+        if: steps.approval.outputs.send == 'true'
+        env:
+          SMTP_HOST: ${{ secrets.APPROVAL_SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.APPROVAL_SMTP_PORT }}
+          SMTP_USER: ${{ secrets.APPROVAL_SMTP_USER }}
+          SMTP_AUTH_CODE: ${{ secrets.APPROVAL_SMTP_AUTH_CODE }}
+          NOTIFY_TO: ${{ secrets.APPROVAL_NOTIFY_TO }}
+          IS_TEST: ${{ steps.approval.outputs.test }}
+          PR_NUMBER: ${{ steps.approval.outputs.pr_number }}
+          PR_TITLE: ${{ steps.approval.outputs.pr_title }}
+          PR_URL: ${{ steps.approval.outputs.pr_url }}
+          HEAD_SHA: ${{ steps.approval.outputs.head_sha }}
+          REVIEWER: ${{ steps.approval.outputs.reviewer }}
+          COMMENT_URL: ${{ steps.approval.outputs.comment_url }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import smtplib
+          import ssl
+          from email.message import EmailMessage
+
+
+          def required(name):
+              value = os.environ.get(name, "").strip()
+              if not value:
+                  raise SystemExit(f"missing required secret: {name}")
+              return value
+
+
+          host = required("SMTP_HOST")
+          port = int(required("SMTP_PORT"))
+          username = required("SMTP_USER")
+          password = required("SMTP_AUTH_CODE")
+          recipient = required("NOTIFY_TO")
+          is_test = os.environ.get("IS_TEST") == "true"
+
+          message = EmailMessage()
+          message["From"] = username
+          message["To"] = recipient
+
+          if is_test:
+              message["Subject"] = "[Agent Hi Tax] APPROVE 邮件通知测试"
+              body = "\n".join([
+                  "这是一封 GitHub Actions 发出的测试邮件。",
+                  "",
+                  "收到本邮件说明 Agent Hi Tax 的 APPROVE 邮件通知链路已经正常工作。",
+                  "",
+                  "本邮件由 Agent 自动发送，如有错误请联系yinkt@zju.edu.cn",
+              ])
+          else:
+              number = required("PR_NUMBER")
+              title = required("PR_TITLE").replace("\r", " ").replace("\n", " ")
+              url = required("PR_URL")
+              head = required("HEAD_SHA")
+              reviewer = required("REVIEWER")
+              comment_url = required("COMMENT_URL")
+              message["Subject"] = f"[Agent Hi Tax] PR #{number} 已有一份 APPROVE"
+              body = "\n".join([
+                  "场景 PR 已收到当前提交上的第一份有效 APPROVE。",
+                  "",
+                  f"PR：#{number} {title}",
+                  f"地址：{url}",
+                  f"Reviewed head：{head}",
+                  f"Reviewer：{reviewer}",
+                  f"Verdict comment：{comment_url}",
+                  "",
+                  "这表示该 PR 已有一份独立评审通过；按仓库 L1 流程，仍需第二份独立评审和维护者终审。",
+                  "",
+                  "本邮件由 Agent 自动发送，如有错误请联系yinkt@zju.edu.cn",
+              ])
+
+          message.set_content(body)
+          tls_context = ssl.create_default_context()
+          if port == 465:
+              with smtplib.SMTP_SSL(host, port, context=tls_context, timeout=30) as smtp:
+                  smtp.login(username, password)
+                  smtp.send_message(message)
+          else:
+              with smtplib.SMTP(host, port, timeout=30) as smtp:
+                  smtp.starttls(context=tls_context)
+                  smtp.login(username, password)
+                  smtp.send_message(message)
+
+          print("approval notification email accepted by SMTP")
+          PY

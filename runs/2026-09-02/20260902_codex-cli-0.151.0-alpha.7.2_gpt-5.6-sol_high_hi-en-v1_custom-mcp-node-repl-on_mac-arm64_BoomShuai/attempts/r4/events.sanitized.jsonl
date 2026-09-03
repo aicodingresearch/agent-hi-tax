@@ -1,0 +1,1 @@
+{"type":"pre_target_failure","timestamp":"2026-09-02T08:00:03Z","exit_status":127,"error":"codex command not found in standalone Terminal PATH","model_request_sent":false,"native_event_bytes":0,"workspace_empty_after":true}

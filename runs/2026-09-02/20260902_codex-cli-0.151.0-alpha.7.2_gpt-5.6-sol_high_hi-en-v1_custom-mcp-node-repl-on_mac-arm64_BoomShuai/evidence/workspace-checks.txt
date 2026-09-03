@@ -1,0 +1,65 @@
+T-31 workspace and launch checks — MCP ON
+
+r1
+start_utc: 2026-09-02T07:28:33Z
+end_utc: 2026-09-02T07:28:44Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r1
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: true
+exit status: 0
+
+r2
+start_utc: 2026-09-02T07:29:11Z
+end_utc: 2026-09-02T07:29:23Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r2
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: true
+exit status: 0
+
+r3
+start_utc: 2026-09-02T07:29:58Z
+end_utc: 2026-09-02T07:30:06Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r3
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: true
+exit status: 0
+
+r5
+start_utc: 2026-09-02T08:10:15Z
+end_utc: 2026-09-02T08:10:23Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r5
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: true
+exit status: 0
+
+r6
+start_utc: 2026-09-02T08:16:46Z
+end_utc: 2026-09-02T08:16:53Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r6
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: true
+exit status: 0
+
+r7
+start_utc: 2026-09-02T08:23:27Z
+end_utc: 2026-09-02T08:23:41Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r7
+pre-request directory check: empty and outside Git
+post-run top-level entries: none
+node_repl enabled immediately before run: true
+exit status: 0
+
+r4 (invalid supplemental infrastructure attempt)
+start_utc: 2026-09-02T08:00:03Z
+end_utc: 2026-09-02T08:00:03Z
+workspace: <LAB_ROOT>/t31-node-repl-on-BoomShuai-r4
+pre-request directory check: empty and outside Git
+post-failure top-level entries: none
+native target event bytes: 0
+exit status: 127
+classification: invalid pre-target client executable lookup failure

@@ -1,0 +1,317 @@
+{
+  "all_configured_mcp_servers_disabled": true,
+  "all_exit_zero": true,
+  "all_workspaces_in_expected_state_after": true,
+  "claim_issue": "https://github.com/aicodingresearch/agent-hi-tax/issues/64",
+  "client_diagnostics": {
+    "off-r2": [
+      "model-list-refresh-timeout",
+      "websocket-connect-fallback"
+    ],
+    "off-r4": [
+      "model-list-refresh-timeout"
+    ]
+  },
+  "control_hashes": {
+    "base_instructions": [
+      "a91357a1cd2727a0be06d461248d6e3a7274746e38108f548a3adf2cc2430415"
+    ],
+    "normalized_non_fixture_role_content": [
+      "5d4835ebc49f343dd58294d2c87cb014f7c51e29956cb2174ca75fa9c6db3e33"
+    ],
+    "on_normalized_fixture_injection_wrapper": [
+      "bf3e29f7ffc8c73851a1200fe0b08c26ac6daeac6a5a18897db36f9d3abc0873"
+    ],
+    "skill_name_counts": [
+      202
+    ],
+    "skill_names": [
+      "e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2"
+    ],
+    "stderr": [
+      "0811ccb5dd5c4e2d6598603c176ecaeee253c86de2bae367e05e3209531447df",
+      "0a6c6bfdc4657fc771dca9ff45c2f4316dcb8838f16d8f07ca8f7f3a8aafdfc0",
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    ]
+  },
+  "evidence_surface_hash_note": {
+    "cross_surface_hash_equality_expected": false,
+    "preflight_debug_common_projection_sha256": "f0722794b99fa98b79aafd1540d31d9ef735ad4a7a1025c044cbaf0d21aca28d",
+    "reason": "the debug prompt-input and retained rollout records use different serialization shapes; equality is evaluated within each surface",
+    "retained_target_rollout_common_projection_sha256": "5d4835ebc49f343dd58294d2c87cb014f7c51e29956cb2174ca75fa9c6db3e33"
+  },
+  "interpretation": {
+    "not_supported": "The data do not establish a universal byte-to-token conversion, do not measure subscription billing, and do not generalize beyond this fixture and configuration.",
+    "supported": "The reported input_tokens_including_cached field increased by 220 in every same-index pair when the exact public AGENTS.md fixture was present."
+  },
+  "invalid_attempts": [
+    {
+      "attempt": "r1",
+      "exit_status": 2,
+      "native_event_bytes": 0,
+      "native_event_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "phase": "pre-target-command-parsing",
+      "public_screenshot_sha256": null,
+      "reason": "this CLI build rejected the approval option after the exec subcommand",
+      "side": "off",
+      "status": "invalid",
+      "stderr_sha256": "c206a405769cb087010d604fab55fd38b0612d2dfc6435797cfba6df5240b7e7",
+      "target_model_request_sent": false,
+      "workspace_empty_after": true
+    }
+  ],
+  "metrics": {
+    "cached_input_tokens": {
+      "off": {
+        "max": 11264,
+        "mean": 11178.67,
+        "median": 11264,
+        "min": 11008,
+        "values": [
+          11264,
+          11008,
+          11264
+        ]
+      },
+      "on": {
+        "max": 11008,
+        "mean": 11008,
+        "median": 11008,
+        "min": 11008,
+        "values": [
+          11008,
+          11008,
+          11008
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        -256,
+        0,
+        -256
+      ]
+    },
+    "cli_total_excluding_cached": {
+      "off": {
+        "max": 9440,
+        "mean": 9270,
+        "median": 9185,
+        "min": 9185,
+        "values": [
+          9185,
+          9440,
+          9185
+        ]
+      },
+      "on": {
+        "max": 9658,
+        "mean": 9658,
+        "median": 9658,
+        "min": 9658,
+        "values": [
+          9658,
+          9658,
+          9658
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        473,
+        218,
+        473
+      ]
+    },
+    "context_total_tokens": {
+      "off": {
+        "max": 20449,
+        "mean": 20448.67,
+        "median": 20449,
+        "min": 20448,
+        "values": [
+          20449,
+          20448,
+          20449
+        ]
+      },
+      "on": {
+        "max": 20666,
+        "mean": 20666,
+        "median": 20666,
+        "min": 20666,
+        "values": [
+          20666,
+          20666,
+          20666
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        217,
+        218,
+        217
+      ]
+    },
+    "input_tokens_including_cached": {
+      "off": {
+        "max": 20435,
+        "mean": 20435,
+        "median": 20435,
+        "min": 20435,
+        "values": [
+          20435,
+          20435,
+          20435
+        ]
+      },
+      "on": {
+        "max": 20655,
+        "mean": 20655,
+        "median": 20655,
+        "min": 20655,
+        "values": [
+          20655,
+          20655,
+          20655
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        220,
+        220,
+        220
+      ]
+    },
+    "non_cached_input_tokens": {
+      "off": {
+        "max": 9427,
+        "mean": 9256.33,
+        "median": 9171,
+        "min": 9171,
+        "values": [
+          9171,
+          9427,
+          9171
+        ]
+      },
+      "on": {
+        "max": 9647,
+        "mean": 9647,
+        "median": 9647,
+        "min": 9647,
+        "values": [
+          9647,
+          9647,
+          9647
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        476,
+        220,
+        476
+      ]
+    },
+    "output_tokens": {
+      "off": {
+        "max": 14,
+        "mean": 13.67,
+        "median": 14,
+        "min": 13,
+        "values": [
+          14,
+          13,
+          14
+        ]
+      },
+      "on": {
+        "max": 11,
+        "mean": 11,
+        "median": 11,
+        "min": 11,
+        "values": [
+          11,
+          11,
+          11
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        -3,
+        -2,
+        -3
+      ]
+    },
+    "reasoning_output_tokens": {
+      "off": {
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "min": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "on": {
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "min": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        0,
+        0,
+        0
+      ]
+    },
+    "response_latency_ms": {
+      "off": {
+        "max": 10928,
+        "mean": 5023,
+        "median": 2343,
+        "min": 1798,
+        "values": [
+          10928,
+          1798,
+          2343
+        ]
+      },
+      "on": {
+        "max": 3267,
+        "mean": 2427.33,
+        "median": 2229,
+        "min": 1786,
+        "values": [
+          3267,
+          1786,
+          2229
+        ]
+      },
+      "paired_delta_on_minus_off": [
+        -7661,
+        -12,
+        -114
+      ]
+    }
+  },
+  "no_tool_calls_observed": true,
+  "rules_fixture": {
+    "bytes": 874,
+    "final_lf": true,
+    "lines": 16,
+    "off_model_visible_occurrences_each_run": 0,
+    "on_model_visible_occurrences_each_run": 1,
+    "on_normalized_injection_wrapper_bytes": 945,
+    "on_normalized_injection_wrapper_sha256": "bf3e29f7ffc8c73851a1200fe0b08c26ac6daeac6a5a18897db36f9d3abc0873",
+    "public_file": "AGENTS.fixture.md",
+    "sha256": "f9a80f05c0b9e7981ccb512fb7f955a7d1c5760eddd7b5919ef3d5538919d2a8"
+  },
+  "schema": "agent-hi-tax-t32-public-analysis-v1",
+  "task_id": "T-32",
+  "valid_attempt_ids_per_side": [
+    "r2",
+    "r3",
+    "r4"
+  ],
+  "valid_run_count": 6
+}

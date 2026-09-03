@@ -1,0 +1,23 @@
+Agent Hi Tax T-32 public-safe preflight
+Captured before the first target model request.
+
+Claim: https://github.com/aicodingresearch/agent-hi-tax/issues/64
+Agent: OpenAI Codex CLI 0.151.0-alpha.7.2
+Model / effort: gpt-5.6-sol / high
+Subscription: ChatGPT Pro subscription login
+Route: first-party subscription / native protocol
+OS: macOS 26.6 (build 25G72), arm64
+Timezone: Asia/Shanghai
+Prompt: hi-en-v1; exact bytes 68 69; SHA-256 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+Sandbox / approval: workspace-write / never
+Workspaces: three OFF directories verified empty and three ON directories verified to contain only the exact fixture; all are outside Git
+Global AGENTS.md: present but empty; SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+Fixture: 874 UTF-8 bytes, 16 lines, final LF; SHA-256 f9a80f05c0b9e7981ccb512fb7f955a7d1c5760eddd7b5919ef3d5538919d2a8
+Plugins: 11 enabled on both sides; names SHA-256 4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999
+Skills: 202 model-visible names on both sides; SHA-256 e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+MCP: computer-use, cua_repl, and node_repl disabled on both sides
+Model-visible fixture check: OFF 0 occurrences; ON 1 exact occurrence
+Normalized ON injection wrapper: 945 bytes; SHA-256 bf3e29f7ffc8c73851a1200fe0b08c26ac6daeac6a5a18897db36f9d3abc0873
+Non-fixture ordered role/content projection: identical after equal-shape path normalization; SHA-256 f0722794b99fa98b79aafd1540d31d9ef735ad4a7a1025c044cbaf0d21aca28d
+Raw config, complete prompt-input records, absolute paths, session identifiers, and identifying account evidence remain outside Git.
+

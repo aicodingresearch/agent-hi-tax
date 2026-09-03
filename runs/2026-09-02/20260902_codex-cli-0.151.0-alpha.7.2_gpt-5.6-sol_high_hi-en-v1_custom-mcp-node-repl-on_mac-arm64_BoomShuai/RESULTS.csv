@@ -1,0 +1,7 @@
+attempt,status,started_at_utc,response_latency_ms,usage_source,input_tokens_including_cached,cached_input_tokens,non_cached_input_tokens,output_tokens,reasoning_output_tokens,context_total_tokens,cli_total_excluding_cached,cli_total_source,quota_attribution,response_text_sha256
+r1,valid,2026-09-02T07:28:37.331Z,6084,event-log,20435,11264,9171,14,0,20449,9185,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043
+r2,valid,2026-09-02T07:29:18.106Z,2234,event-log,20435,11008,9427,13,0,20448,9440,derived-from-event-log,not_measured,f181e10aa5c1fcb74c014df9d75a1208a11a15e89646d4880a48d3a4f4c437a3
+r3,valid,2026-09-02T07:30:02.966Z,2307,event-log,20435,11264,9171,14,0,20449,9185,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043
+r5,valid,2026-09-02T08:10:18.945Z,2357,event-log,20435,11264,9171,14,0,20449,9185,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043
+r6,valid,2026-09-02T08:16:49.782Z,2449,event-log,20435,11264,9171,14,0,20449,9185,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043
+r7,valid,2026-09-02T08:23:33.885Z,2181,event-log,20435,11008,9427,14,0,20449,9441,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043

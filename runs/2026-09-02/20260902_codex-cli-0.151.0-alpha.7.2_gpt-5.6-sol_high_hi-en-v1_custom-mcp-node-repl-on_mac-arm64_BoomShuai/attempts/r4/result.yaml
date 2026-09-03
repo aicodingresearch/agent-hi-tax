@@ -1,0 +1,57 @@
+attempt: 4
+status: "invalid"
+started_at_utc: "2026-09-02T08:00:03Z"
+assistant_message_at_utc: "not_applicable"
+usage_recorded_at_utc: "not_applicable"
+response_latency_ms: "not_applicable"
+response_latency_display_seconds: "not_applicable"
+latency_method: "not_applicable"
+model_observed: "not_applicable"
+effort_observed: "high (requested; no model request was sent)"
+usage:
+  source: "not_applicable"
+  provider_schema: "openai"
+  input_tokens_including_cached: "not_applicable"
+  cached_input_tokens: "not_applicable"
+  non_cached_input_tokens: "not_applicable"
+  cli_total_excluding_cached: "not_applicable"
+  cli_total_source: "not_applicable"
+  cache_write_input_tokens: "not_applicable"
+  model_context_window_event: "not_applicable"
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_applicable"
+  output_tokens: "not_applicable"
+  reasoning_output_tokens: "not_applicable"
+  context_total_tokens: "not_applicable"
+  service_tier: "not_applicable"
+  speed: "not_applicable"
+  iterations: 0
+  iterations_observation: "client executable lookup failed before model launch"
+  web_search_requests: 0
+  web_fetch_requests: 0
+response:
+  file: "not_applicable"
+  exact_text_sha256: "not_applicable"
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors:
+    - "Standalone Terminal PATH did not contain the Codex executable; shell exit status 127."
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "not_applicable"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "not_applicable"
+    usage: "not_applicable"
+    timing: "verified"
+    quota: "not_provided"
+deviations:
+  - "The failure occurred before a target request; the empty native event stream and unchanged empty workspace are retained."
+  - "The capture script was amended before the next target request to invoke the fixed bundled Codex executable path, and valid visual pairs were reassigned to r5-r7."
