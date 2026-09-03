@@ -1,0 +1,259 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-off_mac-arm64_BoomShuai"
+  captured_from_utc: "2026-09-02T07:28:58.024Z"
+  captured_to_utc: "2026-09-02T08:24:43.135Z"
+  planned_repetitions: 3
+  valid_repetitions: 6
+
+contributor:
+  github_handle: "@BoomShuai"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.151.0-alpha.7.2"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "macOS"
+  os_version: "26.6"
+  os_build: "25G72"
+  architecture: "arm64"
+  locale: "C.UTF-8"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Pro"
+  usage_multiplier: "not_exposed"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "native event log and retained local rollout"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "custom"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: true
+  instruction_files:
+    - "<CODEX_HOME>/AGENTS.md (empty; SHA-256 recorded in preflight)"
+  built_in_tools: "not_exposed"
+  plugins_enabled:
+    - "codex-app-tools"
+    - "sites"
+    - "browser"
+    - "chrome"
+    - "computer-use"
+    - "visualize"
+    - "documents"
+    - "pdf"
+    - "spreadsheets"
+    - "presentations"
+    - "template-creator"
+  skills_enabled:
+    - "202 model-visible skill entries; see evidence/available-skill-names.txt"
+  mcp_servers_enabled: []
+  hooks_enabled:
+    - "one local notification hook"
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "retained rollout inspection found one target turn and no tool or hook model calls in every valid attempt"
+  network_mode: "restricted"
+  permission_mode: "never"
+  filesystem_profile_observed: "workspace-write with restricted filesystem profile"
+  settings_sources:
+    - "local Codex config (private original retained outside Git)"
+    - "per-launch node_repl enabled=false override"
+    - "fixed CLI launch arguments"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "command-argument"
+
+measurement:
+  primary_metric: "input_tokens_including_cached"
+  secondary_metric: "context_total_tokens"
+  native_input_definition: "input_tokens_including_cached; cached_input_tokens is a subset"
+  total_input_definition: "input_tokens_including_cached"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "user-message event to assistant-message event"
+  transcript_extraction: "native codex exec JSONL cross-checked against retained local rollout and public supplemental terminal captures"
+  transcript_deduplication: "one exact hi target message, one final assistant message, and one terminal usage record per fresh process"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [20435, 20435, 20435, 20435, 20435, 20435]
+    min: 20435
+    median: 20435
+    max: 20435
+    mean: 20435
+  cached_input_tokens:
+    values: [11264, 11008, 11264, 11264, 11264, 11264]
+    min: 11008
+    median: 11264
+    max: 11264
+    mean: 11221.33
+  cache_write_input_tokens:
+    values: [0, 0, 0, 0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  non_cached_input_tokens:
+    values: [9171, 9427, 9171, 9171, 9171, 9171]
+    min: 9171
+    median: 9171
+    max: 9427
+    mean: 9213.67
+  output_tokens:
+    values: [14, 14, 13, 14, 13, 15]
+    min: 13
+    median: 14
+    max: 15
+    mean: 13.83
+  reasoning_output_tokens:
+    values: [0, 0, 0, 0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  context_total_tokens:
+    values: [20449, 20449, 20448, 20449, 20448, 20450]
+    min: 20448
+    median: 20449
+    max: 20450
+    mean: 20448.83
+  cli_total_excluding_cached:
+    values: [9185, 9441, 9184, 9185, 9184, 9186]
+    min: 9184
+    median: 9185
+    max: 9441
+    mean: 9227.5
+  response_latency_ms:
+    values: [2412, 1980, 2356, 2223, 2658, 1950]
+    min: 1950
+    median: 2289.5
+    max: 2658
+    mean: 2263.17
+
+quota:
+  attribution: "not_measured"
+  notes: "No before/after quota observation was captured; native per-turn token fields remain in scope and are not interpreted as subscription cost."
+
+comparison:
+  task_id: "T-31"
+  status: "paired-controls-verified"
+  reference_scenario: "20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-on_mac-arm64_BoomShuai"
+  intended_variable: "node_repl MCP registration enabled versus disabled"
+  observed_input_token_delta: "0 in each of six same-index pairs"
+  attribution: "The native input_tokens field showed zero observed delta; no claim is made about unreported backend billing or why the registered schemas did not change this field."
+  notes: "The ON side registered three nonempty object-schema MCP tools. Agent, model, effort, account, OS, prompt, sandbox, plugins, skills, rules, hooks, fresh-session rule, workspace profile, base instructions, and normalized developer/user role-content were held constant. Cache decomposition differed only in r7; output wording varied naturally."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "self_reported"
+    mcp_plugins_and_hooks: "self_reported"
+    mcp_target_state_and_schema: "verified"
+  public_files:
+    - "launch-command.txt"
+    - "evidence/pair-preregistration.txt"
+    - "evidence/preregistration.txt"
+    - "evidence/supplemental-visual-plan.txt"
+    - "evidence/preflight.txt"
+    - "evidence/mcp-state.json"
+    - "evidence/available-skill-names.txt"
+    - "evidence/paired-analysis.json"
+    - "evidence/post-run-audit.txt"
+    - "evidence/workspace-checks.txt"
+    - "evidence/private-evidence.md"
+    - "evidence/subscription-note.txt"
+    - "evidence/subscription.png"
+    - "evidence/visual-evidence-audit.txt"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r1/response.txt"
+    - "attempts/r1/result.yaml"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/result.yaml"
+    - "attempts/r3/events.sanitized.jsonl"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/result.yaml"
+    - "attempts/r5/events.sanitized.jsonl"
+    - "attempts/r5/response.txt"
+    - "attempts/r5/result.yaml"
+    - "attempts/r5/response.png"
+    - "attempts/r6/events.sanitized.jsonl"
+    - "attempts/r6/response.txt"
+    - "attempts/r6/result.yaml"
+    - "attempts/r6/response.png"
+    - "attempts/r7/events.sanitized.jsonl"
+    - "attempts/r7/response.txt"
+    - "attempts/r7/result.yaml"
+    - "attempts/r7/response.png"
+  withheld_private_evidence: false
+  redactions:
+    - "Complete developer/system context, raw local configuration, absolute paths, session identifiers, and account identifiers were omitted from public machine records."
+    - "Public event logs use a safe-field allowlist and retain version, model, effort, MCP state, exact target, reply, native usage, and timestamps."
+    - "Public terminal captures and the subscription-plan screenshot are exact-byte safe copies; no pixel editing, blur, reconstruction, or generative editing was applied."
+
+protocol:
+  deviations:
+    - "The original r1-r3 block used official codex exec --json and has no attempt screenshots. Three supplemental post-registration valid attempts, r5-r7, were added without replacing or excluding any original run; each has a public terminal screenshot and matching native event record."
+    - "The supplemental plan was amended after the paired ON-side pre-target r4 infrastructure failure and before any OFF-side r4 request; therefore no off-r4 attempt exists. Valid visual pairs use r5-r7."
+    - "Original r1-r3 ran with piped stdin and emitted a local read-from-stdin notice; retained rollouts prove that the target user message was exactly hi with no appended bytes. Supplemental r5-r7 ran in a native Terminal and emitted no stderr. Base instructions and normalized developer/user inputs remained identical across all twelve valid pair runs."
+    - "Subscription quota before/after was not measured."
+  notes: "T-31 Claim #54. Original pair order was on-r1, off-r1, on-r2, off-r2, on-r3, off-r3. Valid supplemental visual pair order was on-r5, off-r5, on-r6, off-r6, on-r7, off-r7. All valid workspaces were separate empty non-Git directories and all sessions were fresh."

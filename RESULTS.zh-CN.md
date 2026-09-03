@@ -8,9 +8,9 @@
 
 [返回项目首页](README.zh-CN.md) | [查看场景目录](runs/README.zh-CN.md) | [阅读贡献与口径规则](CONTRIBUTING.zh-CN.md)
 
-- 场景数：17
+- 场景数：18
 - Agent 产品数：5
-- 有效 attempts：60
+- 有效 attempts：66
 
 ## 阅读规则
 
@@ -38,6 +38,7 @@
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>官方订阅</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,421 | 20,435 (20,434–20,435) | 14 (13–14) | 1.901 (1.668–2.408) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-off_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 3 | 20,435 | 20,449 (20,448–20,449) | 14 (13–14) | 2.343 (1.798–10.928) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-on_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 3 | 20,655 | 20,666 | 11 | 2.229 (1.786–3.267) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-off_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,435 | 20,449 (20,448–20,450) | 14 (13–15) | 2.289 (1.95–2.658) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-on_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,435 | 20,449 (20,448–20,449) | 14 (13–14) | 2.332 (2.181–6.084) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_medium_hi-en-v1_as-used_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>medium</sub> | ChatGPT Pro 20x<br><sub>官方订阅</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,421 | 20,435 | 14 | 2.022 (1.611–3.761) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [WorkBuddy 5.3.13](runs/2026-08-15/workbuddy-5.3.13_auto_craft_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | glm-5.2 (R1,R2); deepseek-v4-flash (R3)<br><sub>—</sub> | —<br><sub>官方产品</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 33,043 (32,119–33,193) | 33,479 (32,501–33,824) | 436 (382–631) | 8.47 (7.893–11.628) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: per_attempt_native_credit_verified</sub> |
