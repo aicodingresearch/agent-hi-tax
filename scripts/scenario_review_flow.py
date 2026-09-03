@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import base64
 import json
 import os
 import re
@@ -18,7 +17,13 @@ from typing import Any, Iterable
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from notify_review_escalation import GitHubClient, required_env  # noqa: E402
-from review_gate import ParsedVerdict, current_verdicts, parse_time  # noqa: E402
+from review_gate import (  # noqa: E402
+    ParsedVerdict,
+    current_verdicts,
+    evaluate_review_gate,
+    parse_time,
+    parse_verdict_with_reason,
+)
 
 
 CONFIG_PATH = ".github/scenario-reviewers.json"
@@ -58,13 +63,6 @@ class DryRunGitHubClient(GitHubClient):
     def request(
         self, path: str, method: str = "GET", payload: dict[str, Any] | None = None
     ) -> Any:
-        if method == "GET" and path.startswith(f"/contents/{CONFIG_PATH}?"):
-            raw = (Path(__file__).resolve().parents[1] / CONFIG_PATH).read_bytes()
-            return {
-                "type": "file",
-                "encoding": "base64",
-                "content": base64.b64encode(raw).decode("ascii"),
-            }
         if method == "GET":
             return super().request(path, method=method, payload=payload)
         if path.startswith("/statuses/"):
@@ -132,6 +130,27 @@ def verdict_after_assignment(
     if verdict and verdict.submitted_at >= assignment.created_at:
         return verdict
     return None
+
+
+def invalid_verdict_reason(
+    records: Iterable[dict[str, Any]],
+    assignment: Assignment,
+    current_head: str,
+) -> str | None:
+    attempts: list[tuple[datetime, int, str]] = []
+    for record in records:
+        login = str((record.get("user") or {}).get("login") or "").lower()
+        body = str(record.get("body") or "")
+        submitted = record.get("submitted_at") or record.get("created_at")
+        if login != assignment.reviewer.lower() or not submitted:
+            continue
+        submitted_at = parse_time(str(submitted))
+        if submitted_at < assignment.created_at or "## Review verdict:" not in body:
+            continue
+        parsed, reason = parse_verdict_with_reason(record, current_head)
+        if parsed is None and reason:
+            attempts.append((submitted_at, int(record.get("id") or 0), reason))
+    return max(attempts, default=(None, 0, None))[2]
 
 
 def maintainer_assignment(
@@ -233,37 +252,59 @@ def rotated(values: list[Any], pull_number: int) -> list[Any]:
     return values[start:] + values[:start]
 
 
-def is_scenario_pull(client: GitHubClient, number: int) -> bool:
+def pull_files(client: GitHubClient, number: int) -> list[dict[str, Any]]:
+    return client.paginate(f"/pulls/{number}/files")
+
+
+def is_scenario_pull(files: Iterable[dict[str, Any]]) -> bool:
     return any(
         item.get("status") == "added"
         and SCENARIO_RE.fullmatch(str(item.get("filename") or ""))
-        for item in client.paginate(f"/pulls/{number}/files")
+        for item in files
     )
 
 
-def load_config(
-    client: GitHubClient, base_sha: str
-) -> dict[str, Any]:
-    response = client.request(f"/contents/{CONFIG_PATH}?ref={base_sha}")
-    if not isinstance(response, dict) or response.get("type") != "file":
-        raise RuntimeError(f"{CONFIG_PATH} is not a file at {base_sha}")
-    raw = base64.b64decode(response["content"]).decode("utf-8")
-    return normalized_config(json.loads(raw))
+def changes_protected_protocol(files: Iterable[dict[str, Any]]) -> bool:
+    protected_prefixes = (".github/", "docs/", "prompts/", "scripts/", "templates/", "tests/")
+    protected_files = {
+        "CONTRIBUTING.md",
+        "CONTRIBUTING.zh-CN.md",
+        "LICENSE",
+        "LICENSE-DATA",
+        "README.md",
+        "README.zh-CN.md",
+        "SECURITY.md",
+        "SECURITY.zh-CN.md",
+    }
+    for item in files:
+        filename = str(item.get("filename") or "")
+        if filename in protected_files or filename.startswith(protected_prefixes):
+            return True
+    return False
 
 
-def requested_reviewers(client: GitHubClient, number: int) -> list[str]:
+def load_config() -> dict[str, Any]:
+    path = Path(__file__).resolve().parents[1] / CONFIG_PATH
+    return normalized_config(json.loads(path.read_text(encoding="utf-8")))
+
+
+def requested_reviews(
+    client: GitHubClient, number: int
+) -> tuple[list[str], list[str]]:
     response = client.request(f"/pulls/{number}/requested_reviewers")
-    return [str(item["login"]) for item in response.get("users", [])]
+    users = [str(item["login"]) for item in response.get("users", [])]
+    teams = [str(item["slug"]) for item in response.get("teams", [])]
+    return users, teams
 
 
 def sync_review_request(client: GitHubClient, number: int, reviewer: str) -> None:
-    current = requested_reviewers(client, number)
+    current, teams = requested_reviews(client, number)
     remove = [login for login in current if login.lower() != reviewer.lower()]
-    if remove:
+    if remove or teams:
         client.request(
             f"/pulls/{number}/requested_reviewers",
             method="DELETE",
-            payload={"reviewers": remove},
+            payload={"reviewers": remove, "team_reviewers": teams},
         )
     if reviewer.lower() not in {login.lower() for login in current}:
         client.request(
@@ -274,12 +315,12 @@ def sync_review_request(client: GitHubClient, number: int, reviewer: str) -> Non
 
 
 def clear_review_requests(client: GitHubClient, number: int) -> None:
-    current = requested_reviewers(client, number)
-    if current:
+    current, teams = requested_reviews(client, number)
+    if current or teams:
         client.request(
             f"/pulls/{number}/requested_reviewers",
             method="DELETE",
-            payload={"reviewers": current},
+            payload={"reviewers": current, "team_reviewers": teams},
         )
 
 
@@ -289,13 +330,21 @@ def post_status(
     state: str,
     description: str,
 ) -> None:
+    description = description[:140]
+    combined = client.request(f"/commits/{pull['head']['sha']}/status")
+    for status in combined.get("statuses", []):
+        if status.get("context") != "review-gate":
+            continue
+        if status.get("state") == state and status.get("description") == description:
+            return
+        break
     client.request(
         f"/statuses/{pull['head']['sha']}",
         method="POST",
         payload={
             "state": state,
             "context": "review-gate",
-            "description": description[:140],
+            "description": description,
             "target_url": pull["html_url"],
         },
     )
@@ -370,9 +419,17 @@ def request_from_candidates(
     if not ordered:
         raise RuntimeError(f"No {stage} reviewer is available")
     reviewer, family = ordered[0]
+    existing = latest_assignment(
+        assignment_records(client.comments(number)), stage, pull["head"]["sha"]
+    )
+    if existing:
+        return existing, {}
     # Do not fall through to another person after an ambiguous API failure:
     # the first request may have succeeded even if its response was lost.
-    sync_review_request(client, number, reviewer)
+    try:
+        sync_review_request(client, number, reviewer)
+    except Exception as error:
+        raise RuntimeError(f"Could not request @{reviewer}: {error}") from error
     body = assignment_body(
         pull,
         reviewer,
@@ -380,7 +437,12 @@ def request_from_candidates(
         family,
         re_review=previous is not None and previous.reviewer.lower() == reviewer.lower(),
     )
-    comment = client.add_comment(number, body)
+    try:
+        comment = client.add_comment(number, body)
+    except Exception as error:
+        raise RuntimeError(
+            f"@{reviewer} may be requested but its assignment comment failed: {error}"
+        ) from error
     return (
         Assignment(
             reviewer=reviewer,
@@ -469,23 +531,35 @@ def ensure_maintainer(
         raise RuntimeError("No maintainer is available after excluding the PR author")
     number = int(pull["number"])
     login, _ = rotated(candidates, number)[0]
-    sync_review_request(client, number, login)
+    current = maintainer_assignment(client.comments(number), pull["head"]["sha"])
+    if current:
+        sync_review_request(client, number, current.reviewer)
+        return
+    try:
+        sync_review_request(client, number, login)
+    except Exception as error:
+        raise RuntimeError(f"Could not request maintainer @{login}: {error}") from error
     marker = (
         f"<!-- scenario-maintainer-request:{login.lower()} "
         f"head:{pull['head']['sha'].lower()} -->"
     )
-    client.add_comment(
-        number,
-        "\n".join(
-            [
-                marker,
-                "## Maintainer final review requested / 维护者终审邀请",
-                "",
-                f"@{login}, `review-gate` has recorded two independent current-head APPROVE verdicts.",
-                "Please perform the final human check and use GitHub's formal Approve action if the PR is ready. Do not approve your own PR.",
-            ]
-        ),
-    )
+    try:
+        client.add_comment(
+            number,
+            "\n".join(
+                [
+                    marker,
+                    "## Maintainer final review requested / 维护者终审邀请",
+                    "",
+                    f"@{login}, `review-gate` has recorded two independent current-head APPROVE verdicts.",
+                    "Please perform the final human check and use GitHub's formal Approve action if the PR is ready. Do not approve your own PR.",
+                ]
+            ),
+        )
+    except Exception as error:
+        raise RuntimeError(
+            f"@{login} may be requested but its maintainer comment failed: {error}"
+        ) from error
 
 
 def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
@@ -495,11 +569,15 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     if pull.get("draft", False):
         post_status(client, pull, "pending", "Draft PRs are not eligible for review")
         return None
-    if not is_scenario_pull(client, number):
+    files = pull_files(client, number)
+    if not is_scenario_pull(files):
         post_status(client, pull, "success", "Not a new scenario PR; review-gate does not apply")
         return None
+    if changes_protected_protocol(files):
+        post_status(client, pull, "failure", "Scenario PR also changes protected protocol files")
+        return None
 
-    config = load_config(client, pull["base"]["sha"])
+    config = load_config()
     comments = client.comments(number)
     reviews = client.reviews(number)
     assignments = assignment_records(comments)
@@ -515,11 +593,21 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     first_verdict = verdict_after_assignment(verdicts, first)
     if first_verdict is None:
         sync_review_request(client, number, first.reviewer)
-        post_status(client, pull, "pending", f"Waiting for first verdict from @{first.reviewer}")
+        reason = invalid_verdict_reason(records, first, current_head)
+        description = (
+            f"First verdict rejected: {reason}"
+            if reason
+            else f"Waiting for first verdict from @{first.reviewer}"
+        )
+        post_status(client, pull, "pending", description)
         return None
     if first_verdict.verdict == "PRIVACY-CONCERN-RAISED-PRIVATELY":
         clear_review_requests(client, number)
         post_status(client, pull, "failure", "Privacy concern raised; review flow stopped")
+        return None
+    expected_first_family = config["reviewer_profiles"][first.reviewer.lower()]
+    if first_verdict.model_family not in {expected_first_family, "not-exposed"}:
+        post_status(client, pull, "failure", "First verdict did not use its assigned model family")
         return None
     if first_verdict.verdict != "APPROVE":
         sync_review_request(client, number, first.reviewer)
@@ -535,7 +623,13 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     second_verdict = verdict_after_assignment(verdicts, second)
     if second_verdict is None:
         sync_review_request(client, number, second.reviewer)
-        post_status(client, pull, "pending", f"Waiting for second verdict from @{second.reviewer}")
+        reason = invalid_verdict_reason(records, second, current_head)
+        description = (
+            f"Second verdict rejected: {reason}"
+            if reason
+            else f"Waiting for second verdict from @{second.reviewer}"
+        )
+        post_status(client, pull, "pending", description)
         return None
     if second_verdict.verdict == "PRIVACY-CONCERN-RAISED-PRIVATELY":
         clear_review_requests(client, number)
@@ -546,15 +640,18 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         post_status(client, pull, "pending", f"Waiting for @{second.reviewer} to re-review changes")
         return None
 
-    if first.reviewer.lower() == second.reviewer.lower():
-        post_status(client, pull, "failure", "Two different GitHub reviewers are required")
-        return None
-    if first_verdict.model_family == second_verdict.model_family:
-        post_status(client, pull, "failure", "Two different model families are required")
-        return None
     expected_second_family = config["reviewer_profiles"][second.reviewer.lower()]
-    if second_verdict.model_family != expected_second_family:
+    if second_verdict.model_family not in {expected_second_family, "not-exposed"}:
         post_status(client, pull, "failure", "Second verdict did not use its assigned model family")
+        return None
+
+    gate = evaluate_review_gate(
+        records,
+        current_head,
+        expected_reviewers=(first.reviewer, second.reviewer),
+    )
+    if not gate["eligible"]:
+        post_status(client, pull, "failure", "Two different reviewers and model families are required")
         return None
 
     post_status(client, pull, "success", "Two independent current-head APPROVE verdicts recorded")
@@ -609,7 +706,7 @@ def main(argv: list[str] | None = None) -> int:
                         client,
                         pull,
                         "error",
-                        "Review automation failed; inspect the workflow run",
+                        f"Review automation failed: {detail}",
                     )
             except Exception as status_error:
                 print(f"::error title=Could not report review-gate error::{status_error}")

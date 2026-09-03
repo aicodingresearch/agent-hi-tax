@@ -1,3 +1,4 @@
+import http.client
 import sys
 import unittest
 from datetime import datetime, timedelta, timezone
@@ -9,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from notify_review_escalation import (  # noqa: E402
     Assignment,
+    GitHubClient,
     already_notified,
     assignment_from_comments,
     build_email,
@@ -318,6 +320,25 @@ class ReviewNotificationTests(unittest.TestCase):
         sent, failures = process_watchdog(Client(), NOW, 24, dry_run=True)
         self.assertEqual(sent, 1)
         self.assertEqual(failures, 1)
+
+    def test_github_get_retries_incomplete_read(self):
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return b"{}"
+
+        client = GitHubClient("aicodingresearch/agent-hi-tax", "test-token")
+        with patch(
+            "notify_review_escalation.urllib.request.urlopen",
+            side_effect=[http.client.IncompleteRead(b""), Response()],
+        ) as urlopen, patch("notify_review_escalation.time.sleep"):
+            self.assertEqual(client.request("/pulls/58"), {})
+        self.assertEqual(urlopen.call_count, 2)
 
 
 if __name__ == "__main__":

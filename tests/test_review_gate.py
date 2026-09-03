@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from review_gate import evaluate_review_gate, legacy_key  # noqa: E402
+from review_gate import evaluate_review_gate, legacy_key, parse_verdict_with_reason  # noqa: E402
 
 
 HEAD = "0123456789abcdef0123456789abcdef01234567"
@@ -80,6 +80,26 @@ class ReviewGateTests(unittest.TestCase):
             HEAD,
         )
         self.assertFalse(result["eligible"])
+
+    def test_noncanonical_agent_keys_are_rejected(self):
+        for key in ("agent:codex", "agent:gpt-5.6-sol", "agent:claude", "agent:glm"):
+            parsed, reason = parse_verdict_with_reason(record(1, key=key), HEAD)
+            self.assertIsNone(parsed)
+            self.assertIn("canonical", reason)
+
+    def test_one_not_exposed_family_can_pair_with_a_known_family(self):
+        result = evaluate_review_gate(
+            [
+                record(1, key="agent:not-exposed"),
+                record(
+                    2,
+                    key="agent:anthropic-claude",
+                    login="other-reviewer",
+                ),
+            ],
+            HEAD,
+        )
+        self.assertTrue(result["eligible"])
 
     def test_latest_verdict_per_reviewer_wins(self):
         result = evaluate_review_gate(

@@ -35,12 +35,12 @@ permissions:
   statuses: write
 
 concurrency:
-  group: scenario-review-flow-${{ github.event.pull_request.number || github.event.issue.number || inputs.pull_request_number || 'watchdog' }}
+  group: scenario-review-flow
   cancel-in-progress: false
 
 jobs:
   manage:
-    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    if: github.event_name != 'issue_comment' || (github.event.issue.pull_request && contains(github.event.comment.body, '## Review verdict:'))
     runs-on: ubuntu-latest
     steps:
       - name: Check out trusted review automation

@@ -1,8 +1,10 @@
 import base64
 import json
+import os
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -12,8 +14,10 @@ from scenario_review_flow import (  # noqa: E402
     choose_candidates,
     has_formal_approval,
     latest_assignment,
+    main,
     normalized_config,
     process_pull,
+    request_first,
 )
 from review_gate import parse_verdict  # noqa: E402
 
@@ -95,19 +99,27 @@ class FakeClient:
         self.comments_data = []
         self.reviews_data = []
         self.requested = []
+        self.teams = []
         self.statuses = []
         self.request_history = []
         self.next_comment = 1
         self.scenario = True
+        self.protocol_change = False
+        self.fail_files = False
 
     def paginate(self, path):
         if path.startswith(f"/pulls/{self.value['number']}/files"):
-            return [] if not self.scenario else [
+            if self.fail_files:
+                raise RuntimeError("file API unavailable")
+            values = [] if not self.scenario else [
                 {
                     "status": "added",
                     "filename": "runs/2026-09-03/example/manifest.yaml",
                 }
             ]
+            if self.protocol_change:
+                values.append({"status": "modified", "filename": ".github/CODEOWNERS"})
+            return values
         raise AssertionError(path)
 
     def request(self, path, method="GET", payload=None):
@@ -120,11 +132,20 @@ class FakeClient:
             }
         if path == f"/pulls/{self.value['number']}/requested_reviewers":
             if method == "GET":
-                return {"users": [{"login": login} for login in self.requested]}
+                return {
+                    "users": [{"login": login} for login in self.requested],
+                    "teams": [{"slug": slug} for slug in self.teams],
+                }
             if method == "DELETE":
                 removed = {login.lower() for login in payload["reviewers"]}
                 self.requested = [
                     login for login in self.requested if login.lower() not in removed
+                ]
+                removed_teams = {
+                    slug.lower() for slug in payload.get("team_reviewers", [])
+                }
+                self.teams = [
+                    slug for slug in self.teams if slug.lower() not in removed_teams
                 ]
                 return {}
             if method == "POST":
@@ -132,6 +153,8 @@ class FakeClient:
                 self.requested = [reviewer]
                 self.request_history.append(reviewer)
                 return {}
+        if path == f"/commits/{self.value['head']['sha']}/status" and method == "GET":
+            return {"statuses": list(reversed(self.statuses))}
         if path == f"/statuses/{self.value['head']['sha']}" and method == "POST":
             self.statuses.append(payload)
             return {}
@@ -139,6 +162,9 @@ class FakeClient:
 
     def comments(self, number):
         return list(self.comments_data)
+
+    def pull(self, number):
+        return self.value
 
     def reviews(self, number):
         return list(self.reviews_data)
@@ -229,12 +255,56 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertNotEqual(assignment.reviewer, "keting")
         self.assertEqual(client.statuses[-1]["state"], "pending")
 
+    def test_owner_is_excluded_even_if_misconfigured_as_first_reviewer(self):
+        client = FakeClient(pull(number=1))
+        value = normalized_config(config())
+        value["reviewers"].insert(0, "keting")
+        assignment = request_first(client, client.value, value, [])
+        self.assertNotEqual(assignment.reviewer.lower(), "keting")
+
+    def test_first_assignment_removes_a_pending_team_request(self):
+        client = FakeClient(pull(number=1))
+        client.teams = ["release-maintainers"]
+        process_pull(client, client.value)
+        self.assertEqual(client.teams, [])
+        self.assertEqual(client.requested, ["beautyarbutin"])
+
     def test_non_scenario_pull_reports_not_applicable_success(self):
         client = FakeClient(pull(number=1))
         client.scenario = False
         self.assertIsNone(process_pull(client, client.value))
         self.assertEqual(client.statuses[-1]["state"], "success")
         self.assertIn("does not apply", client.statuses[-1]["description"])
+        process_pull(client, client.value)
+        self.assertEqual(len(client.statuses), 1)
+
+    def test_draft_pull_reports_pending_without_assignment(self):
+        value = pull(number=1)
+        value["draft"] = True
+        client = FakeClient(value)
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "pending")
+        self.assertEqual(client.requested, [])
+
+    def test_main_reports_error_status_when_processing_fails(self):
+        client = FakeClient(pull(number=1))
+        client.fail_files = True
+        with patch("scenario_review_flow.GitHubClient", return_value=client), patch.dict(
+            os.environ,
+            {"REPOSITORY": "aicodingresearch/agent-hi-tax", "GITHUB_TOKEN": "test"},
+        ):
+            with self.assertRaises(RuntimeError):
+                main(["--pull-request-number", "1"])
+        self.assertEqual(client.statuses[-1]["state"], "error")
+        self.assertIn("file API unavailable", client.statuses[-1]["description"])
+
+    def test_scenario_with_protocol_changes_stops_without_reassigning(self):
+        client = FakeClient(pull(number=1))
+        client.protocol_change = True
+        client.requested = ["keting"]
+        self.assertIsNone(process_pull(client, client.value))
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertEqual(client.requested, ["keting"])
 
     def test_glm_first_approval_assigns_another_codex_reviewer(self):
         client = FakeClient(pull(number=3))
@@ -268,6 +338,31 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         )
         self.assertEqual(client.requested, ["beautyarbutin"])
 
+    def test_verdict_before_assignment_is_ignored(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict(
+            "beautyarbutin",
+            "openai-gpt",
+            submitted="2026-09-03T07:00:00Z",
+        )
+        process_pull(client, client.value)
+        self.assertIsNone(
+            latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        )
+
+    def test_invalid_structured_verdict_has_visible_status_reason(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        bad = verdict("beautyarbutin", "openai-gpt")
+        bad["body"] = bad["body"].replace(
+            "agent:openai-gpt", "human:<github-login> | agent:<model-family>"
+        )
+        client.comments_data.append(bad)
+        process_pull(client, client.value)
+        self.assertIn("verdict rejected", client.statuses[-1]["description"].lower())
+        self.assertIn("canonical", client.statuses[-1]["description"].lower())
+
     def test_new_head_reuses_first_reviewer_with_short_re_review_message(self):
         client = FakeClient(pull(number=3))
         process_pull(client, client.value)
@@ -288,6 +383,21 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         process_pull(client, client.value)
         client.add_verdict(
             "beautyarbutin", "openai-gpt", "PRIVACY-CONCERN-RAISED-PRIVATELY"
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.requested, [])
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+
+    def test_second_privacy_verdict_stops_flow_and_clears_request(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        process_pull(client, client.value)
+        client.add_verdict(
+            "keting",
+            "anthropic-claude",
+            "PRIVACY-CONCERN-RAISED-PRIVATELY",
+            submitted="2026-09-03T10:00:00Z",
         )
         process_pull(client, client.value)
         self.assertEqual(client.requested, [])
@@ -323,6 +433,52 @@ class ScenarioReviewFlowTests(unittest.TestCase):
                 for comment in client.comments_data
             )
         )
+
+    def test_first_reviewer_must_use_assigned_model_family(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "zhipu-glm")
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertIsNone(
+            latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        )
+
+    def test_production_path_calls_review_gate_evaluator(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        process_pull(client, client.value)
+        client.add_verdict(
+            "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
+        )
+        with patch(
+            "scenario_review_flow.evaluate_review_gate",
+            return_value={"eligible": False},
+        ) as gate:
+            process_pull(client, client.value)
+        gate.assert_called_once()
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+
+    def test_maintainer_author_is_excluded(self):
+        client = FakeClient(pull(number=1, author="beautyarbutin"))
+        process_pull(client, client.value)
+        first = latest_assignment(assignment_records(client.comments_data), "first", HEAD)
+        client.add_verdict(first.reviewer, "openai-gpt")
+        process_pull(client, client.value)
+        second = latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        client.add_verdict(
+            second.reviewer,
+            "anthropic-claude" if second.reviewer.lower() == "keting" else "zhipu-glm",
+            submitted="2026-09-03T10:00:00Z",
+        )
+        process_pull(client, client.value)
+        maintainer_comment = next(
+            comment
+            for comment in client.comments_data
+            if "scenario-maintainer-request" in comment["body"]
+        )
+        self.assertNotIn("scenario-maintainer-request:beautyarbutin", maintainer_comment["body"])
 
     def test_formal_maintainer_approval_is_not_re_requested(self):
         client = FakeClient(pull(number=1))

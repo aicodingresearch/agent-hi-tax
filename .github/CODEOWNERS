@@ -7,9 +7,15 @@
 /prompts/       @keting
 /templates/     @keting
 /scripts/       @keting
+/tests/         @keting
 /.github/       @keting
+/docs/agent-review-and-scoring.md        @keting
+/docs/agent-review-and-scoring.zh-CN.md  @keting
+/docs/review-process.md                  @keting
+/docs/review-process.zh-CN.md            @keting
 /CONTRIBUTING.md        @keting
 /CONTRIBUTING.zh-CN.md  @keting
 /LICENSE        @keting
 /LICENSE-DATA   @keting
 /SECURITY.md    @keting
+/SECURITY.zh-CN.md      @keting

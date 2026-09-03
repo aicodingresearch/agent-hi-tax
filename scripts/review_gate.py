@@ -15,7 +15,14 @@ VERDICTS = {
     "REQUEST_CHANGES",
     "PRIVACY-CONCERN-RAISED-PRIVATELY",
 }
-KEY_RE = re.compile(r"^(?:human:[a-z0-9-]+|agent:[a-z0-9][a-z0-9._/-]*)$")
+HUMAN_KEY_RE = re.compile(r"^human:[a-z0-9-]+$")
+CANONICAL_AGENT_KEYS = {
+    "agent:openai-gpt",
+    "agent:anthropic-claude",
+    "agent:zhipu-glm",
+    "agent:google-gemini",
+    "agent:not-exposed",
+}
 
 
 @dataclass(frozen=True)
@@ -53,10 +60,6 @@ def legacy_key(reviewer: str) -> str | None:
         return "agent:zhipu-glm"
     if "gemini" in value or "google" in value:
         return "agent:google-gemini"
-    if "deepseek" in value:
-        return "agent:deepseek"
-    if "qwen" in value or "通义" in value or "千问" in value:
-        return "agent:alibaba-qwen"
     if "codex" in value or "openai" in value or re.search(r"\bgpt[- ]", value):
         return "agent:openai-gpt"
     if "claude" in value or "anthropic" in value:
@@ -67,22 +70,14 @@ def legacy_key(reviewer: str) -> str | None:
 def model_family(independence_key: str) -> str:
     if independence_key.startswith("human:"):
         return "human"
-    value = independence_key.removeprefix("agent:")
-    prefixes = (
-        ("openai", "openai-gpt"),
-        ("anthropic", "anthropic-claude"),
-        ("zhipu", "zhipu-glm"),
-        ("google", "google-gemini"),
-    )
-    for prefix, family in prefixes:
-        if value.startswith(prefix):
-            return family
-    return value
+    return independence_key.removeprefix("agent:")
 
 
-def parse_verdict(record: dict[str, Any], current_head: str) -> ParsedVerdict | None:
+def parse_verdict_with_reason(
+    record: dict[str, Any], current_head: str
+) -> tuple[ParsedVerdict | None, str | None]:
     if record.get("author_association") not in TRUSTED_ASSOCIATIONS:
-        return None
+        return None, "comment author is not a repository member or collaborator"
 
     body = str(record.get("body") or "").replace("\r\n", "\n")
     if not re.search(
@@ -90,7 +85,7 @@ def parse_verdict(record: dict[str, Any], current_head: str) -> ParsedVerdict | 
         body,
         re.I | re.M,
     ):
-        return None
+        return None, "missing or invalid Reviewed under declaration"
 
     matches = re.findall(
         r"^## Review verdict: "
@@ -99,52 +94,65 @@ def parse_verdict(record: dict[str, Any], current_head: str) -> ParsedVerdict | 
         re.M,
     )
     if len(matches) != 1 or matches[0] not in VERDICTS:
-        return None
+        return None, "expected exactly one supported Review verdict heading"
 
     head_value = _field(body, "Reviewed at head")
     reviewer = _field(body, "Reviewer")
-    if not head_value or not reviewer:
-        return None
+    if not head_value:
+        return None, "missing Reviewed at head"
+    if not reviewer:
+        return None, "missing Reviewer"
     reviewed_head = head_value.strip("`").lower()
     if not re.fullmatch(r"[0-9a-f]{7,40}", reviewed_head):
-        return None
+        return None, "Reviewed at head is not a commit SHA"
     if not current_head.lower().startswith(reviewed_head):
-        return None
+        return None, "Reviewed at head does not match the current PR head"
 
     commenter = str((record.get("user") or {}).get("login") or "").lower()
     if not commenter:
-        return None
+        return None, "missing GitHub reviewer login"
 
     explicit_key = _field(body, "Independence key")
     if explicit_key:
         independence_key = explicit_key.lower()
-        if not KEY_RE.fullmatch(independence_key):
-            return None
+        if not (
+            HUMAN_KEY_RE.fullmatch(independence_key)
+            or independence_key in CANONICAL_AGENT_KEYS
+        ):
+            return None, "Independence key is not a supported canonical family"
         if independence_key.startswith("human:"):
             if independence_key.removeprefix("human:") != commenter:
-                return None
+                return None, "human Independence key does not match the commenter"
         key_source = "explicit"
     else:
         independence_key = legacy_key(reviewer) or ""
         if not independence_key:
-            return None
+            return None, "missing Independence key and legacy family is ambiguous"
         key_source = "legacy-inference"
 
     submitted = record.get("submitted_at") or record.get("created_at")
     if not submitted:
-        return None
-    return ParsedVerdict(
-        record_id=int(record.get("id") or 0),
-        record_url=str(record.get("html_url") or ""),
-        commenter=commenter,
-        verdict=matches[0],
-        reviewed_head=reviewed_head,
-        reviewer=reviewer,
-        independence_key=independence_key,
-        model_family=model_family(independence_key),
-        key_source=key_source,
-        submitted_at=parse_time(str(submitted)),
+        return None, "missing verdict timestamp"
+    return (
+        ParsedVerdict(
+            record_id=int(record.get("id") or 0),
+            record_url=str(record.get("html_url") or ""),
+            commenter=commenter,
+            verdict=matches[0],
+            reviewed_head=reviewed_head,
+            reviewer=reviewer,
+            independence_key=independence_key,
+            model_family=model_family(independence_key),
+            key_source=key_source,
+            submitted_at=parse_time(str(submitted)),
+        ),
+        None,
     )
+
+
+def parse_verdict(record: dict[str, Any], current_head: str) -> ParsedVerdict | None:
+    parsed, _ = parse_verdict_with_reason(record, current_head)
+    return parsed
 
 
 def current_verdicts(

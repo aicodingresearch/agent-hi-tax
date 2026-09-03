@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import re
@@ -261,7 +262,7 @@ class GitHubClient:
                 raise RuntimeError(
                     f"GitHub API {method} {path} failed: {error.code} {detail}"
                 ) from error
-            except urllib.error.URLError as error:
+            except (urllib.error.URLError, http.client.HTTPException, TimeoutError) as error:
                 if attempt + 1 < attempts:
                     time.sleep(2**attempt)
                     continue
