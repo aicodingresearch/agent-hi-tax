@@ -132,8 +132,8 @@ Agent 汇报：
    - 中英文台账不一致时返回 `LEDGER_INCONSISTENT`，请求维护者裁决，不再追加普通行。
 3. 执行资格出口。积分台账 PR 返回 `NOT_APPLICABLE`，防止工作流给自己计分。没有明确计价场景交付的协议、治理、软件或文档 PR 也返回 `NOT_APPLICABLE`。制度前明确排除的参考样板继续不计分；作者身份本身不是排除条件。
 4. 对符合条件的场景或混合交付，记录场景身份、任务或认领、route、证据等级和交付文件。读取源 PR 合并时版本的 `docs/wanted-scenarios.zh-CN.md` 中的积分规则和台账。读取 claim 或 proposal 及评审 Advisory，但重新计算分值；评审建议只是输入，不是裁决。
-5. 匹配所有可能适用的任务和计价桶。执行递减、pair 完成条件、proposal 定价、adapter 与 probe 加分，以及已有叠加规则。不得默默叠加两个普通任务分值。确有歧义时返回 `NEEDS_MAINTAINER_DECISION`，只问维护者一个具体问题；未得到答复前不创建台账变更。
-6. 核实是否遗漏了本可取得的证据。诚实使用 `self_reported`、`not_exposed` 或标注 confounded 本身不扣分。能够提供却主动省略证据时返回 `AWARD_DEFERRED`，写清需要补什么，暂不追加台账行。
+5. 匹配所有可能适用的任务和计价桶。执行递减、pair 完成条件、proposal 定价、adapter 与 probe 加分，以及已有叠加规则。不得默默叠加两个普通任务分值。`docs/wanted-scenarios.md` 的首次贡献保底放在最后执行，在其余全部调整之后取下限。确有歧义时返回 `NEEDS_MAINTAINER_DECISION`，只问维护者一个具体问题；未得到答复前不创建台账变更。
+6. 核实是否遗漏了本可取得的证据。诚实使用 `self_reported`、`not_exposed` 或标注 confounded 本身不扣分。能够提供却主动省略证据时返回 `AWARD_DEFERRED`，写清需要补什么，暂不追加台账行。唯一的例外是首次贡献保底：贡献者的首个已合并场景包一律按不低于 1 分登记，本条核查不对它暂缓——把遗漏写进台账备注即可。
 7. 只有前述检查得到“符合条件且尚未登记”的分值后，才在 `docs/wanted-scenarios.md` 和 `docs/wanted-scenarios.zh-CN.md` 各追加一行。记录日期、贡献者、任务、已合并 PR、分值、必要时关联 claim 或 proposal，并用足够的备注保存归一化与不叠加裁决。历史台账行绝不修改；更正通过追加冲销行完成。
 8. 从最新 `main` 创建工作分支，运行 `./scripts/verify-packages.sh` 和 `git diff --check`，只提交台账文件，push 分支并创建 PR。绝不直接 push `main`，也不得使用 admin bypass 跳过 PR、CI 或评审门禁。
 9. 汇报台账 commit 与 PR URL。该 PR 正常合并后，再确认中英文台账行已进入 `main`，并确认工作区没有本任务产生的未提交文件。

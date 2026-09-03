@@ -31,7 +31,7 @@
 
 清单上的每个任务都有一个分值，写在标题里，形如 `(N 分)`。
 
-**这个数字是什么。** 它是对该任务*当前*能给数据集带来多少边际信息量的标价，仅此而已。它的用途是让你一眼看出缺口在哪、据此选题。积分是给贡献计价，不是给产品排名。这与 [README 明确不做的](../README.zh-CN.md#这不是什么)"简单排行榜"不冲突——那句话指的是把厂商和模型放在一起比高下，本项目依然不做。同一套价格对所有贡献者适用。
+**这个数字是什么。** 它是对该任务*当前*能给数据集带来多少边际信息量的标价，仅此而已。它的用途是让你一眼看出缺口在哪、据此选题。积分是给贡献计价，不是给产品排名。这与 [README 明确不做的](../README.zh-CN.md#这不是什么)"简单排行榜"不冲突——那句话指的是把厂商和模型放在一起比高下，本项目依然不做。同一套价格对所有贡献者适用，只有一个刻意留出的例外：下文的首次贡献保底。
 
 **什么时候发分。** PR 合并的那一刻，按本页当时显示的价格与计数确定。不预留额度，也不提前锁价。开测之前你可以对照本页和 open 的 claim issue 预判一个任务大概值多少，但这个预判不构成承诺。
 
@@ -43,9 +43,11 @@
 
 **0 分不等于"不需要"。** 它只表示这一轮不再以积分招募这个任务。数据本身依然有价值，提交与独立复测一如既往受欢迎。
 
+**任何贡献者的首个已合并场景包，最低发 1 分。** 价格衡量的是边际信息量，所以一个新人可能完全照协议执行，却撞上前一天刚被别人清空的桶——那是时机问题，不是对他工作的评判。因此任何贡献者被合并的第一个场景包，按 `max(上文算出的价格, 1)` 发放。通过评审就是全部条件：包一旦合并就说明它已经过线，此后这个下限在任何情形下都成立：不因递减计数而减少，不被下文的证据遗漏核查扣住，也不受该包的证据等级或评审提了多少条意见影响。它是下限而不是加分项——价格本来就达到 1 及以上时它不再叠加，不与适配器加分或探针加测叠加，且每位贡献者一生只用一次，不是每季度一次。台账、文档、协议类 PR 不属于场景包，不触发本条。其余一切照旧：该包仍然计入它自己的桶，是否占用递减名额完全由它对应的任务本来会不会占用来决定。台账历史行从不改动，因此本下限自它合并之后记录的第一笔发放起生效。
+
 **唯一的通用任务加分项是可用的新产品适配器：+2。** 每个产品一次，条件是适配器文档已经合并，*并且*其中的采集命令与脱敏点被对应场景实际走通。下文的探针加测是只适用于 L1/L2 兄弟包的窄范围规则。没有证据等级加成；诚实标注混杂或缺失不会扣你的分。
 
-**发分之前，维护者会核查可得的证据是否被遗漏了**，依据的是[贡献指南](../CONTRIBUTING.zh-CN.md#最重要的六条规则)已有的原则：能拿到的证据应当提供，拿不到不阻断。凡是本可采集却被主动省略的，补齐之后再发分。这只影响积分，不改变 PR 的接收标准。
+**发分之前，维护者会核查可得的证据是否被遗漏了**，依据的是[贡献指南](../CONTRIBUTING.zh-CN.md#最重要的六条规则)已有的原则：能拿到的证据应当提供，拿不到不阻断。凡是本可采集却被主动省略的，补齐之后再发分。这只影响积分，不改变 PR 的接收标准。上文的首次贡献保底是这条核查唯一扣不住的发放。
 
 **清单之外的组合**要先开一个 proposal issue。维护者回复前为 0 分；回复按固定 rubric 定价：3 分 = 已覆盖 harness 背后的兼容端点或模型替换；4 分 = 成熟的第三方 harness；6 分 = 真正全新的一方或独立 harness。
 
@@ -77,6 +79,7 @@ L1、L2 两个新标准输入的定义正在按 E 组流程敲定，见 T-41 与
 | OpenCode 首样合并，且适配器被该场景实际走通 | 6 + 2 | 清单点名产品的首个样本；适配器是唯一通用的可叠加任务加分，每产品一次 |
 | 只交了适配器文档，没有场景走通它 | +0 | +2 的条件是文档已合并且被真实场景走通 |
 | 本季度同桶的第 4 个 T-01 复测 | 1 | 锚点计价的第 4 档仍为 1 分；计数下季度重置 |
+| 新人的首个包排在同一个桶的第 5 位，锚点价已经用尽 | 1 | 算出来是 0 分，但贡献者的首个已合并包最低发 1 分 |
 | 提议测一个清单完全没点名的 Agent（T-23），维护者在回复中定价 4 分，包合并 | 4 | 清单外组合在 proposal 定价之前都是 0 分 |
 | 复测某个新收录产品的首样 | 走 proposal 定价 | 清单上还没有这一项：维护者定价（通常照 A 组 3/2/1/0）并回写本页 |
 
@@ -502,3 +505,4 @@ Agent 的发行方和推理路由是两个变量：官方 Agent 也可以配置�
 | 2026-09-03 | [@BoomShuai](https://github.com/BoomShuai) | T-32 | [#66](https://github.com/aicodingresearch/agent-hi-tax/pull/66) | 8 | 认领为 T-32（[#64](https://github.com/aicodingresearch/agent-hi-tax/issues/64)）；在规则文件 OFF 侧 [#65](https://github.com/aicodingresearch/agent-hi-tax/pull/65) 先合并后，完成 Codex CLI 同机规则文件有 / 无 pair；固定的 8 分 pair 价在两侧均合并后一次发放，故只记在最后合并并关闭 claim 的 #66，不拆分到两个 PR，也不与 T-01 锚点价叠加或占用锚点档位；无适配器、无 L1/L2 探针，Level A 证据等级不另加分；不触发证据遗漏暂缓——两侧均公开固定 `AGENTS.md` fixture、逐次原生 JSONL usage、公开终端截图与配对分析，支撑可重复的原生 input token +220 差值；未测量的订阅额度已明确限定，且未被解释为成本 |
 | 2026-09-03 | [@BoomShuai](https://github.com/BoomShuai) | T-31 | [#62](https://github.com/aicodingresearch/agent-hi-tax/pull/62) | 8 | 认领为 T-31（[#54](https://github.com/aicodingresearch/agent-hi-tax/issues/54)）；在 MCP ON 侧 [#63](https://github.com/aicodingresearch/agent-hi-tax/pull/63) 先合并后，完成 Codex CLI 同机 `node_repl` MCP 开 / 关 pair；虽然 #63 带有 `Closes #54`，固定的 8 分 pair 价直到最后合并的 #62 落地才可发放，故只记在 #62，不拆分到两个 PR，也不与 T-01 锚点价叠加或占用锚点档位；无适配器、无 L1/L2 探针，Level A 证据等级与每侧 6 次有效运行均不另加分；不触发证据遗漏暂缓——ON 侧公开直接探测到的 3 个已注册非空 object schema 工具，两侧保留全部有效 attempt 的原生 JSONL usage 与补充公开终端截图，配对分析支撑原生 input token 字段的零观测差值，且未把未测量的订阅额度解释为成本 |
 | 2026-09-03 | [@BoomShuai](https://github.com/BoomShuai) | T-33 | [#68](https://github.com/aicodingresearch/agent-hi-tax/pull/68) | 8 | 认领为 T-33（[#67](https://github.com/aicodingresearch/agent-hi-tax/issues/67)）；在 resumed 侧 [#69](https://github.com/aicodingresearch/agent-hi-tax/pull/69) 先合并后，完成 Codex CLI 同机 fresh / resumed 会话 pair；与 [#62](https://github.com/aicodingresearch/agent-hi-tax/pull/62) 同理，虽然 #69 带有 `Closes #67`，固定的 8 分 pair 价直到最后合并的 #68 落地才可发放，故只记在 #68，不拆分到两个 PR，也不与 T-01 锚点价叠加或占用锚点档位；本 pair 的预设变量是会话历史，与 T-31、T-32 已计价的 MCP 注册、规则文件两个变量不同，故那两个 pair 既不吸收也不重复本次计价；不触发 T-13 与 T-15——effort 仍为 `high`，订阅仍为 USD 200/月 的 ChatGPT Pro，与参考样本同属 Pro 20x 速率档；无适配器、无 L1/L2 探针，Level A 证据等级不另加分；不触发证据遗漏暂缓——两侧均公开逐次原生 JSONL usage、公开终端截图、可独立复现的 202 技能与 11 插件清单哈希，以及逐字段等价的配对分析，支撑可重复的原生 input token +20/+21 差值与 +8,960 的缓存输入位移，且两侧均明确拒绝将其解读为计费下降；未测量的订阅额度已限定范围，未被解释为成本 |
+| 2026-09-03 | [@TH-Chou](https://github.com/TH-Chou) | T-01 | [#41](https://github.com/aicodingresearch/agent-hi-tax/pull/41) | 1 | 认领为 T-01（[#36](https://github.com/aicodingresearch/agent-hi-tax/issues/36)）；Codex CLI × `gpt-5.6-sol` × high 的 2026Q3 锚点 1 第 5 次复现。本包于 2026-09-03T08:26:13Z 合并，彼时 [#27](https://github.com/aicodingresearch/agent-hi-tax/pull/27)、[#35](https://github.com/aicodingresearch/agent-hi-tax/pull/35)、[#32](https://github.com/aicodingresearch/agent-hi-tax/pull/32) 与 [#53](https://github.com/aicodingresearch/agent-hi-tax/pull/53) 已占满本页 5 / 3 / 2 / 1 全部四个锚点档位，按锚点价算出 0 分；本包是 @TH-Chou 的首个已合并场景包，由首次贡献保底抬到 1 分——保底是在其余全部调整之后取下限，不是在价格之上再加，且每位贡献者只用一次。锚点身份为 Agent × effort，macOS arm64 不与 Linux、Windows 包分属不同的桶，`0.151.0-alpha.7.2` 这一 point release 在分桶时忽略；合并时锚点序列已用尽，本包不占用锚点 1 档位。不计 T-13——该任务的 effort 为 `medium`；不计 T-15——`subscription_plan` 为 `not_exposed`，未记录任何档位替换；不计 T-16——该任务只付某产品的首个 Windows 包，且已在 [#13](https://github.com/aicodingresearch/agent-hi-tax/pull/13) 发放；不属于配对任务——`as-used` 档下虽启用 `node_repl`，但没有同机 off 侧，且 T-31 配对价已在 [#62](https://github.com/aicodingresearch/agent-hi-tax/pull/62) 发放；无适配器、无 L1/L2 探针，按“证据等级不另加分”规则，Level C 证据等级既不加分也不扣分。证据遗漏已记录且刻意不扣住：本包未发布任何视觉证据（`visual_evidence_access: not_provided`），`subscription_plan` 标为 `not_exposed` 而 ChatGPT 账户页其实暴露档位——但首次贡献保底从不被该核查扣住。该贡献者此后的包按常规计价 |
