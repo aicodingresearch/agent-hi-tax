@@ -10,6 +10,7 @@ import re
 import smtplib
 import ssl
 import sys
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -147,6 +148,9 @@ def already_notified(
 ) -> bool:
     expected = (reason.lower(), head.lower(), reviewer.lower())
     for comment in comments:
+        login = str(comment.get("user", {}).get("login", "")).lower()
+        if login not in TRUSTED_ASSIGNERS:
+            continue
         for match in NOTIFICATION_RE.finditer(str(comment.get("body", ""))):
             actual = (match.group(1).lower(), match.group(2).lower(), match.group(3).lower())
             if actual == expected:
@@ -162,6 +166,7 @@ def classify_watchdog_alert(
     now: datetime,
     threshold: timedelta,
     ready_at: datetime | None = None,
+    requested_at: datetime | None = None,
 ) -> Alert | None:
     head = str(pull["head"]["sha"])
     assignment = assignment_from_comments(comments, head)
@@ -169,8 +174,8 @@ def classify_watchdog_alert(
     if assignment is None and requested_reviewers:
         assignment = Assignment(
             reviewer=requested_reviewers[0],
-            assigned_at=parse_time(pull["updated_at"]),
-            head=head,
+            assigned_at=requested_at or ready_at or parse_time(pull["created_at"]),
+            head=None,
         )
 
     if assignment is None:
@@ -188,6 +193,35 @@ def classify_watchdog_alert(
             since=assignment.assigned_at,
         )
     return None
+
+
+def ready_at_from_timeline(
+    pull: dict[str, Any], timeline: list[dict[str, Any]]
+) -> datetime:
+    ready_at: datetime | None = parse_time(pull["created_at"])
+    for event in timeline:
+        event_name = event.get("event")
+        if event_name == "convert_to_draft":
+            ready_at = None
+        elif event_name == "ready_for_review" and event.get("created_at"):
+            ready_at = parse_time(str(event["created_at"]))
+    # The caller excludes current drafts. If GitHub omitted a transition event,
+    # creation time is the oldest safe bound and cannot be reset by comments.
+    return ready_at or parse_time(pull["created_at"])
+
+
+def requested_at_from_timeline(
+    timeline: list[dict[str, Any]], requested_reviewers: list[str]
+) -> datetime | None:
+    requested = {login.lower() for login in requested_reviewers}
+    times: list[datetime] = []
+    for event in timeline:
+        if event.get("event") != "review_requested":
+            continue
+        login = str(event.get("requested_reviewer", {}).get("login", "")).lower()
+        if login in requested and event.get("created_at"):
+            times.append(parse_time(str(event["created_at"])))
+    return max(times, default=None)
 
 
 class GitHubClient:
@@ -211,13 +245,27 @@ class GitHubClient:
                 "User-Agent": "agent-hi-tax-review-notifier",
             },
         )
-        try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                raw = response.read()
-                return json.loads(raw) if raw else None
-        except urllib.error.HTTPError as error:
-            detail = error.read().decode("utf-8", errors="replace")[:1000]
-            raise RuntimeError(f"GitHub API {method} {path} failed: {error.code} {detail}") from error
+        attempts = 3 if method in {"GET", "PATCH"} else 1
+        for attempt in range(attempts):
+            try:
+                with urllib.request.urlopen(request, timeout=30) as response:
+                    raw = response.read()
+                    return json.loads(raw) if raw else None
+            except urllib.error.HTTPError as error:
+                detail = error.read().decode("utf-8", errors="replace")[:1000]
+                retryable = error.code in {429, 500, 502, 503, 504}
+                if retryable and attempt + 1 < attempts:
+                    time.sleep(2**attempt)
+                    continue
+                raise RuntimeError(
+                    f"GitHub API {method} {path} failed: {error.code} {detail}"
+                ) from error
+            except urllib.error.URLError as error:
+                if attempt + 1 < attempts:
+                    time.sleep(2**attempt)
+                    continue
+                raise RuntimeError(f"GitHub API {method} {path} failed: {error}") from error
+        raise AssertionError("unreachable")
 
     def paginate(self, path: str) -> list[dict[str, Any]]:
         separator = "&" if "?" in path else "?"
@@ -249,17 +297,8 @@ class GitHubClient:
     def reviews(self, number: int) -> list[dict[str, Any]]:
         return self.paginate(f"/pulls/{number}/reviews")
 
-    def ready_at(self, number: int, pull: dict[str, Any]) -> datetime:
-        ready_at = parse_time(pull["created_at"])
-        for event in self.paginate(f"/issues/{number}/timeline"):
-            event_name = event.get("event")
-            if event_name == "convert_to_draft":
-                ready_at = None
-            elif event_name == "ready_for_review" and event.get("created_at"):
-                ready_at = parse_time(str(event["created_at"]))
-        # The caller already excludes current drafts. A missing ready event is
-        # therefore an old non-draft PR, for which creation is the best bound.
-        return ready_at or parse_time(pull["created_at"])
+    def timeline(self, number: int) -> list[dict[str, Any]]:
+        return self.paginate(f"/issues/{number}/timeline")
 
     def requested_reviewers(self, number: int) -> list[str]:
         value = self.request(f"/pulls/{number}/requested_reviewers")
@@ -268,8 +307,18 @@ class GitHubClient:
     def open_pulls(self) -> list[dict[str, Any]]:
         return self.paginate("/pulls?state=open&base=main")
 
-    def add_comment(self, number: int, body: str) -> None:
-        self.request(f"/issues/{number}/comments", method="POST", payload={"body": body})
+    def add_comment(self, number: int, body: str) -> dict[str, Any]:
+        value = self.request(
+            f"/issues/{number}/comments", method="POST", payload={"body": body}
+        )
+        if not isinstance(value, dict):
+            raise RuntimeError("GitHub did not return the notification reservation")
+        return value
+
+    def update_comment(self, comment_id: int, body: str) -> None:
+        self.request(
+            f"/issues/comments/{comment_id}", method="PATCH", payload={"body": body}
+        )
 
 
 def required_env(name: str) -> str:
@@ -288,6 +337,11 @@ def build_email(
     head = pull["head"]["sha"]
     repository_url = f"https://github.com/{pull['base']['repo']['full_name']}"
     entry_url = f"{repository_url}/blob/{pull['base']['sha']}/docs/agent-review-and-scoring.zh-CN.md"
+    prompt = (
+        f"Review and post a verdict for {url} using the repository's Agent "
+        "review entry point. Do not read existing review findings before "
+        "publishing your independent verdict."
+    )
 
     message = EmailMessage()
     if reason == "assigned-to-keting":
@@ -309,7 +363,10 @@ def build_email(
             f"PR：#{number} {title}",
             f"地址：{url}",
             f"Current head：{head}",
-            f"评审入口与可复制 Prompt：{entry_url}",
+            f"评审入口：{entry_url}",
+            "",
+            "可复制 Prompt：",
+            prompt,
             "",
             FOOTER,
         ]
@@ -365,11 +422,22 @@ def notify(
         print(f"PR #{pull['number']}: would send {reason} email")
         return True
 
-    message = build_email(pull, reason, reviewer, threshold_hours)
-    send_email(message)
     marker = notification_marker(reason, head, reviewer)
-    client.add_comment(
+    reservation = client.add_comment(
         int(pull["number"]),
+        f"{marker}\nReview notification reserved. / 评审通知已预留。",
+    )
+    message = build_email(pull, reason, reviewer, threshold_hours)
+    try:
+        send_email(message)
+    except Exception:
+        client.update_comment(
+            int(reservation["id"]),
+            f"{marker}\nReview notification failed; automatic retry is suppressed to prevent duplicate email. / 评审通知失败；为避免重复邮件，已停止自动重试。",
+        )
+        raise
+    client.update_comment(
+        int(reservation["id"]),
         f"{marker}\nReview notification sent to the maintainer. / 已向维护者发送评审通知。",
     )
     print(f"PR #{pull['number']}: sent {reason} email")
@@ -402,37 +470,50 @@ def process_watchdog(
     now: datetime,
     threshold_hours: int,
     dry_run: bool = False,
-) -> int:
+) -> tuple[int, int]:
     sent = 0
+    failures = 0
     threshold = timedelta(hours=threshold_hours)
     for pull in client.open_pulls():
         number = int(pull["number"])
-        if not eligible_pull(pull) or not client.is_scenario_pull(number):
-            continue
-        comments = client.comments(number)
-        reviews = client.reviews(number)
-        requested = client.requested_reviewers(number)
-        ready_at = None
-        if assignment_from_comments(comments, str(pull["head"]["sha"])) is None and not requested:
-            ready_at = client.ready_at(number, pull)
-        alert = classify_watchdog_alert(
-            pull, comments, reviews, requested, now, threshold, ready_at=ready_at
-        )
-        if alert is None:
-            print(f"PR #{number}: no review escalation needed")
-            continue
-        sent += int(
-            notify(
-                client,
+        try:
+            if not eligible_pull(pull) or not client.is_scenario_pull(number):
+                continue
+            comments = client.comments(number)
+            reviews = client.reviews(number)
+            requested = client.requested_reviewers(number)
+            timeline = client.timeline(number)
+            ready_at = ready_at_from_timeline(pull, timeline)
+            requested_at = requested_at_from_timeline(timeline, requested)
+            alert = classify_watchdog_alert(
                 pull,
                 comments,
-                reason=alert.reason,
-                reviewer=alert.reviewer,
-                threshold_hours=threshold_hours,
-                dry_run=dry_run,
+                reviews,
+                requested,
+                now,
+                threshold,
+                ready_at=ready_at,
+                requested_at=requested_at,
             )
-        )
-    return sent
+            if alert is None:
+                print(f"PR #{number}: no review escalation needed")
+                continue
+            sent += int(
+                notify(
+                    client,
+                    pull,
+                    comments,
+                    reason=alert.reason,
+                    reviewer=alert.reviewer,
+                    threshold_hours=threshold_hours,
+                    dry_run=dry_run,
+                )
+            )
+        except Exception as error:
+            failures += 1
+            detail = str(error).replace("\r", " ").replace("\n", " ")
+            print(f"::error title=Review watchdog failed for PR #{number}::{detail}")
+    return sent, failures
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -461,13 +542,15 @@ def main(argv: list[str] | None = None) -> int:
             client, args.pull_request_number, threshold_hours, dry_run=args.dry_run
         )
     else:
-        sent = process_watchdog(
+        sent, failures = process_watchdog(
             client,
             datetime.now(timezone.utc),
             threshold_hours,
             dry_run=args.dry_run,
         )
     print(f"review notifications sent: {sent}")
+    if args.mode == "watchdog" and failures:
+        raise RuntimeError(f"review watchdog failed for {failures} pull request(s)")
     return 0
 
 

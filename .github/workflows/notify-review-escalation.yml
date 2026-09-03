@@ -53,7 +53,7 @@ concurrency:
 
 jobs:
   notify:
-    if: github.event_name != 'pull_request_target' || github.event.requested_reviewer.login == 'keting'
+    if: inputs.mode != '' || github.event_name != 'pull_request_target' || github.event.requested_reviewer.login == 'keting'
     runs-on: ubuntu-latest
     steps:
       - name: Check out trusted notification code
