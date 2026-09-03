@@ -1,0 +1,41 @@
+Visual evidence audit — T-33 FRESH
+
+Scenario-level subscription image
+
+file: evidence/subscription.png
+dimensions: 3840 x 2100
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+visible support: ChatGPT Pro plan and USD 200/month
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+file: attempts/r1/response.png
+dimensions: 1694 x 784
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 38d136a60130f7ea374ea4137407b55e7a6e792a7d1af75c7d49799fc50f9015
+visible support: side/attempt, CLI version, model, high effort, fresh state, exact hi, normalized launch command, complete reply and native usage, exit 0, one-turn transcript proof, empty workspace, and VALID status
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+file: attempts/r2/response.png
+dimensions: 2266 x 810
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 9bc91e5aef64c1b1fb956959ecdf95633b66d21a5d69d0f082dc1c98e0d69127
+visible support: side/attempt, CLI version, model, high effort, fresh state, exact hi, normalized launch command, complete reply and native usage, exit 0, one-turn transcript proof, empty workspace, and VALID status
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+file: attempts/r3/response.png
+dimensions: 2246 x 760
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 417b6a866429b6ea8064eadb23c484251691fb4d6c04fdb476124d41a2c9b4b6
+visible support: side/attempt, CLI version, model, high effort, fresh state, exact hi, normalized launch command, complete reply and native usage, exit 0, one-turn transcript proof, empty workspace, and VALID status
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+Every attempt image was visually cross-checked against its retained native event stream. Only standard PNG metadata is present; no author, creator, description, source URL, or account metadata is embedded.

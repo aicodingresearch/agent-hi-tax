@@ -1,0 +1,124 @@
+Public transcription note: the generic resume subcommand is rendered as <resume-subcommand>. The private thread identifier was never present in this preregistration; all formal identifiers remain outside Git. The exact private preregistration is hash-registered.
+
+Agent Hi Tax local preregistration — T-33 paired comparison
+Created before the first formal target-model request.
+
+created_at_utc: 2026-09-03T01:01:53Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/67
+task_id: T-33
+contributor: @BoomShuai
+
+pair:
+  fresh_scenario_id: 20260903_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-session-fresh_mac-arm64_BoomShuai
+  resumed_scenario_id: 20260903_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-session-resumed-one-hi_mac-arm64_BoomShuai
+  intended_variable: no prior human chat turn versus one completed hi round trip followed by one explicit resume
+  execution_order: fresh-r1, resumed-seed-r1, resumed-target-r1, then the same sequence for r2 and r3
+  execution_mode: sequential; never parallel
+  workspace_pairing: the fresh target and resumed seed/target for a given attempt use the exact same empty non-Git path, sequentially; emptiness is checked before and after each phase
+
+fixed_common_variables:
+  agent: OpenAI Codex CLI
+  agent_version: 0.151.0-alpha.7.2
+  executable: bundled first-party ChatGPT app CLI
+  requested_model: gpt-5.6-sol
+  requested_effort: high
+  auth_channel: ChatGPT subscription-login
+  subscription_plan: ChatGPT Pro
+  route: first-party-subscription / native protocol
+  os: macOS 26.6 (build 25G72)
+  architecture: arm64
+  locale: C.UTF-8
+  timezone: Asia/Shanghai
+  context_profile: custom
+  planned_repetitions_per_side: 3
+  prompt_case: hi-en-v1
+  prompt_bytes_hex: 68 69
+  prompt_sha256: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+  sandbox: workspace-write
+  approval_policy: never
+
+fixed_harness_controls:
+  global_AGENTS_md: present but empty; sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  project_instruction_files: none
+  configured_mcp_servers: computer-use, cua_repl, node_repl
+  mcp_state_both_sides: all disabled; node_repl disabled by per-launch override
+  enabled_plugins_both_sides: browser, chrome, codex-app-tools, computer-use, documents, pdf, presentations, sites, spreadsheets, template-creator, visualize
+  enabled_plugin_count_both_sides: 11
+  enabled_plugin_names_sha256_both_sides: 4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999
+  available_skill_catalog_count_both_sides: 202
+  available_skill_catalog_sha256_both_sides: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+  hooks_both_sides: one local notification hook configured; no model call expected
+
+initial_model_visible_preflight:
+  paths_checked: r1, r2, r3
+  exact_hi_user_message_count_each: 1
+  normalized_role_content_sha256: 9ecf8d601b7dab86fe5fa0c6764ea47180550bc20b73eadd52efb7962446a5c4
+  normalization: replace only each equal-shape private workspace path with <RUN_DIR>; retain ordered role/content objects; recursively sort JSON keys
+  equal_across_paths: true
+  model_visible_sandbox: workspace-write
+  model_visible_approval_policy: never
+
+session_construction:
+  fresh_target:
+    session_state: fresh
+    prior_human_chat_turns: 0
+    action: start a new exec session and send exact hi once; never resume it
+  resumed_seed:
+    session_state: fresh setup turn outside the resumed target aggregate
+    action: start a different new exec session in the same verified-empty pair workspace and send exact hi once
+    valid_seed_requires: exit 0; one exact human hi; one assistant reply; zero tool calls; one turn context; unchanged empty workspace
+  resumed_target:
+    session_state: resumed
+    prior_human_chat_turns: 1
+    action: immediately resume the exact private seed thread and send exact hi once
+    valid_target_requires: exit 0; native target thread identifier equals seed identifier; final rollout has two exact human hi messages, two assistant replies, two fixed turn contexts, zero tool calls, and an unchanged empty workspace
+  identifier_policy: raw thread/session identifiers remain private; public commands use <PRIVATE_SESSION_ID>; public proof records only equality and counts
+  resume_sandbox_policy: the resume subcommand has no sandbox flag in this build; workspace-write is inherited from the seed and must be verified in both retained turn contexts
+
+fixed_launch_commands:
+  fresh_target: codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=false' --config 'approval_policy="never"' --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+  resumed_seed: identical to fresh_target, but starts a different fresh private thread in the same pair workspace
+  resumed_target: cd "<RUN_DIR>" && codex exec <resume-subcommand> --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=false' --config 'approval_policy="never"' "<PRIVATE_SESSION_ID>" "hi"
+
+measurement_plan:
+  Preserve native exec JSONL, stderr, start/end timestamps, exit status, MCP/plugin state,
+  pre/post config hashes, workspace checks, private thread binding, and complete local rollouts
+  outside Git. The fresh target and resumed target native turn.completed usage are the paired
+  primary observations. Seed usage is reported separately and is never added to or substituted
+  for resumed-target usage. Derive non-cached input as input_tokens minus cached_input_tokens;
+  cached input is a subset and is not double-counted. Context total is input_tokens plus
+  output_tokens. Do not interpret any token total as ChatGPT subscription quota cost.
+
+analysis_plan:
+  Retain every attempt in chronological order. For each target, cross-check CLI reply and usage
+  against the retained rollout. Verify common agent/model/effort/sandbox/approval/MCP/plugins/
+  skills/rules/workspace controls and base-instructions hashes. For resumed targets, additionally
+  verify private seed-target thread equality, exact human/assistant history cardinality, and the
+  target turn context. Report raw values, medians, ranges, and pairwise resumed-minus-fresh deltas
+  for input including cached, cached input, non-cached input, output, reasoning output, context
+  total, and response latency. Do not select attempts by output wording or token value.
+
+visual_plan:
+  Capture every valid target in native macOS Terminal immediately after the native run. Fresh
+  captures show exact hi, full reply, all native usage fields, exit status, transcript counts,
+  and fresh state. Resumed captures also show the seed reply/usage, same-thread boolean, one prior
+  human turn, target reply/usage, and final transcript counts. Crop only the Terminal title bar.
+  Never expose a username, hostname, home path, account identifier, thread/session ID, or literal
+  resume command. Retain invalid attempts and append replacements if necessary.
+
+preflight_note:
+  A non-target mechanics probe used distinct diagnostic text before this preregistration. It
+  confirmed that exec resume emits the same private thread identifier and preserves model,
+  effort, cwd, approval, and workspace-write context. It experienced network retries and agent
+  tool activity, so none of its replies, usage, or timing is part of the T-33 dataset.
+
+attribution_rule:
+  Attribute observed target deltas only to this exact fresh-versus-one-hi-resumed construction if
+  all checks pass. The resumed side intentionally includes history injection and any associated
+  cache behavior; the result is not a billing claim and does not generalize to longer histories.
+  Every failed or anomalous attempt is retained; no preferred reply or minimum is selected.
+
+frozen_method_files:
+  run_capture_attempt_sha256: 7d208157a989e27ae62f6c73c4d6cd17eebc27ba7b7ada6c9f30c10b24fb4b6d
+  analyze_preflight_sha256: 15392363acf519db70c42fea8eea923f998094f9b9878f1995e3a296867cd21c
+  preflight_analysis_sha256: 023ce6a3079cdae516b4a764153b0097d91468c9ffabf4517830fc880fd31692

@@ -1,0 +1,21 @@
+Agent Hi Tax T-33 public-safe preflight
+Captured before the first formal target-model request.
+
+Claim: https://github.com/aicodingresearch/agent-hi-tax/issues/67
+Agent: OpenAI Codex CLI 0.151.0-alpha.7.2
+Model / effort: gpt-5.6-sol / high
+Subscription: ChatGPT Pro subscription login
+Route: first-party subscription / native protocol
+OS: macOS 26.6 (build 25G72), arm64
+Locale / timezone: C.UTF-8 / Asia/Shanghai
+Prompt: hi-en-v1; exact bytes 68 69; SHA-256 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+Sandbox / approval: workspace-write / never
+Workspaces: three exact pair directories verified empty and non-Git; each path is reused sequentially by its fresh and resumed sides
+Global AGENTS.md: present but empty; SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+Project instruction files: none
+Plugins: 11 enabled; names SHA-256 4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999
+Skills: 202 model-visible names; SHA-256 e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+MCP: computer-use, cua_repl, and node_repl disabled on both sides
+Initial model-visible input: exact one-message `hi` target on all three paths; normalized role/content SHA-256 9ecf8d601b7dab86fe5fa0c6764ea47180550bc20b73eadd52efb7962446a5c4
+Resume mechanics probe: same private thread before/after resume; both turn contexts preserved model, effort, cwd, workspace-write, and approval=never. Diagnostic text, usage, timing, and tool activity are excluded from formal data.
+Raw config, complete prompt-input records, diagnostic transcript, absolute paths, account details, and all thread/session identifiers remain outside Git.

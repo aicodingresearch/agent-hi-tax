@@ -1,0 +1,4 @@
+attempt,status,session_state,prior_human_chat_turns,started_at_utc,response_latency_ms,usage_source,input_tokens_including_cached,cached_input_tokens,non_cached_input_tokens,output_tokens,reasoning_output_tokens,context_total_tokens,cli_total_excluding_cached,cli_total_source,seed_input_tokens_setup_only,quota_attribution,response_text_sha256
+r1,valid,fresh,0,2026-09-03T01:10:00.773Z,2346,event-log,20428,11264,9164,14,0,20442,9178,derived-from-event-log,not_applicable,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043
+r2,valid,fresh,0,2026-09-03T01:24:32.880Z,3045,event-log,20428,11264,9164,13,0,20441,9177,derived-from-event-log,not_applicable,not_measured,f181e10aa5c1fcb74c014df9d75a1208a11a15e89646d4880a48d3a4f4c437a3
+r3,valid,fresh,0,2026-09-03T01:38:00.460Z,1972,event-log,20428,11264,9164,14,0,20442,9178,derived-from-event-log,not_applicable,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043

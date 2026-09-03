@@ -1,0 +1,331 @@
+{
+  "all_configured_mcp_servers_disabled": true,
+  "all_resumed_seed_rollouts_preserved_as_exact_prefix": true,
+  "all_resumed_seed_target_thread_ids_equal": true,
+  "all_valid": true,
+  "all_workspaces_empty_after": true,
+  "attempt_ids_per_side": [
+    "r1",
+    "r2",
+    "r3"
+  ],
+  "claim_issue": "https://github.com/aicodingresearch/agent-hi-tax/issues/67",
+  "control_hashes": {
+    "base_instructions_sha256": "a91357a1cd2727a0be06d461248d6e3a7274746e38108f548a3adf2cc2430415",
+    "fixed_turn_context_projection_sha256": "62171cbbeaaa61ef8159d4470555e2c2f01d292cc5cd31f900a7e1e8443c114c",
+    "normalized_initial_role_content_sha256": "ceb80661a56b7c8c68ff0b88783d31572284b156c41a61a1c5ef9624c5ed6339",
+    "plugin_names_sha256": "4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999",
+    "prompt_sha256": "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4",
+    "skill_names_sha256": "e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2"
+  },
+  "diagnostics": {
+    "all_other_target_stderr_categories": [],
+    "fresh_r3_stderr": [
+      "model-list-refresh-timeout",
+      "plugin-mcp-transport-closed"
+    ],
+    "initial_turn_skill_description_budget_notice": "present on all three fresh targets and all three resumed setup seeds",
+    "resumed_target_repeated_that_notice": false
+  },
+  "interpretation": {
+    "not_supported": "The data do not measure subscription cost, isolate latency, estimate randomized order effects, or generalize to longer histories or other harnesses.",
+    "supported": "In this exact fixed-order T-33 construction, one prior hi roundtrip plus session recovery increased native input_tokens by 20-21 and cached_input_tokens by 8960 in every pair."
+  },
+  "metrics": {
+    "cache_write_input_tokens": {
+      "fresh": {
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "min": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        0,
+        0,
+        0
+      ],
+      "resumed_target": {
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "min": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "cached_input_tokens": {
+      "fresh": {
+        "max": 11264,
+        "mean": 11264,
+        "median": 11264,
+        "min": 11264,
+        "values": [
+          11264,
+          11264,
+          11264
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        8960,
+        8960,
+        8960
+      ],
+      "resumed_target": {
+        "max": 20224,
+        "mean": 20224,
+        "median": 20224,
+        "min": 20224,
+        "values": [
+          20224,
+          20224,
+          20224
+        ]
+      }
+    },
+    "cli_total_excluding_cached": {
+      "fresh": {
+        "max": 9178,
+        "mean": 9177.67,
+        "median": 9178,
+        "min": 9177,
+        "values": [
+          9178,
+          9177,
+          9178
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        -8940,
+        -8931,
+        -8936
+      ],
+      "resumed_target": {
+        "max": 246,
+        "mean": 242,
+        "median": 242,
+        "min": 238,
+        "values": [
+          238,
+          246,
+          242
+        ]
+      }
+    },
+    "context_total_tokens": {
+      "fresh": {
+        "max": 20442,
+        "mean": 20441.67,
+        "median": 20442,
+        "min": 20441,
+        "values": [
+          20442,
+          20441,
+          20442
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        20,
+        29,
+        24
+      ],
+      "resumed_target": {
+        "max": 20470,
+        "mean": 20466,
+        "median": 20466,
+        "min": 20462,
+        "values": [
+          20462,
+          20470,
+          20466
+        ]
+      }
+    },
+    "input_tokens_including_cached": {
+      "fresh": {
+        "max": 20428,
+        "mean": 20428,
+        "median": 20428,
+        "min": 20428,
+        "values": [
+          20428,
+          20428,
+          20428
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        20,
+        21,
+        21
+      ],
+      "resumed_target": {
+        "max": 20449,
+        "mean": 20448.67,
+        "median": 20449,
+        "min": 20448,
+        "values": [
+          20448,
+          20449,
+          20449
+        ]
+      }
+    },
+    "non_cached_input_tokens": {
+      "fresh": {
+        "max": 9164,
+        "mean": 9164,
+        "median": 9164,
+        "min": 9164,
+        "values": [
+          9164,
+          9164,
+          9164
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        -8940,
+        -8939,
+        -8939
+      ],
+      "resumed_target": {
+        "max": 225,
+        "mean": 224.67,
+        "median": 225,
+        "min": 224,
+        "values": [
+          224,
+          225,
+          225
+        ]
+      }
+    },
+    "output_tokens": {
+      "fresh": {
+        "max": 14,
+        "mean": 13.67,
+        "median": 14,
+        "min": 13,
+        "values": [
+          14,
+          13,
+          14
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        0,
+        8,
+        3
+      ],
+      "resumed_target": {
+        "max": 21,
+        "mean": 17.33,
+        "median": 17,
+        "min": 14,
+        "values": [
+          14,
+          21,
+          17
+        ]
+      }
+    },
+    "reasoning_output_tokens": {
+      "fresh": {
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "min": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        0,
+        0,
+        0
+      ],
+      "resumed_target": {
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "min": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "response_latency_ms": {
+      "fresh": {
+        "max": 3045,
+        "mean": 2454.33,
+        "median": 2346,
+        "min": 1972,
+        "values": [
+          2346,
+          3045,
+          1972
+        ]
+      },
+      "paired_delta_resumed_minus_fresh": [
+        -142,
+        -1435,
+        -225
+      ],
+      "resumed_target": {
+        "max": 2204,
+        "mean": 1853.67,
+        "median": 1747,
+        "min": 1610,
+        "values": [
+          2204,
+          1610,
+          1747
+        ]
+      }
+    }
+  },
+  "no_tool_calls_observed": true,
+  "resumed_setup_seed_usage": [
+    {
+      "attempt": "r1",
+      "cached_input_tokens": 11264,
+      "input_tokens_including_cached": 20428,
+      "output_tokens": 13,
+      "reasoning_output_tokens": 0
+    },
+    {
+      "attempt": "r2",
+      "cached_input_tokens": 11264,
+      "input_tokens_including_cached": 20428,
+      "output_tokens": 14,
+      "reasoning_output_tokens": 0
+    },
+    {
+      "attempt": "r3",
+      "cached_input_tokens": 11264,
+      "input_tokens_including_cached": 20428,
+      "output_tokens": 14,
+      "reasoning_output_tokens": 0
+    }
+  ],
+  "schema": "agent-hi-tax-t33-public-analysis-v1",
+  "session_construction": {
+    "fresh_prior_human_chat_turns": 0,
+    "real_thread_identifiers_published": false,
+    "resumed_history": "one exact hi user message and one assistant reply",
+    "resumed_prior_human_chat_turns": 1,
+    "seed_usage_included_in_target_aggregate": false
+  },
+  "task_id": "T-33",
+  "valid_target_count": 6
+}

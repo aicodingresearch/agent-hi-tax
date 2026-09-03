@@ -1,0 +1,58 @@
+attempt: 3
+status: "valid"
+started_at_utc: "2026-09-03T01:38:00.460Z"
+assistant_message_at_utc: "2026-09-03T01:38:02.432Z"
+usage_recorded_at_utc: "2026-09-03T01:38:02.434Z"
+response_latency_ms: 1972
+response_latency_display_seconds: "not_exposed"
+latency_method: "assistant-message-event"
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+usage:
+  source: "event-log"
+  provider_schema: "openai"
+  input_tokens_including_cached: 20428
+  cached_input_tokens: 11264
+  non_cached_input_tokens: 9164
+  cli_total_excluding_cached: 9178
+  cli_total_source: "derived from event-log fields"
+  cache_write_input_tokens: 0
+  model_context_window_event: 258400
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_applicable"
+  output_tokens: 14
+  reasoning_output_tokens: 0
+  context_total_tokens: 20442
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: 1
+  iterations_observation: "one final target agent_message event"
+  web_search_requests: 0
+  web_fetch_requests: 0
+response:
+  file: "response.txt"
+  exact_text_sha256: "9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043"
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors:
+    - "Non-fatal harness notice: skill descriptions were shortened to fit the skills context budget; all 202 skill names remained visible."
+    - "Non-fatal client diagnostic: available-model refresh timed out before the target completed normally."
+    - "Non-fatal client diagnostic: a plugin-MCP transport channel closed; all configured user MCP servers remained disabled and the target completed normally."
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "response.png"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    quota: "not_provided"
+deviations:
+  - "Non-fatal startup/transport diagnostics are disclosed; target usage remains valid and latency is descriptive only."

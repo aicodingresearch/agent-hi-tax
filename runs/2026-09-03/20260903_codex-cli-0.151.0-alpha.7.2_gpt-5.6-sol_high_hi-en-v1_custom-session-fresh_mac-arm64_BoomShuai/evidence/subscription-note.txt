@@ -1,0 +1,10 @@
+Subscription evidence note
+
+The public screenshot shows the contributor's personal ChatGPT Pro plan at USD 200/month.
+It contains no account name, email, payment detail, or account identifier. It was captured
+for the same personal subscription used by these Codex CLI runs and is reused unchanged
+across the paired packages. A separate company-account profile image was deliberately
+excluded because it refers to a different account and would introduce a confounder.
+
+No before/after quota screenshot was collected. Native per-turn token fields are reported,
+but no token field is interpreted as subscription billing or quota consumption.
