@@ -1,0 +1,9 @@
+{"type":"session_context","timestamp":"2026-09-03T01:14:47.867Z","agent":"OpenAI Codex CLI","version":"0.151.0-alpha.7.2","model":"gpt-5.6-sol","effort":"high","session_state":"resumed","prior_human_chat_turns_at_target":1,"all_configured_mcp_servers_disabled":true,"workspace_empty_after":true,"base_instructions_sha256":"a91357a1cd2727a0be06d461248d6e3a7274746e38108f548a3adf2cc2430415","fixed_turn_context_projection_sha256":"62171cbbeaaa61ef8159d4470555e2c2f01d292cc5cd31f900a7e1e8443c114c"}
+{"type":"setup_user_message","timestamp":"2026-09-03T01:14:47.867Z","text":"hi","case_id":"hi-en-v1"}
+{"type":"setup_assistant_message","timestamp":"2026-09-03T01:14:49.492Z","text":"Hi! What are we working on today?"}
+{"type":"setup_token_count","timestamp":"2026-09-03T01:14:49.510Z","usage":{"input_tokens":20428,"cached_input_tokens":11264,"cache_write_input_tokens":0,"output_tokens":13,"reasoning_output_tokens":0},"included_in_target_aggregate":false}
+{"type":"target_user_message","timestamp":"2026-09-03T01:14:54.610Z","text":"hi","case_id":"hi-en-v1"}
+{"type":"target_assistant_message","timestamp":"2026-09-03T01:14:56.814Z","text":"Hey again! What can I help you with?"}
+{"type":"target_token_count","timestamp":"2026-09-03T01:14:56.837Z","usage":{"input_tokens":20448,"cached_input_tokens":20224,"cache_write_input_tokens":0,"output_tokens":14,"reasoning_output_tokens":0,"total_tokens":20462},"model_context_window":258400}
+{"type":"resume_proof","same_private_thread_identifier":true,"private_identifier_published":false,"seed_rollout_is_exact_prefix_of_target_rollout":true,"exact_hi_human_messages":2,"assistant_messages":2,"turn_contexts":2,"tool_calls":0}
+{"type":"non_fatal_diagnostics","messages":["Non-fatal setup-seed harness notice: skill descriptions were shortened to fit the skills context budget; the resumed target did not repeat the notice."],"target_completed":true,"exit_status":0}

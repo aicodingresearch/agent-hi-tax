@@ -1,0 +1,14 @@
+SETUP SEED (usage is evidence only, not part of target aggregate):
+codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" \
+  --config 'model_reasoning_effort="high"' \
+  --config 'mcp_servers.node_repl.enabled=false' \
+  --config 'approval_policy="never"' \
+  --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+
+MEASURED TARGET (real private identifier withheld):
+cd "<RUN_DIR>"
+codex exec <resume-subcommand> --json --skip-git-repo-check --model "gpt-5.6-sol" \
+  --config 'model_reasoning_effort="high"' \
+  --config 'mcp_servers.node_repl.enabled=false' \
+  --config 'approval_policy="never"' \
+  "<PRIVATE_SESSION_ID>" "hi"

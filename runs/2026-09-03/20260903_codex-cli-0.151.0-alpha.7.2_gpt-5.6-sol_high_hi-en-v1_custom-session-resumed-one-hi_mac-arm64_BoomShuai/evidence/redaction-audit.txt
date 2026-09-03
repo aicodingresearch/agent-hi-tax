@@ -1,0 +1,18 @@
+Public redaction and privacy audit — T-33 RESUMED
+
+- Screenshots and machine records were collected outside the Git worktrees.
+- Public JSONL was rebuilt from a safe-field allowlist. Raw thread/session IDs,
+  complete developer/system content, local absolute paths, config bodies, and account
+  identifiers are omitted.
+- Public text uses <RUN_DIR>, <LAB_ROOT>, <CODEX_HOME>, <resume-subcommand>, and
+  <PRIVATE_SESSION_ID> placeholders. No real recovery identifier is published.
+- The public pair preregistration replaces only generic resume syntax; its exact private
+  original is hash-registered, and no measurement value or protocol decision changed.
+- Attempt screenshots and the subscription image were inspected at original resolution.
+  They contain no email, account ID, personal name, username, hostname, absolute path,
+  real session/thread identifier, credential, payment detail, or unrelated content.
+- Public PNG files are exact-byte copies of safe originals. No pixel editing, blur,
+  reconstruction, resampling, or generative processing was used.
+- The company-account profile screenshot was excluded because it describes a different
+  account and contains a personal profile identity.
+- Public text is scanned by the repository privacy detector during package verification.

@@ -1,0 +1,59 @@
+T-33 post-run consistency and extraction audit — RESUMED
+
+r1
+session state / prior human turns: resumed / 1
+exact target: UTF-8 bytes 68 69 (`hi`)
+native target event cardinality: one assistant reply and one final usage record
+retained thread cardinality: 2 exact hi; 2 assistant replies; 2 turn contexts; 0 tool calls
+post-run workspace top-level entries: 0
+configured MCP servers enabled immediately before launch: none
+target input/cached/output: 20448 / 20224 / 14
+complete local config byte hash changed during wrapper: false
+setup seed: valid; one exact hi; one assistant; one turn context; zero tool calls
+private seed-target thread identifiers equal: true (value withheld)
+seed rollout is exact prefix of final rollout: true
+seed usage included in target aggregate: false
+
+r2
+session state / prior human turns: resumed / 1
+exact target: UTF-8 bytes 68 69 (`hi`)
+native target event cardinality: one assistant reply and one final usage record
+retained thread cardinality: 2 exact hi; 2 assistant replies; 2 turn contexts; 0 tool calls
+post-run workspace top-level entries: 0
+configured MCP servers enabled immediately before launch: none
+target input/cached/output: 20449 / 20224 / 21
+complete local config byte hash changed during wrapper: false
+setup seed: valid; one exact hi; one assistant; one turn context; zero tool calls
+private seed-target thread identifiers equal: true (value withheld)
+seed rollout is exact prefix of final rollout: true
+seed usage included in target aggregate: false
+
+r3
+session state / prior human turns: resumed / 1
+exact target: UTF-8 bytes 68 69 (`hi`)
+native target event cardinality: one assistant reply and one final usage record
+retained thread cardinality: 2 exact hi; 2 assistant replies; 2 turn contexts; 0 tool calls
+post-run workspace top-level entries: 0
+configured MCP servers enabled immediately before launch: none
+target input/cached/output: 20449 / 20224 / 17
+complete local config byte hash changed during wrapper: false
+setup seed: valid; one exact hi; one assistant; one turn context; zero tool calls
+private seed-target thread identifiers equal: true (value withheld)
+seed rollout is exact prefix of final rollout: true
+seed usage included in target aggregate: false
+
+Cross-pair controls:
+- base instructions SHA-256: a91357a1cd2727a0be06d461248d6e3a7274746e38108f548a3adf2cc2430415
+- fixed target turn-context projection SHA-256: 62171cbbeaaa61ef8159d4470555e2c2f01d292cc5cd31f900a7e1e8443c114c
+- normalized initial role/content SHA-256: ceb80661a56b7c8c68ff0b88783d31572284b156c41a61a1c5ef9624c5ed6339
+- sorted 202-skill inventory SHA-256: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+- sorted 11-plugin inventory SHA-256: 4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999
+- exact prompt SHA-256: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+- agent/version/model/effort/account/OS/sandbox/approval/MCP/plugins/skills/rules/workspace and collection method fixed
+
+Paired resumed-minus-fresh input deltas: [20, 21, 21].
+Paired cached-input deltas: [8960, 8960, 8960].
+Paired non-cached-input deltas: [-8940, -8939, -8939].
+All cache-write and reasoning-output values were zero.
+
+Every initial turn emitted a non-fatal skill-description budget notice. Fresh r3 additionally emitted non-fatal model-list refresh and plugin-MCP transport diagnostics before completing. No target value was dropped or replaced. Latency is descriptive.

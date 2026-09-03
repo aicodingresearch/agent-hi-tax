@@ -1,0 +1,41 @@
+Visual evidence audit — T-33 RESUMED
+
+Scenario-level subscription image
+
+file: evidence/subscription.png
+dimensions: 3840 x 2100
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+visible support: ChatGPT Pro plan and USD 200/month
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+file: attempts/r1/response.png
+dimensions: 2320 x 970
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 57d5573806e75a437117d957f3538886bdd4b7c0f7bcdb4900d0b81611b18907
+visible support: side/attempt, CLI version, model, high effort, one prior turn, setup reply/usage, generic resume syntax with private-ID placeholder, target reply/usage, same-thread statement, two-hi transcript proof, empty workspace, and VALID status
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+file: attempts/r2/response.png
+dimensions: 2248 x 928
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 843cec46f572995e6fc03a34026acb1a9ebb42d11c25bff3c7610754553d1d28
+visible support: side/attempt, CLI version, model, high effort, one prior turn, setup reply/usage, generic resume syntax with private-ID placeholder, target reply/usage, same-thread statement, two-hi transcript proof, empty workspace, and VALID status
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+file: attempts/r3/response.png
+dimensions: 2250 x 900
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 70b0330ab4203930017aae2fcb0c3b394f828da153f130a8eafdd6cb1e17210e
+visible support: side/attempt, CLI version, model, high effort, one prior turn, setup reply/usage, generic resume syntax with private-ID placeholder, target reply/usage, same-thread statement, two-hi transcript proof, empty workspace, and VALID status
+privacy: no title bar, account identifier, email, personal name, username, hostname, absolute path, real session/thread identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, blur, redaction, reconstruction, resampling, or generative editing
+
+Every attempt image was visually cross-checked against its retained native event stream. Only standard PNG metadata is present; no author, creator, description, source URL, or account metadata is embedded.

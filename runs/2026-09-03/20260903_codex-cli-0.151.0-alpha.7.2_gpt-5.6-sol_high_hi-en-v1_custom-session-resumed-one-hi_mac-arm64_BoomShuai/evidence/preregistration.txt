@@ -1,0 +1,15 @@
+Agent Hi Tax scenario preregistration — T-33 RESUMED side
+
+scenario_id: 20260903_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-session-resumed-one-hi_mac-arm64_BoomShuai
+pair_claim: https://github.com/aicodingresearch/agent-hi-tax/issues/67
+pair_protocol: evidence/pair-preregistration.txt
+session_state: resumed
+prior_human_chat_turns_at_target: 1
+planned_valid_attempts: r1, r2, r3
+workspace: exact same pair path as the matched fresh target; empty and non-Git before seed, unchanged through seed and target
+seed: new private thread; exact UTF-8 `hi`; require one completed assistant reply and no tool calls; seed usage is setup evidence, not target aggregate data
+target: immediately resume that exact seed thread by private identifier and send exact UTF-8 `hi` once
+thread_proof: retain raw identifier only outside Git; publish equality boolean and history cardinality, never the value
+target_measurement: resumed second turn's native reply, usage, and latency
+invalid_policy: if seed or target fails any preregistered check, retain it and append the next attempt ID
+evidence_target: Level A with seed and target native JSONL, before/after rollout proof, public-safe screenshot, and private identifiers withheld

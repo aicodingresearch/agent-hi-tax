@@ -1,0 +1,52 @@
+T-33 workspace and launch checks — RESUMED
+
+r1
+wrapper start UTC: 2026-09-03T01:14:43Z
+wrapper end UTC: 2026-09-03T01:14:58Z
+workspace: <LAB_ROOT>/t33-session-pair-BoomShuai-r1
+pre-request state: empty, non-Git, preregistered pair path
+post-run top-level entries: none
+configured MCP servers enabled immediately before launch: none
+whole local config byte hash changed: false
+fixed effective controls: independently verified from retained turn context and inventories
+target exit status: 0
+seed wrapper start UTC: 2026-09-03T01:14:43Z
+seed wrapper end UTC: 2026-09-03T01:14:51Z
+target wrapper start UTC: 2026-09-03T01:14:51Z
+target wrapper end UTC: 2026-09-03T01:14:58Z
+seed exit status: 0
+same private thread: true (identifier withheld)
+
+r2
+wrapper start UTC: 2026-09-03T01:30:54Z
+wrapper end UTC: 2026-09-03T01:31:14Z
+workspace: <LAB_ROOT>/t33-session-pair-BoomShuai-r2
+pre-request state: empty, non-Git, preregistered pair path
+post-run top-level entries: none
+configured MCP servers enabled immediately before launch: none
+whole local config byte hash changed: false
+fixed effective controls: independently verified from retained turn context and inventories
+target exit status: 0
+seed wrapper start UTC: 2026-09-03T01:30:54Z
+seed wrapper end UTC: 2026-09-03T01:31:06Z
+target wrapper start UTC: 2026-09-03T01:31:06Z
+target wrapper end UTC: 2026-09-03T01:31:14Z
+seed exit status: 0
+same private thread: true (identifier withheld)
+
+r3
+wrapper start UTC: 2026-09-03T01:41:59Z
+wrapper end UTC: 2026-09-03T01:42:16Z
+workspace: <LAB_ROOT>/t33-session-pair-BoomShuai-r3
+pre-request state: empty, non-Git, preregistered pair path
+post-run top-level entries: none
+configured MCP servers enabled immediately before launch: none
+whole local config byte hash changed: false
+fixed effective controls: independently verified from retained turn context and inventories
+target exit status: 0
+seed wrapper start UTC: 2026-09-03T01:41:59Z
+seed wrapper end UTC: 2026-09-03T01:42:07Z
+target wrapper start UTC: 2026-09-03T01:42:07Z
+target wrapper end UTC: 2026-09-03T01:42:16Z
+seed exit status: 0
+same private thread: true (identifier withheld)
