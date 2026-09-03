@@ -40,13 +40,13 @@
 
 两份评审改为顺序派发。第一名 Reviewer 先发布当前 head 的 verdict，再决定是否邀请第二人。首评为 `REQUEST_CHANGES` 时仍由原 Reviewer 跟进复审；首评为隐私 verdict 时停止流程；只有首评为 `APPROVE`，才邀请一名不同模型家族的第二 Reviewer。
 
-自动化按两个独立维度登记评审能力：**Agent 产品**（例如 Codex、Claude Code、WorkBuddy）和**模型家族**（例如 OpenAI/GPT、GLM、Claude、Kimi）。同一个 GitHub 账号可以登记多个“产品 + 模型家族”能力组合。每次分配都会在可信 marker 中固定本轮准确的能力组合；当同一账号有多个可用组合时，`.github/scenario-reviewers.json` 中的列表顺序表示其使用优先级。二评仍必须选择与已接受首评不同的模型家族。
+自动化按两个独立维度登记评审能力：**Agent 产品**（例如 Codex、Claude Code、WorkBuddy）和**模型家族**（例如 OpenAI/GPT、GLM、Claude、Kimi）。同一个 GitHub 账号可以登记多个“产品 + 模型家族”能力组合。每次分配都会在可信 marker 中固定本轮准确的能力组合。新二评分配严格按 `second_reviewers` 或 `glm_first_fallback_reviewers` 中的账号顺序选择；同一账号内再严格按 capability 列表顺序选择。只有首评池按 PR 编号轮转。二评仍必须选择与已接受首评不同的模型家族。
 
 顺序派发不降低独立性要求。第二 Reviewer 必须从 diff 和文件独立检查，不得阅读第一人的 findings。看过他人意见之后写下的评审必须披露，并且不计入两份独立评审的下限。明确要求由同一 Reviewer 复审时，可以读取自己此前的 verdict 与贡献者后续回复，因为这一步是在核验修订，不是在新增一份独立评审；follow-up 必须披露这一边界。
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。
 
-当前 head 获得两份合格的 APPROVE verdict 后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审，但只要求其中一份正式 Maintainer Approve。第一名合格 Maintainer 批准当前 head 后，这一步即完成；定时归约会撤销另一名 Maintainer 尚未完成的 Review Request。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。
+当前 head 获得两份合格的 APPROVE verdict 后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审。Maintainer 不得进入任何结构化评审路由池，因此终审保持为第三次独立判断。终审只要求其中一份正式 Maintainer Approve；第一名合格 Maintainer 批准当前 head 后，这一步即完成。定时归约只撤销另一名 Maintainer 尚未完成的 Review Request，并保留无关请求。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。受信任请求下原本有效的批准，不会因之后的 Maintainer 配置变更而失效。
 
 ## 意见模板
 

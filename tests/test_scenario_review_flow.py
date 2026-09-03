@@ -11,8 +11,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from scenario_review_flow import (  # noqa: E402
     Assignment,
+    Capability,
     MaintainerRequest,
     allowed_assignment_families,
+    assignment_supported,
     assignment_records,
     changes_protected_protocol,
     choose_candidates,
@@ -36,11 +38,9 @@ NOW = "2026-09-03T08:00:00Z"
 def config():
     return {
         "reviewers": [
-            "beautyarbutin",
-            "XiaoCooder",
-            "AHMEDALATTAR416",
             "black-pwq",
             "leonadoor",
+            "AHMEDALATTAR416",
         ],
         "reviewer_capabilities": {
             "beautyarbutin": [
@@ -66,8 +66,6 @@ def config():
         },
         "second_reviewers": ["keting", "AHMEDALATTAR416"],
         "glm_first_fallback_reviewers": [
-            "beautyarbutin",
-            "XiaoCooder",
             "black-pwq",
             "leonadoor",
         ],
@@ -296,7 +294,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         candidates = choose_candidates(normalized_config(config()), parsed, "XiaoCooder")
         self.assertEqual(
             {item.login for item in candidates},
-            {"beautyarbutin", "black-pwq", "leonadoor"},
+            {"black-pwq", "leonadoor"},
         )
         self.assertNotIn("keting", {item.login for item in candidates})
 
@@ -310,6 +308,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         )
 
     def test_legacy_assignment_uses_only_first_configured_capability(self):
+        value = normalized_config(config())
         legacy = Assignment(
             reviewer="keting",
             stage="second",
@@ -318,15 +317,63 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             comment_id=1,
         )
         self.assertEqual(
-            allowed_assignment_families(normalized_config(config()), legacy),
+            allowed_assignment_families(value, legacy),
             {"anthropic-claude"},
         )
+        self.assertTrue(
+            assignment_supported(
+                value,
+                legacy,
+                [Capability("keting", "claude-code", "anthropic-claude")],
+            )
+        )
+        self.assertFalse(
+            assignment_supported(
+                value,
+                legacy,
+                [Capability("keting", "workbuddy", "moonshot-kimi")],
+            )
+        )
+
+    def test_assignment_capability_pin_must_match_product_and_family(self):
+        value = normalized_config(config())
+        candidate = [Capability("keting", "workbuddy", "moonshot-kimi")]
+        exact = Assignment(
+            reviewer="keting",
+            stage="second",
+            head=HEAD,
+            created_at=parse_time(NOW),
+            comment_id=1,
+            agent_product="workbuddy",
+            model_family="moonshot-kimi",
+        )
+        wrong_product = Assignment(
+            **{**exact.__dict__, "agent_product": "claude-code"}
+        )
+        wrong_family = Assignment(
+            **{**exact.__dict__, "model_family": "anthropic-claude"}
+        )
+        self.assertTrue(assignment_supported(value, exact, candidate))
+        self.assertFalse(assignment_supported(value, wrong_product, candidate))
+        self.assertFalse(assignment_supported(value, wrong_family, candidate))
+
+    def test_config_rejects_noncanonical_model_family(self):
+        value = config()
+        value["reviewer_capabilities"]["black-pwq"][0]["model_family"] = "deepseek"
+        with self.assertRaisesRegex(RuntimeError, "invalid model_family"):
+            normalized_config(value)
+
+    def test_config_rejects_maintainers_in_structured_reviewer_pools(self):
+        value = config()
+        value["reviewers"].append("beautyarbutin")
+        with self.assertRaisesRegex(RuntimeError, "must be independent"):
+            normalized_config(value)
 
     def test_new_scenario_assigns_first_reviewer_but_never_owner(self):
         client = FakeClient(pull(number=1))
         self.assertIsNone(process_pull(client, client.value))
         assignment = latest_assignment(assignment_records(client.comments_data), "first", HEAD)
-        self.assertEqual(assignment.reviewer, "beautyarbutin")
+        self.assertEqual(assignment.reviewer, "black-pwq")
         self.assertNotEqual(assignment.reviewer, "keting")
         self.assertEqual(
             (assignment.agent_product, assignment.model_family),
@@ -346,7 +393,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         client.teams = ["release-maintainers"]
         process_pull(client, client.value)
         self.assertEqual(client.teams, [])
-        self.assertEqual(client.requested, ["beautyarbutin"])
+        self.assertEqual(client.requested, ["black-pwq"])
 
     def test_removed_first_reviewer_is_reassigned(self):
         client = FakeClient(pull(number=1))
@@ -400,14 +447,14 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             def comments(self, number):
                 self.comment_reads += 1
                 if self.comment_reads == 2 and not self.comments_data:
-                    self.requested = ["beautyarbutin"]
+                    self.requested = ["black-pwq"]
                     self.comments_data.append(
                         {
                             "id": 99,
                             "created_at": NOW,
                             "user": {"login": "github-actions[bot]"},
                             "body": (
-                                f"<!-- scenario-review-assignment:beautyarbutin head:{HEAD} -->\n"
+                                f"<!-- scenario-review-assignment:black-pwq head:{HEAD} -->\n"
                                 "<!-- scenario-review-stage:first -->"
                             ),
                         }
@@ -460,24 +507,21 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertEqual(client.statuses[-1]["state"], "failure")
         self.assertEqual(client.requested, ["keting"])
 
-    def test_glm_first_approval_assigns_another_codex_reviewer(self):
-        client = FakeClient(pull(number=3))
+    def test_glm_first_approval_assigns_highest_priority_codex_reviewer(self):
+        client = FakeClient(pull(number=6))
         process_pull(client, client.value)
         first = latest_assignment(assignment_records(client.comments_data), "first", HEAD)
         self.assertEqual(first.reviewer.lower(), "ahmedalattar416")
         client.add_verdict("AHMEDALATTAR416", "zhipu-glm")
         self.assertIsNone(process_pull(client, client.value))
         second = latest_assignment(assignment_records(client.comments_data), "second", HEAD)
-        self.assertIn(
-            second.reviewer,
-            {"beautyarbutin", "XiaoCooder", "black-pwq", "leonadoor"},
-        )
+        self.assertEqual(second.reviewer, "black-pwq")
         self.assertNotEqual(second.reviewer, "keting")
 
     def test_openai_first_approval_assigns_owner_and_requests_email(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         self.assertEqual(process_pull(client, client.value), "1")
         second = latest_assignment(
             assignment_records(client.comments_data), "second", HEAD
@@ -485,10 +529,20 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertEqual(second.reviewer, "keting")
         self.assertEqual(process_pull(client, client.value), "1")
 
+    def test_openai_second_reviewer_priority_does_not_rotate(self):
+        client = FakeClient(pull(number=2))
+        process_pull(client, client.value)
+        client.add_verdict("leonadoor", "openai-gpt")
+        self.assertEqual(process_pull(client, client.value), "2")
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertEqual(second.reviewer, "keting")
+
     def test_second_reviewer_outside_route_is_reassigned(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         client.requested = ["black-pwq"]
         client.comments_data.append(
             {
@@ -511,17 +565,17 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_request_changes_keeps_first_reviewer_and_does_not_assign_second(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt", "REQUEST_CHANGES")
+        client.add_verdict("black-pwq", "openai-gpt", "REQUEST_CHANGES")
         self.assertIsNone(process_pull(client, client.value))
         self.assertIsNone(
             latest_assignment(assignment_records(client.comments_data), "second", HEAD)
         )
-        self.assertEqual(client.requested, ["beautyarbutin"])
+        self.assertEqual(client.requested, ["black-pwq"])
 
     def test_request_changes_is_pending_even_with_wrong_model_family(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "zhipu-glm", "REQUEST_CHANGES")
+        client.add_verdict("black-pwq", "zhipu-glm", "REQUEST_CHANGES")
         process_pull(client, client.value)
         self.assertEqual(client.statuses[-1]["state"], "pending")
         self.assertIsNone(
@@ -532,7 +586,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
         client.add_verdict(
-            "beautyarbutin",
+            "black-pwq",
             "openai-gpt",
             submitted="2026-09-03T07:00:00Z",
         )
@@ -544,7 +598,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_invalid_structured_verdict_has_visible_status_reason(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        bad = verdict("beautyarbutin", "openai-gpt")
+        bad = verdict("black-pwq", "openai-gpt")
         bad["body"] = bad["body"].replace(
             "agent:openai-gpt", "human:<github-login> | agent:<model-family>"
         )
@@ -556,9 +610,9 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_latest_invalid_attempt_replaces_an_earlier_valid_approval(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         bad = verdict(
-            "beautyarbutin",
+            "black-pwq",
             "openai-gpt",
             verdict="REQUEST_CHANGES",
             submitted="2026-09-03T10:00:00Z",
@@ -592,7 +646,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
         client.add_verdict(
-            "beautyarbutin", "openai-gpt", "PRIVACY-CONCERN-RAISED-PRIVATELY"
+            "black-pwq", "openai-gpt", "PRIVACY-CONCERN-RAISED-PRIVATELY"
         )
         process_pull(client, client.value)
         self.assertEqual(client.requested, [])
@@ -601,7 +655,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_second_privacy_verdict_stops_flow_and_clears_request(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         process_pull(client, client.value)
         client.add_verdict(
             "keting",
@@ -616,7 +670,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_two_independent_approvals_request_both_maintainers(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         process_pull(client, client.value)
         client.add_verdict("keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z")
         process_pull(client, client.value)
@@ -636,7 +690,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_second_reviewer_must_use_assigned_model_family(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         process_pull(client, client.value)
         client.add_verdict("keting", "zhipu-glm", submitted="2026-09-03T10:00:00Z")
         process_pull(client, client.value)
@@ -651,7 +705,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_first_reviewer_must_use_assigned_model_family(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "zhipu-glm")
+        client.add_verdict("black-pwq", "zhipu-glm")
         process_pull(client, client.value)
         self.assertEqual(client.statuses[-1]["state"], "failure")
         self.assertIsNone(
@@ -661,11 +715,11 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_assigned_reviewer_can_submit_a_human_only_verdict(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        human = verdict("beautyarbutin", "openai-gpt")
+        human = verdict("black-pwq", "openai-gpt")
         human["body"] = human["body"].replace(
             "Reviewer: Agent / model / high",
-            "Reviewer: beautyarbutin (human-only)",
-        ).replace("agent:openai-gpt", "human:beautyarbutin")
+            "Reviewer: black-pwq (human-only)",
+        ).replace("agent:openai-gpt", "human:black-pwq")
         client.comments_data.append(human)
         process_pull(client, client.value)
         second = latest_assignment(
@@ -676,7 +730,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_first_not_exposed_family_does_not_route_second_review(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "not-exposed")
+        client.add_verdict("black-pwq", "not-exposed")
         process_pull(client, client.value)
         self.assertEqual(client.statuses[-1]["state"], "failure")
         self.assertIsNone(
@@ -686,7 +740,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_removed_second_reviewer_is_reassigned(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         process_pull(client, client.value)
         current = latest_assignment(
             assignment_records(client.comments_data), "second", HEAD
@@ -708,7 +762,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_production_path_calls_review_gate_evaluator(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         process_pull(client, client.value)
         client.add_verdict(
             "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
@@ -745,7 +799,7 @@ class ScenarioReviewFlowTests(unittest.TestCase):
     def test_formal_maintainer_approval_is_not_re_requested(self):
         client = FakeClient(pull(number=1))
         process_pull(client, client.value)
-        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.add_verdict("black-pwq", "openai-gpt")
         process_pull(client, client.value)
         client.add_verdict("keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z")
         process_pull(client, client.value)
@@ -766,12 +820,56 @@ class ScenarioReviewFlowTests(unittest.TestCase):
                 "user": {"login": "XiaoCooder"},
             }
         )
+        client.requested.remove("XiaoCooder")
+        client.requested.append("manual-reviewer")
+        client.teams = ["manual-team"]
         before = len(client.request_history)
         process_pull(client, client.value)
         self.assertEqual(len(client.request_history), before)
-        self.assertEqual(client.requested, [])
+        self.assertEqual(client.requested, ["manual-reviewer"])
+        self.assertEqual(client.teams, ["manual-team"])
         maintenance = assignment_records([maintainer_comment])
         self.assertEqual(maintenance, [])
+
+    def test_config_change_does_not_invalidate_existing_maintainer_approval(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("black-pwq", "openai-gpt")
+        process_pull(client, client.value)
+        client.add_verdict(
+            "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
+        )
+        process_pull(client, client.value)
+        client.reviews_data.append(
+            {
+                "state": "APPROVED",
+                "submitted_at": "2026-09-03T11:00:00Z",
+                "commit_id": HEAD,
+                "user": {"login": "XiaoCooder"},
+            }
+        )
+        client.requested.remove("XiaoCooder")
+        before_requests = len(client.request_history)
+        before_markers = sum(
+            "scenario-maintainer-request" in comment["body"]
+            for comment in client.comments_data
+        )
+        revised = config()
+        revised["maintainers"] = ["beautyarbutin"]
+        with patch(
+            "scenario_review_flow.load_config",
+            return_value=normalized_config(revised),
+        ):
+            process_pull(client, client.value)
+        self.assertEqual(client.requested, [])
+        self.assertEqual(len(client.request_history), before_requests)
+        self.assertEqual(
+            sum(
+                "scenario-maintainer-request" in comment["body"]
+                for comment in client.comments_data
+            ),
+            before_markers,
+        )
 
     def test_formal_approval_must_match_maintainer_and_head(self):
         request = MaintainerRequest(
@@ -802,6 +900,31 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             "user": {"login": "someone-else"},
         }
         self.assertIsNone(has_formal_approval([unrelated], request, HEAD))
+
+    def test_earliest_eligible_maintainer_approval_wins(self):
+        request = MaintainerRequest(
+            reviewers=("beautyarbutin", "XiaoCooder"),
+            head=HEAD,
+            created_at=parse_time(NOW),
+            comment_id=1,
+        )
+        reviews = [
+            {
+                "id": 2,
+                "state": "APPROVED",
+                "submitted_at": "2026-09-03T12:00:00Z",
+                "commit_id": HEAD,
+                "user": {"login": "XiaoCooder"},
+            },
+            {
+                "id": 1,
+                "state": "APPROVED",
+                "submitted_at": "2026-09-03T11:00:00Z",
+                "commit_id": HEAD,
+                "user": {"login": "beautyarbutin"},
+            },
+        ]
+        self.assertEqual(has_formal_approval(reviews, request, HEAD), "beautyarbutin")
 
 
 if __name__ == "__main__":

@@ -227,6 +227,7 @@ def has_formal_approval(
     reviews: Iterable[dict[str, Any]], request: MaintainerRequest, current_head: str
 ) -> str | None:
     requested = {login.lower() for login in request.reviewers}
+    eligible: list[tuple[datetime, int, str]] = []
     for review in reviews:
         login = str((review.get("user") or {}).get("login") or "").lower()
         submitted = review.get("submitted_at")
@@ -237,8 +238,10 @@ def has_formal_approval(
             continue
         if not commit_id or not head_matches(current_head, commit_id):
             continue
-        return login
-    return None
+        eligible.append(
+            (parse_time(str(submitted)), int(review.get("id") or 0), login)
+        )
+    return min(eligible)[-1] if eligible else None
 
 
 def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
@@ -291,6 +294,17 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     missing = configured - set(value["reviewer_capabilities"])
     if missing:
         raise RuntimeError(f"reviewer_capabilities missing: {sorted(missing)}")
+    maintainers = {login.lower() for login in value["maintainers"]}
+    structured_reviewers = {
+        login.lower()
+        for name in ("reviewers", "second_reviewers", "glm_first_fallback_reviewers")
+        for login in value[name]
+    }
+    overlap = maintainers & structured_reviewers
+    if overlap:
+        raise RuntimeError(
+            f"maintainers must be independent from structured reviewer pools: {sorted(overlap)}"
+        )
     return value
 
 
@@ -306,14 +320,17 @@ def capabilities_for(config: dict[str, Any], login: str) -> list[Capability]:
 
 
 def assignment_supported(
-    assignment: Assignment, candidates: Iterable[Capability]
+    config: dict[str, Any],
+    assignment: Assignment,
+    candidates: Iterable[Capability],
 ) -> bool:
+    allowed_families = allowed_assignment_families(config, assignment)
     for capability in candidates:
         if capability.login.lower() != assignment.reviewer.lower():
             continue
         if assignment.agent_product and assignment.agent_product != capability.agent_product:
             continue
-        if assignment.model_family and assignment.model_family != capability.model_family:
+        if capability.model_family not in allowed_families:
             continue
         return True
     return False
@@ -425,6 +442,20 @@ def sync_review_requests(
         )
 
 
+def remove_review_requests(
+    client: GitHubClient, number: int, reviewers: Iterable[str]
+) -> None:
+    targets = {login.lower() for login in reviewers}
+    current, _ = requested_reviews(client, number)
+    remove = [login for login in current if login.lower() in targets]
+    if remove:
+        client.request(
+            f"/pulls/{number}/requested_reviewers",
+            method="DELETE",
+            payload={"reviewers": remove, "team_reviewers": []},
+        )
+
+
 def clear_review_requests(client: GitHubClient, number: int) -> None:
     current, teams = requested_reviews(client, number)
     if current or teams:
@@ -524,12 +555,13 @@ def assignment_body(
 def request_from_candidates(
     client: GitHubClient,
     pull: dict[str, Any],
+    config: dict[str, Any],
     candidates: list[Capability],
     stage: str,
     previous: Assignment | None,
 ) -> tuple[Assignment, dict[str, Any]]:
     number = int(pull["number"])
-    ordered = rotated(candidates, number)
+    ordered = rotated(candidates, number) if stage == "first" else candidates
     if not ordered:
         raise RuntimeError(f"No {stage} reviewer is available")
     capability = ordered[0]
@@ -537,7 +569,7 @@ def request_from_candidates(
     existing = latest_assignment(
         assignment_records(client.comments(number)), stage, pull["head"]["sha"]
     )
-    if existing and assignment_supported(existing, candidates):
+    if existing and assignment_supported(config, existing, candidates):
         return existing, {}
     # Do not fall through to another person after an ambiguous API failure:
     # the first request may have succeeded even if its response was lost.
@@ -591,12 +623,12 @@ def request_first(
             item
             for item in candidates
             if item.login.lower() == previous.reviewer.lower()
-            and assignment_supported(previous, [item])
+            and assignment_supported(config, previous, [item])
         ]
         if previous_match:
             candidates = previous_match
     assignment, _ = request_from_candidates(
-        client, pull, candidates, "first", previous
+        client, pull, config, candidates, "first", previous
     )
     return assignment
 
@@ -621,12 +653,12 @@ def request_second(
             item
             for item in candidates
             if item.login.lower() == previous.reviewer.lower()
-            and assignment_supported(previous, [item])
+            and assignment_supported(config, previous, [item])
         ]
         if previous_match:
             candidates = previous_match
     assignment, _ = request_from_candidates(
-        client, pull, candidates, "second", previous
+        client, pull, config, candidates, "second", previous
     )
     return assignment
 
@@ -637,33 +669,44 @@ def ensure_maintainers(
     config: dict[str, Any],
     comments: list[dict[str, Any]],
     reviews: list[dict[str, Any]],
+    structured_reviewers: set[str],
 ) -> None:
     current = maintainer_assignment(comments, pull["head"]["sha"])
     author = pull["user"]["login"].lower()
     desired = [
-        login for login in config["maintainers"] if login.lower() != author
+        login
+        for login in config["maintainers"]
+        if login.lower() not in structured_reviewers | {author}
     ]
     desired_lower = {login.lower() for login in desired}
     if not desired:
-        raise RuntimeError("No maintainer is available after excluding the PR author")
-    if (
-        current
-        and {login.lower() for login in current.reviewers} == desired_lower
-    ):
-        if has_formal_approval(reviews, current, pull["head"]["sha"]):
-            clear_review_requests(client, int(pull["number"]))
+        raise RuntimeError(
+            "No independent maintainer is available after excluding the PR author and structured reviewers"
+        )
+    if current:
+        approved = has_formal_approval(reviews, current, pull["head"]["sha"])
+        if approved:
+            remove_review_requests(
+                client,
+                int(pull["number"]),
+                [login for login in current.reviewers if login.lower() != approved],
+            )
             return
+    if current and {login.lower() for login in current.reviewers} == desired_lower:
         sync_review_requests(client, int(pull["number"]), desired)
         return
     number = int(pull["number"])
     current = maintainer_assignment(client.comments(number), pull["head"]["sha"])
-    if (
-        current
-        and {login.lower() for login in current.reviewers} == desired_lower
-    ):
-        if has_formal_approval(reviews, current, pull["head"]["sha"]):
-            clear_review_requests(client, number)
+    if current:
+        approved = has_formal_approval(reviews, current, pull["head"]["sha"])
+        if approved:
+            remove_review_requests(
+                client,
+                number,
+                [login for login in current.reviewers if login.lower() != approved],
+            )
             return
+    if current and {login.lower() for login in current.reviewers} == desired_lower:
         sync_review_requests(client, number, desired)
         return
     try:
@@ -686,6 +729,7 @@ def ensure_maintainers(
                     "",
                     f"{mentions}, `review-gate` has recorded two independent current-head APPROVE verdicts.",
                     "The first eligible Maintainer to finish may use GitHub's formal Approve action. After one approval, the other Review Request is no longer needed and will be removed automatically.",
+                    "Do not approve your own PR.",
                 ]
             ),
         )
@@ -721,7 +765,7 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         for login in config["reviewers"]
         if login.lower() not in {pull["user"]["login"].lower(), "keting"}
     ]
-    if first and not assignment_supported(first, first_candidates):
+    if first and not assignment_supported(config, first, first_candidates):
         first = request_first(client, pull, config, assignments)
         post_status(client, pull, "pending", f"Reassigned first review to @{first.reviewer}")
         return None
@@ -758,7 +802,7 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     second_candidates = choose_candidates(
         config, first_verdict, pull["user"]["login"]
     )
-    if second and not assignment_supported(second, second_candidates):
+    if second and not assignment_supported(config, second, second_candidates):
         second = request_second(client, pull, config, first_verdict, assignments)
         post_status(client, pull, "pending", f"Reassigned second review to @{second.reviewer}")
         return str(number) if second.reviewer.lower() == "keting" else None
@@ -807,6 +851,7 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         config,
         comments,
         reviews,
+        {first.reviewer.lower(), second.reviewer.lower()},
     )
     return None
 
