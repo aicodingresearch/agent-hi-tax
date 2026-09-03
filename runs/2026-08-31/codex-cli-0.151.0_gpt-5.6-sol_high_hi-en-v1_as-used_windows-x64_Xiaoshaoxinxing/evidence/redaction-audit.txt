@@ -1,0 +1,40 @@
+Redaction method: deterministic RGBA pixel edit and crop
+Resizing: none
+Blur or mosaic: none
+Generative editing: none
+
+environment.redacted.png
+- Source: environment/codex-status-raw.png
+- Output: evidence/environment.redacted.png
+- Fill color: RGBA (0, 0, 0, 255), matching the terminal background
+- Mask rectangle 1: x=230, y=374, w=300, h=22 (account email)
+- Mask rectangle 2: x=230, y=409, w=430, h=24 (Session ID)
+- Mask rectangle 3: x=235, y=464, w=500, h=43 (quota bars and reset details)
+- Visual review: version, model, reasoning effort, Fast service tier, directory, permission mode, Agents.md state, and collaboration mode remain visible.
+
+subscription-plan.png
+- Source: environment/subscription-plan-raw.png
+- Output: evidence/subscription-plan.png
+- Treatment: manually cropped before registry to remove transaction records and payment amounts.
+- Visual review: ChatGPT Plus plan remains visible. Account identifiers and payment details are not visible.
+
+attempts/r1/response.png, attempts/r2/response.png, attempts/r3/response.png
+- Fill color: RGBA (0, 0, 0, 255), matching the terminal background
+- Mask rectangle 1: x=230, y=258, w=270, h=21 (account email)
+- Mask rectangle 2: x=230, y=295, w=380, h=22 (Session ID)
+- Mask rectangle 3: x=235, y=350, w=500, h=43 (quota bars and reset details)
+- Visual review: each image contains the exact `hi` input and complete assistant reply.
+
+attempts/r1/usage.png, attempts/r2/usage.png, attempts/r3/usage.png
+- Fill color: RGBA (0, 0, 0, 255), matching the terminal background
+- Mask rectangle 1: x=232, y=222, w=280, h=22 (account email)
+- Mask rectangle 2: x=232, y=280, w=390, h=22 (Session ID)
+- Mask rectangle 3: x=236, y=331, w=500, h=42 (quota bars and reset details)
+- Mask rectangle 4: x=0, y=414, w=1110, h=24 (resume command)
+- Visual review: each image retains the complete Token usage line.
+
+Final visual review:
+- Account email is not visible.
+- Session and continuation identifiers are not visible.
+- Payment records and amounts are not visible.
+- Version, model, effort, Fast service tier, directory, permission mode, Agents.md state, collaboration mode, Plus plan, exact prompt, complete replies, and Token usage numbers remain visible where applicable.

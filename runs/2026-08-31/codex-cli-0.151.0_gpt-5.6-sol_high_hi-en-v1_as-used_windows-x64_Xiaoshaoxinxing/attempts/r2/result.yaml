@@ -1,0 +1,51 @@
+attempt: 2
+status: "valid"
+started_at_utc: "2026-08-31T08:15:10Z"
+assistant_message_at_utc: "2026-08-31T08:15:10Z"
+usage_recorded_at_utc: "2026-08-31T08:16:11Z"
+response_latency_ms: "not_measured"
+latency_method: "manual screenshot timestamps"
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+
+usage:
+  source: "exit-ui"
+  provider_schema: "openai"
+  input_tokens_including_cached: 14426
+  cached_input_tokens: "not_exposed"
+  non_cached_input_tokens: "not_exposed"
+  output_tokens: 13
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: 14439
+  cli_total_excluding_cached: "not_exposed"
+  cli_total_source: "exit-ui"
+  cache_write_input_tokens: "not_exposed"
+  model_context_window_event: 475000
+  service_tier: "fast"
+  speed: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "a2e6b63bc03ff02f976dd47e7c9a0574c6bd76e0a4ce5310b7e5108e2c9bacc4"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "usage.png"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "self_reported"
+    quota: "not_provided"
+
+deviations: []

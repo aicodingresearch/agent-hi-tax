@@ -1,0 +1,63 @@
+Captured at UTC: 2026-08-31T04:41:56Z
+
+## Codex CLI
+
+Executable: codex (sanitized command name)
+Version: codex-cli 0.151.0
+Authentication: Logged in using ChatGPT
+Subscription plan: ChatGPT Plus
+
+## Operating system
+
+Caption: Microsoft Windows 11 Home, Chinese edition
+Version: 10.0.26200
+Build number: 26200
+Architecture: 64-bit / x64
+Locale: zh-CN
+Windows time zone: China Standard Time (UTC+08:00)
+IANA time zone used in manifest: Asia/Shanghai
+
+## Fixed configuration
+
+Global config source: <CODEX_HOME>/config.toml
+Workspace config: not inspected
+Pre-prompt CLI /status Agents.md observation: <none>
+Configured model: gpt-5.6-sol
+Configured reasoning effort: high
+Observed service tier: fast (shown in the footer)
+Harness profile: as-used
+Session state: fresh
+Workspace type: independent empty non-Git directory per attempt
+Launch command source: launch-command.txt
+
+## Enabled MCP servers
+
+None. `codex mcp list` showed `cua_repl` disabled.
+
+## Installed and enabled plugins
+
+not_exposed
+
+## Skills observed in the injected harness
+
+not_exposed
+
+## Hooks
+
+No explicit hooks were observed. No hook model calls were identified.
+
+## Pre-prompt observations shared by R1, R2, and R3
+
+- observed model: gpt-5.6-sol
+- observed reasoning effort: high (summaries auto)
+- observed service tier: fast
+- permission mode: Workspace (Ask for approval)
+- collaboration mode: Default
+- filesystem profile: Workspace
+- Agents.md reported by CLI /status: <none>
+- workspace: independent empty non-Git directory
+- startup or MCP error: none visible in the TUI screenshots
+
+Local configuration paths were replaced with <CODEX_HOME> or `~`. No account
+email, Session ID, hostname, full home path, authentication material, or resume
+command is included.
