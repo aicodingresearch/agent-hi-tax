@@ -194,6 +194,7 @@ def evaluate_review_gate(
         and len(approvals) >= 2
         and len(distinct_reviewers) >= 2
         and len(distinct_families) >= 2
+        and "not-exposed" not in distinct_families
     )
     return {
         "eligible": eligible,

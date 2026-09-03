@@ -35,6 +35,9 @@ permissions:
   statuses: write
 
 concurrency:
+  # One global queue prevents the scheduled reconciliation from racing a PR
+  # event. GitHub may collapse intermediate pending runs; the 15-minute scan
+  # deliberately reconciles final repository state after such a burst.
   group: scenario-review-flow
   cancel-in-progress: false
 
@@ -68,7 +71,7 @@ jobs:
           python3 scripts/scenario_review_flow.py "${args[@]}"
 
       - name: Email keting when selected for second review
-        if: steps.flow.outputs.notify_prs != ''
+        if: always() && steps.flow.outputs.notify_prs != ''
         env:
           GITHUB_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}

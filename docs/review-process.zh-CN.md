@@ -24,12 +24,13 @@
 | 级别 | 适用 | 配置与判定 |
 | --- | --- | --- |
 | **L1——默认** | 普通数据 PR | 至少 2 份独立评审（人工，或由人主导、AI 协助），外加维护者终审。两份 APPROVE：维护者合并并发放分值。任一 REQUEST_CHANGES：贡献者修改后由评审复看。 |
-| **L2——升级** | 两份 Verdict 相左；★★★ 新产品的首个样本，没有可对照的参照样板；任何带 `private_evidence` 升级的包 | 追加第三份评审，来自与前两份不同的模型家族或不同的人。三取二形成判定，由维护者执行。 |
+| **L2——升级** | ★★★ 新产品的首个样本且没有可对照的参照样板；任何带 `private_evidence` 升级的包；或正常修订周期后仍无法解决的意见分歧 | 由 Maintainer 明确决定还需要什么证据或评审；不自动追加第三票，也不采用三取二。 |
 | **L3——维护者独占** | 协议文件改动（`prompts/`、`templates/`、`scripts/`，以及 [CODEOWNERS](../.github/CODEOWNERS) 中另行列出的路径）；计分争议；疑似不诚实；安全事件 | 不走多数决。维护者裁定，并按既有元规则把决定回写到相应清单上——定价与归一化的判断记录在它们发生的地方。 |
 
 ## 判定细则
 
-- **"意见相左"指 Verdict 行不同。** 两份都是 REQUEST_CHANGES、但提出的问题完全不同，不算相左——那是两张清单，贡献者应当把两张都修掉。
+- **REQUEST_CHANGES 会阻止当前 head，不启动多数表决。** 贡献者修订后，由被分配的 Reviewer 检查新 head；正常修订周期后仍无法解决的分歧升级给 Maintainer，不自动追加第三票。
+- **场景提交不得同时修改受保护的协议路径。** 对 `.github/`、`prompts/`、`scripts/`、`templates/`、`tests/`、四份评审流程文档、贡献规则、许可证或安全策略的修改必须拆成单独 PR。自动状态会明确要求拆分，并保留用户的 owner Review Request。
 - **每份评审都要写明所针对的 head commit。** force-push 或追加提交之后，受影响的评审针对新的 head 重做；针对旧树写下的判定不自动延续。
 - **draft PR 不评审。** 评审从贡献者把 PR 转为 Ready for review 那一刻开始；明确要求评审一个 draft 也不改变这一点——针对移动中的 head 写下的判定注定要重做，而[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)把自动核验和逐张复看截图放在这次状态切换之前，而不是之后。看 draft 并留下普通评论当然欢迎：那是评审前的沟通，不是 verdict，不计入任何门禁。
 - **复审采用追加评论，不改写 verdict 历史。** 贡献者针对 verdict 推送 commit 或更新 PR 描述后，旧 verdict comment 保持不变；评审者在贡献者更新之后另发一条新的结构化 verdict，即使 head SHA 没有变化也一样。新评论在 `Supersedes` 中链接旧评论，说明复核了什么，并披露已经读过前序讨论。门禁以这条新评论作为该 reviewer 的当前 verdict，但它仍是同一份评审，不得重复计入 L1 独立评审数。旧 verdict 只允许修正不改变结论或 findings 的错字、链接或格式；维护者明确要求修正历史记录时，必须保留编辑说明。
@@ -83,7 +84,7 @@ git log -1 --format=%h -- docs/review-process.md
 - **发布自己的评审之前，不得阅读该 PR 评论区已有的任何评审意见，必须独立得出结论。** 评审基于 PR 的 diff 和文件本身进行，不打开 PR 会话页。如果你确实看到了他人的意见，必须在评论中披露：这份评审不计入两份独立评审的下限，只作参考。
 - **复审必须另发新评论，并写明它 supersede 哪条旧 verdict。** 贡献者已经依据旧 verdict 行动后，不得把旧评论原地改成另一种结论。旧评论保留为贡献者回复的可见原因，新评论作为该 reviewer 的当前 verdict。
 - **AI 协助的评审必须署明 agent 产品、具体模型和 reasoning effort。** 产品没有暴露模型或 effort 时写 `not exposed`，不要臆测。这与本仓对证据字段的诚实规则是同一条口径：拿不到的值就记为拿不到，绝不推断。
-- **Independence key 在同一 Reviewer 的复审中保持稳定，并且有意比 Reviewer 行更粗。** 纯人工评审写 `human:<github-login>`；AI 协助评审按模型家族写，例如 `agent:openai-gpt`、`agent:anthropic-claude`、`agent:zhipu-glm` 或 `agent:google-gemini`，同一家族的模型版本与 effort 变化不另立 key。模型家族未暴露时写 `agent:not-exposed`。只有 GitHub Reviewer 和 key 都不同时，两份 APPROVE 才分别计数。
+- **Independence key 在同一 Reviewer 的复审中保持稳定，并且有意比 Reviewer 行更粗。** 纯人工评审必须写 `human:<github-login>`；AI 协助评审必须且只能写 `agent:openai-gpt`、`agent:anthropic-claude`、`agent:zhipu-glm`、`agent:google-gemini` 或 `agent:not-exposed` 之一，模型版本与 effort 不另立 key。`agent:not-exposed` 诚实记录无法确认的边界，但不能满足自动两家族门禁。支持新家族前，必须同时更新规范 key 实现与 Reviewer profile 配置。只有 GitHub Reviewer 和通过校验的模型家族都不同时，两份 APPROVE 才分别计数。
 - **"Could not verify" 是必填栏。** 写清你这份评审实际能确立的边界。它至少包含只有贡献者才能核验的那一类主张——例如已发布图片与其脱敏所依据的私有原图之间的对应关系，或者提交之前是否还有被丢弃的 attempts。一份默默略过自身局限的评审是在夸大自己，而这正是本项目要求贡献者避免的那种失误。
 
 ## 隐私例外

@@ -19,7 +19,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from notify_review_escalation import GitHubClient, required_env  # noqa: E402
 from review_gate import (  # noqa: E402
     ParsedVerdict,
-    current_verdicts,
     evaluate_review_gate,
     parse_time,
     parse_verdict_with_reason,
@@ -42,6 +41,25 @@ MAINTAINER_RE = re.compile(
     re.IGNORECASE,
 )
 TRUSTED_ASSIGNERS = {"github-actions[bot]", "keting"}
+PROTECTED_PROTOCOL_PREFIXES = (
+    ".github/",
+    "prompts/",
+    "scripts/",
+    "templates/",
+    "tests/",
+)
+PROTECTED_PROTOCOL_FILES = {
+    "CONTRIBUTING.md",
+    "CONTRIBUTING.zh-CN.md",
+    "docs/agent-review-and-scoring.md",
+    "docs/agent-review-and-scoring.zh-CN.md",
+    "docs/review-process.md",
+    "docs/review-process.zh-CN.md",
+    "LICENSE",
+    "LICENSE-DATA",
+    "SECURITY.md",
+    "SECURITY.zh-CN.md",
+}
 
 
 @dataclass(frozen=True)
@@ -123,21 +141,12 @@ def latest_assignment(
     )
 
 
-def verdict_after_assignment(
-    verdicts: dict[str, ParsedVerdict], assignment: Assignment
-) -> ParsedVerdict | None:
-    verdict = verdicts.get(assignment.reviewer.lower())
-    if verdict and verdict.submitted_at >= assignment.created_at:
-        return verdict
-    return None
-
-
-def invalid_verdict_reason(
+def assigned_verdict(
     records: Iterable[dict[str, Any]],
     assignment: Assignment,
     current_head: str,
-) -> str | None:
-    attempts: list[tuple[datetime, int, str]] = []
+) -> tuple[ParsedVerdict | None, str | None]:
+    attempts: list[tuple[datetime, int, dict[str, Any]]] = []
     for record in records:
         login = str((record.get("user") or {}).get("login") or "").lower()
         body = str(record.get("body") or "")
@@ -147,10 +156,11 @@ def invalid_verdict_reason(
         submitted_at = parse_time(str(submitted))
         if submitted_at < assignment.created_at or "## Review verdict:" not in body:
             continue
-        parsed, reason = parse_verdict_with_reason(record, current_head)
-        if parsed is None and reason:
-            attempts.append((submitted_at, int(record.get("id") or 0), reason))
-    return max(attempts, default=(None, 0, None))[2]
+        attempts.append((submitted_at, int(record.get("id") or 0), record))
+    if not attempts:
+        return None, None
+    latest = max(attempts, key=lambda item: (item[0], item[1]))[2]
+    return parse_verdict_with_reason(latest, current_head)
 
 
 def maintainer_assignment(
@@ -265,20 +275,13 @@ def is_scenario_pull(files: Iterable[dict[str, Any]]) -> bool:
 
 
 def changes_protected_protocol(files: Iterable[dict[str, Any]]) -> bool:
-    protected_prefixes = (".github/", "docs/", "prompts/", "scripts/", "templates/", "tests/")
-    protected_files = {
-        "CONTRIBUTING.md",
-        "CONTRIBUTING.zh-CN.md",
-        "LICENSE",
-        "LICENSE-DATA",
-        "README.md",
-        "README.zh-CN.md",
-        "SECURITY.md",
-        "SECURITY.zh-CN.md",
-    }
+    # Keep this list aligned with .github/CODEOWNERS. A scenario submission
+    # that changes one of these paths must be split before normal review.
     for item in files:
         filename = str(item.get("filename") or "")
-        if filename in protected_files or filename.startswith(protected_prefixes):
+        if filename in PROTECTED_PROTOCOL_FILES or filename.startswith(
+            PROTECTED_PROTOCOL_PREFIXES
+        ):
             return True
     return False
 
@@ -422,7 +425,8 @@ def request_from_candidates(
     existing = latest_assignment(
         assignment_records(client.comments(number)), stage, pull["head"]["sha"]
     )
-    if existing:
+    candidate_logins = {login.lower() for login, _ in candidates}
+    if existing and existing.reviewer.lower() in candidate_logins:
         return existing, {}
     # Do not fall through to another person after an ambiguous API failure:
     # the first request may have succeeded even if its response was lost.
@@ -517,12 +521,17 @@ def ensure_maintainer(
     reviewers: set[str],
 ) -> None:
     current = maintainer_assignment(comments, pull["head"]["sha"])
-    if current:
+    configured_maintainers = {login.lower() for login in config["maintainers"]}
+    author = pull["user"]["login"].lower()
+    if (
+        current
+        and current.reviewer.lower() in configured_maintainers
+        and current.reviewer.lower() != author
+    ):
         if has_formal_approval(reviews, current, pull["head"]["sha"]):
             return
         sync_review_request(client, int(pull["number"]), current.reviewer)
         return
-    author = pull["user"]["login"].lower()
     pool = [login for login in config["maintainers"] if login.lower() != author]
     preferred = [login for login in pool if login.lower() not in reviewers]
     ordered = preferred or pool
@@ -532,7 +541,11 @@ def ensure_maintainer(
     number = int(pull["number"])
     login, _ = rotated(candidates, number)[0]
     current = maintainer_assignment(client.comments(number), pull["head"]["sha"])
-    if current:
+    if (
+        current
+        and current.reviewer.lower() in configured_maintainers
+        and current.reviewer.lower() != author
+    ):
         sync_review_request(client, number, current.reviewer)
         return
     try:
@@ -574,7 +587,7 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         post_status(client, pull, "success", "Not a new scenario PR; review-gate does not apply")
         return None
     if changes_protected_protocol(files):
-        post_status(client, pull, "failure", "Scenario PR also changes protected protocol files")
+        post_status(client, pull, "failure", "Split scenario data and protected protocol changes into separate PRs")
         return None
 
     config = load_config()
@@ -583,20 +596,28 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     assignments = assignment_records(comments)
     current_head = pull["head"]["sha"]
     first = latest_assignment(assignments, "first", current_head)
+    profiles = config["reviewer_profiles"]
+    valid_first_reviewers = {
+        login.lower()
+        for login in config["reviewers"]
+        if login.lower() not in {pull["user"]["login"].lower(), "keting"}
+    }
+    if first and first.reviewer.lower() not in valid_first_reviewers:
+        first = request_first(client, pull, config, assignments)
+        post_status(client, pull, "pending", f"Reassigned first review to @{first.reviewer}")
+        return None
     if first is None:
         first = request_first(client, pull, config, assignments)
         post_status(client, pull, "pending", f"Waiting for first verdict from @{first.reviewer}")
         return None
 
     records = comments + reviews
-    verdicts = current_verdicts(records, current_head)
-    first_verdict = verdict_after_assignment(verdicts, first)
+    first_verdict, first_reason = assigned_verdict(records, first, current_head)
     if first_verdict is None:
         sync_review_request(client, number, first.reviewer)
-        reason = invalid_verdict_reason(records, first, current_head)
         description = (
-            f"First verdict rejected: {reason}"
-            if reason
+            f"First verdict rejected: {first_reason}"
+            if first_reason
             else f"Waiting for first verdict from @{first.reviewer}"
         )
         post_status(client, pull, "pending", description)
@@ -605,32 +626,41 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         clear_review_requests(client, number)
         post_status(client, pull, "failure", "Privacy concern raised; review flow stopped")
         return None
-    expected_first_family = config["reviewer_profiles"][first.reviewer.lower()]
-    if first_verdict.model_family not in {expected_first_family, "not-exposed"}:
-        post_status(client, pull, "failure", "First verdict did not use its assigned model family")
-        return None
     if first_verdict.verdict != "APPROVE":
         sync_review_request(client, number, first.reviewer)
         post_status(client, pull, "pending", f"Waiting for @{first.reviewer} to re-review changes")
         return None
+    expected_first_family = profiles[first.reviewer.lower()]
+    if first_verdict.model_family not in {expected_first_family, "human"}:
+        post_status(client, pull, "failure", "First verdict did not use its assigned model family")
+        return None
 
     second = latest_assignment(assignments, "second", current_head)
+    valid_second_reviewers = {
+        login.lower()
+        for login, _ in choose_candidates(
+            config, first_verdict, pull["user"]["login"]
+        )
+    }
+    if second and second.reviewer.lower() not in valid_second_reviewers:
+        second = request_second(client, pull, config, first_verdict, assignments)
+        post_status(client, pull, "pending", f"Reassigned second review to @{second.reviewer}")
+        return str(number) if second.reviewer.lower() == "keting" else None
     if second is None:
         second = request_second(client, pull, config, first_verdict, assignments)
         post_status(client, pull, "pending", f"Waiting for second verdict from @{second.reviewer}")
         return str(number) if second.reviewer.lower() == "keting" else None
 
-    second_verdict = verdict_after_assignment(verdicts, second)
+    second_verdict, second_reason = assigned_verdict(records, second, current_head)
     if second_verdict is None:
         sync_review_request(client, number, second.reviewer)
-        reason = invalid_verdict_reason(records, second, current_head)
         description = (
-            f"Second verdict rejected: {reason}"
-            if reason
+            f"Second verdict rejected: {second_reason}"
+            if second_reason
             else f"Waiting for second verdict from @{second.reviewer}"
         )
         post_status(client, pull, "pending", description)
-        return None
+        return str(number) if second.reviewer.lower() == "keting" else None
     if second_verdict.verdict == "PRIVACY-CONCERN-RAISED-PRIVATELY":
         clear_review_requests(client, number)
         post_status(client, pull, "failure", "Privacy concern raised; review flow stopped")
@@ -640,8 +670,8 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         post_status(client, pull, "pending", f"Waiting for @{second.reviewer} to re-review changes")
         return None
 
-    expected_second_family = config["reviewer_profiles"][second.reviewer.lower()]
-    if second_verdict.model_family not in {expected_second_family, "not-exposed"}:
+    expected_second_family = profiles[second.reviewer.lower()]
+    if second_verdict.model_family not in {expected_second_family, "human"}:
         post_status(client, pull, "failure", "Second verdict did not use its assigned model family")
         return None
 

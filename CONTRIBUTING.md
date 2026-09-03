@@ -381,6 +381,8 @@ Review focuses on internal consistency, field states, redaction, and whether ove
 
 Every data PR receives **at least two independent reviews**, human or AI-assisted; an AI-assisted review names the agent product, model, effort, and model-family independence key. Reviews are posted as structured comments on the PR — the sequential process and verdict template are in [docs/review-process.md](docs/review-process.md). A `REQUEST_CHANGES` verdict stays with that reviewer until the revision is re-reviewed, while a privacy verdict stops the flow; merging, awarding points, and the final read remain the maintainer's. The target response time is about 3 working days.
 
+Keep scenario data and protected protocol changes in separate PRs. A PR that adds a scenario manifest must not also change `.github/`, `prompts/`, `scripts/`, `templates/`, `tests/`, the review-process documents, contribution rules, licenses, or security policy; the automated review gate will ask the author to split such a PR before review.
+
 Pre-submission checklist:
 
 - [ ] The same scenario has at least 3 valid independent runs;

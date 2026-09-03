@@ -87,10 +87,24 @@ class ReviewGateTests(unittest.TestCase):
             self.assertIsNone(parsed)
             self.assertIn("canonical", reason)
 
-    def test_one_not_exposed_family_can_pair_with_a_known_family(self):
+    def test_not_exposed_cannot_satisfy_two_family_gate(self):
         result = evaluate_review_gate(
             [
                 record(1, key="agent:not-exposed"),
+                record(
+                    2,
+                    key="agent:anthropic-claude",
+                    login="other-reviewer",
+                ),
+            ],
+            HEAD,
+        )
+        self.assertFalse(result["eligible"])
+
+    def test_human_review_can_pair_with_a_known_agent_family(self):
+        result = evaluate_review_gate(
+            [
+                record(1, reviewer="Reviewer", key="human:reviewer"),
                 record(
                     2,
                     key="agent:anthropic-claude",

@@ -11,11 +11,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from scenario_review_flow import (  # noqa: E402
     assignment_records,
+    changes_protected_protocol,
     choose_candidates,
     has_formal_approval,
     latest_assignment,
     main,
     normalized_config,
+    PROTECTED_PROTOCOL_FILES,
+    PROTECTED_PROTOCOL_PREFIXES,
     process_pull,
     request_first,
 )
@@ -103,6 +106,7 @@ class FakeClient:
         self.statuses = []
         self.request_history = []
         self.next_comment = 1
+        self.comment_time = NOW
         self.scenario = True
         self.protocol_change = False
         self.fail_files = False
@@ -172,7 +176,7 @@ class FakeClient:
     def add_comment(self, number, body):
         value = {
             "id": self.next_comment,
-            "created_at": NOW,
+            "created_at": self.comment_time,
             "author_association": "MEMBER",
             "user": {"login": "github-actions[bot]"},
             "body": body,
@@ -230,6 +234,29 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             latest_assignment(assignments, "second", HEAD).reviewer, "XiaoCooder"
         )
 
+    def test_protocol_boundary_matches_documented_paths(self):
+        self.assertTrue(
+            changes_protected_protocol(
+                [{"filename": "docs/review-process.md"}]
+            )
+        )
+        self.assertFalse(
+            changes_protected_protocol(
+                [{"filename": "docs/wanted-scenarios.md"}]
+            )
+        )
+
+    def test_protocol_boundary_matches_codeowners(self):
+        path = Path(__file__).resolve().parents[1] / ".github" / "CODEOWNERS"
+        patterns = {
+            line.split()[0]
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        }
+        expected = {f"/{prefix}" for prefix in PROTECTED_PROTOCOL_PREFIXES}
+        expected.update(f"/{filename}" for filename in PROTECTED_PROTOCOL_FILES)
+        self.assertEqual(patterns, expected)
+
     def test_openai_first_routes_to_keting_or_glm(self):
         parsed = parse_verdict(verdict("beautyarbutin", "openai-gpt"), HEAD)
         candidates = choose_candidates(normalized_config(config()), parsed, "contributor")
@@ -268,6 +295,81 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         process_pull(client, client.value)
         self.assertEqual(client.teams, [])
         self.assertEqual(client.requested, ["beautyarbutin"])
+
+    def test_removed_first_reviewer_is_reassigned(self):
+        client = FakeClient(pull(number=1))
+        client.requested = ["someone-new"]
+        client.comments_data.append(
+            {
+                "id": 1,
+                "created_at": NOW,
+                "user": {"login": "github-actions[bot]"},
+                "body": (
+                    f"<!-- scenario-review-assignment:someone-new head:{HEAD} -->\n"
+                    "<!-- scenario-review-stage:first -->"
+                ),
+            }
+        )
+        client.next_comment = 2
+        process_pull(client, client.value)
+        current = latest_assignment(
+            assignment_records(client.comments_data), "first", HEAD
+        )
+        self.assertNotEqual(current.reviewer, "someone-new")
+        self.assertIn(current.reviewer, config()["reviewers"])
+
+    def test_owner_marker_cannot_make_owner_the_first_reviewer(self):
+        client = FakeClient(pull(number=1))
+        client.requested = ["keting"]
+        client.comments_data.append(
+            {
+                "id": 1,
+                "created_at": NOW,
+                "user": {"login": "keting"},
+                "body": (
+                    f"<!-- scenario-review-assignment:keting head:{HEAD} -->\n"
+                    "<!-- scenario-review-stage:first -->"
+                ),
+            }
+        )
+        client.next_comment = 2
+        process_pull(client, client.value)
+        current = latest_assignment(
+            assignment_records(client.comments_data), "first", HEAD
+        )
+        self.assertNotEqual(current.reviewer, "keting")
+
+    def test_existing_assignment_found_during_recheck_prevents_duplicate_comment(self):
+        class RaceClient(FakeClient):
+            def __init__(self, value):
+                super().__init__(value)
+                self.comment_reads = 0
+
+            def comments(self, number):
+                self.comment_reads += 1
+                if self.comment_reads == 2 and not self.comments_data:
+                    self.requested = ["beautyarbutin"]
+                    self.comments_data.append(
+                        {
+                            "id": 99,
+                            "created_at": NOW,
+                            "user": {"login": "github-actions[bot]"},
+                            "body": (
+                                f"<!-- scenario-review-assignment:beautyarbutin head:{HEAD} -->\n"
+                                "<!-- scenario-review-stage:first -->"
+                            ),
+                        }
+                    )
+                return list(self.comments_data)
+
+        client = RaceClient(pull(number=1))
+        process_pull(client, client.value)
+        assignment_comments = [
+            item
+            for item in client.comments_data
+            if "scenario-review-assignment" in item["body"]
+        ]
+        self.assertEqual(len(assignment_comments), 1)
 
     def test_non_scenario_pull_reports_not_applicable_success(self):
         client = FakeClient(pull(number=1))
@@ -325,8 +427,34 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         process_pull(client, client.value)
         client.add_verdict("beautyarbutin", "openai-gpt")
         self.assertEqual(process_pull(client, client.value), "1")
-        second = latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
         self.assertEqual(second.reviewer, "keting")
+        self.assertEqual(process_pull(client, client.value), "1")
+
+    def test_second_reviewer_outside_route_is_reassigned(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.requested = ["black-pwq"]
+        client.comments_data.append(
+            {
+                "id": 700,
+                "created_at": "2026-09-03T09:30:00Z",
+                "user": {"login": "github-actions[bot]"},
+                "body": (
+                    f"<!-- scenario-review-assignment:black-pwq head:{HEAD} -->\n"
+                    "<!-- scenario-review-stage:second -->"
+                ),
+            }
+        )
+        client.comment_time = "2026-09-03T10:00:00Z"
+        process_pull(client, client.value)
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertIn(second.reviewer.lower(), {"keting", "ahmedalattar416"})
 
     def test_request_changes_keeps_first_reviewer_and_does_not_assign_second(self):
         client = FakeClient(pull(number=1))
@@ -337,6 +465,16 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             latest_assignment(assignment_records(client.comments_data), "second", HEAD)
         )
         self.assertEqual(client.requested, ["beautyarbutin"])
+
+    def test_request_changes_is_pending_even_with_wrong_model_family(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "zhipu-glm", "REQUEST_CHANGES")
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "pending")
+        self.assertIsNone(
+            latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        )
 
     def test_verdict_before_assignment_is_ignored(self):
         client = FakeClient(pull(number=1))
@@ -362,6 +500,26 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         process_pull(client, client.value)
         self.assertIn("verdict rejected", client.statuses[-1]["description"].lower())
         self.assertIn("canonical", client.statuses[-1]["description"].lower())
+
+    def test_latest_invalid_attempt_replaces_an_earlier_valid_approval(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        bad = verdict(
+            "beautyarbutin",
+            "openai-gpt",
+            verdict="REQUEST_CHANGES",
+            submitted="2026-09-03T10:00:00Z",
+        )
+        bad["body"] = bad["body"].replace(
+            "agent:openai-gpt", "agent:codex"
+        )
+        client.comments_data.append(bad)
+        process_pull(client, client.value)
+        self.assertIn("verdict rejected", client.statuses[-1]["description"].lower())
+        self.assertIsNone(
+            latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        )
 
     def test_new_head_reuses_first_reviewer_with_short_re_review_message(self):
         client = FakeClient(pull(number=3))
@@ -443,6 +601,38 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertIsNone(
             latest_assignment(assignment_records(client.comments_data), "second", HEAD)
         )
+
+    def test_first_not_exposed_family_does_not_route_second_review(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "not-exposed")
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertIsNone(
+            latest_assignment(assignment_records(client.comments_data), "second", HEAD)
+        )
+
+    def test_removed_second_reviewer_is_reassigned(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        process_pull(client, client.value)
+        current = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertEqual(current.reviewer, "keting")
+        revised = config()
+        revised["second_reviewers"] = ["AHMEDALATTAR416"]
+        revised["reviewer_profiles"].pop("keting")
+        with patch(
+            "scenario_review_flow.load_config",
+            return_value=normalized_config(revised),
+        ):
+            process_pull(client, client.value)
+        reassigned = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertEqual(reassigned.reviewer.lower(), "ahmedalattar416")
 
     def test_production_path_calls_review_gate_evaluator(self):
         client = FakeClient(pull(number=1))
