@@ -1,0 +1,54 @@
+Visual evidence audit
+
+Public file: evidence/subscription.png
+Dimensions: 3840 x 2100 pixels
+Format: PNG, 8-bit RGBA, non-interlaced
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+
+Visible support:
+- the account settings usage-and-billing screen identifies the current plan as Pro;
+- the same plan card displays USD 200/month;
+- OpenAI's public pricing documentation viewed on 2026-09-02 maps the USD 200/month
+  tier to ChatGPT Pro 20x: https://learn.chatgpt.com/zh-Hans/docs/pricing
+
+Privacy review:
+- no email address, personal name, username, account ID, order ID, or payment detail;
+- no hostname, local filesystem path, session ID, resume identifier, or credential;
+- no embedded author, creator, download-source, or where-from metadata was found;
+- the screenshot also shows non-identifying quota balances and reset times.
+
+Processing:
+- no crop, pixel redaction, blur, reconstruction, or generative editing was applied;
+- the public PNG is byte-identical to the supplied original;
+- this screenshot verifies only the subscription plan and multiplier.
+
+Supplemental attempt screenshots
+
+attempts/r4/response.png
+- dimensions: 3196 x 1288 pixels
+- SHA-256: c8e414498c0c084efff34fbf6d1d4f2f9381f124becc5213023ceebc1e40c641
+
+attempts/r5/response.png
+- dimensions: 1704 x 682 pixels
+- SHA-256: d97f796d40870fa15cc7786d7803670746e156e3bf510e9d21a101cdb578e0c4
+
+attempts/r6/response.png
+- dimensions: 1702 x 672 pixels
+- SHA-256: d1262dd5c104eddeaa486acbeb0fe4f219913a5205d114c05ba3cc19dc5c7623
+
+Visible support in each R4-R6 image:
+- Codex CLI version 0.151.0-alpha.7.2, gpt-5.6-sol, and medium effort;
+- exact hi input, fresh-session and empty-workspace assertions, and fixed command;
+- complete assistant reply, native input/cache/output/reasoning usage, and exit 0.
+
+Attempt-image privacy and provenance review:
+- each public image was inspected at original size and cross-checked against the
+  corresponding retained raw exec event stream and rollout;
+- no title bar, account UI, email, personal name, username, hostname, absolute path,
+  session ID, resume identifier, credential, or unrelated private content is visible;
+- no embedded author, creator, download-source, or where-from metadata was found;
+- the public files are byte-identical to the contributor-supplied terminal-content
+  captures; no post-receipt crop, redaction, blur, reconstruction, resampling, or
+  generative editing was applied;
+- R4-R6 are explicitly supplemental post-registration attempts. R1-R3 remain valid
+  and retained without screenshots; no original attempt was replaced or excluded.

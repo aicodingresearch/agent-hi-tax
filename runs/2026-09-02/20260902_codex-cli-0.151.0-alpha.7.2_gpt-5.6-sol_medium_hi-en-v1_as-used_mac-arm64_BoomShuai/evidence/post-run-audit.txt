@@ -1,0 +1,45 @@
+Post-run consistency and extraction audit
+
+The private retained rollouts for R1-R6 were inspected locally. Public
+files contain only the minimal sanitized fields listed in manifest.yaml.
+
+For each of R1-R6:
+- session_meta records: 1
+- turn_context records: 1
+- exact target user messages equal to hi: 1
+- final assistant messages: 1
+- token-count records with native usage: 1
+- tool-call records: 0
+- client skill-context budget warnings: 1
+- top-level workspace entries after the run: 0
+- stderr bytes from codex exec: 0
+
+Observed model and effort were gpt-5.6-sol / medium in all six runs. Each
+attempt reported input_tokens=20421, cached_input_tokens=11008,
+cache_write_input_tokens=0, output_tokens=14, and reasoning_output_tokens=0.
+
+Skill inventory correction:
+- preregistration/preflight count: 199
+- corrected unique full-name count in each retained rollout: 202
+- corrected sorted-name inventory SHA-256:
+  e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+
+The initial parser stopped at the first colon in a skill name. It therefore
+collapsed three additional namespaced sibling entries. The corrected parser
+preserves the complete token before the delimiter colon-space and deduplicates the
+two catalog entries named skill-creator. The same 202-name inventory and hash
+appeared in all six valid rollouts, so this correction does not indicate a harness
+change between attempts.
+
+Model-visible input consistency across both effort packages:
+- base-instructions JSON.stringify SHA-256 in all twelve medium/high rollouts:
+  b3ec1058b94376d82caad2755cf34a6472030fa140ec7c9919b01e7266bd8039
+- ordered developer/user {role, content} JSON, after replacing only the equal-shape
+  attempt path with <RUN_DIR>, SHA-256 in all twelve rollouts:
+  00a214ac428ff7c94424e7f63dba0022d1ebc2e8be3369a212ac96cfb759a635
+
+R4-R6 were collected after the original three-run block to add visual evidence.
+They were not used to replace, invalidate, or hide R1-R3. Their public screenshots
+show the fixed command, model, effort, exact input, full reply, native usage, empty
+workspace assertion, fresh-session assertion, and zero exit status; each screenshot
+was checked against its retained raw event stream and rollout.
