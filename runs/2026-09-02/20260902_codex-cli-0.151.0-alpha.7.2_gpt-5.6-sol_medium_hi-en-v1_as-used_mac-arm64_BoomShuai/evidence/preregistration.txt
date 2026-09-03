@@ -1,0 +1,64 @@
+Agent Hi Tax local preregistration
+Created before the first target model request.
+
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/49
+task_id: T-13
+scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_medium_hi-en-v1_as-used_mac-arm64_BoomShuai
+agent: OpenAI Codex CLI
+agent_version: 0.151.0-alpha.7.2
+requested_model: gpt-5.6-sol
+requested_effort: medium
+auth_channel: ChatGPT subscription-login
+subscription_plan: exact tier not exposed by Codex CLI
+route: first-party-subscription
+os: macOS 26.6 (build 25G72)
+architecture: arm64
+locale: C.UTF-8
+timezone: Asia/Shanghai
+session_state: fresh
+workspace_type: three independent empty non-Git directories
+context_profile: as-used
+planned_repetitions: 3
+prompt_case: hi-en-v1
+prompt_bytes_hex: 68 69
+prompt_sha256: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+
+fixed_launch_command:
+  codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="medium"' --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+
+fixed_harness_inventory:
+  global_AGENTS_md: present but empty; sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  global_config: present; private original remains outside Git
+  enabled_mcp_servers: node_repl
+  disabled_mcp_servers: computer-use, cua_repl
+  enabled_plugins: codex-app-tools, sites, browser, chrome, computer-use, visualize, documents, pdf, spreadsheets, presentations, template-creator
+  available_skill_catalog_count: 199
+  hooks: one local notification hook configured; no model call expected
+  permission_mode_requested: workspace-write / on-request
+  collaboration_mode: default product behavior, to be observed in TUI
+
+measurement_plan:
+  Run r1, r2, and r3 sequentially. Create only the current attempt directory.
+  Confirm each directory is empty and not a Git repository.
+  Start a fresh TUI session with the fixed launch command.
+  Use local /status before the prompt, send exactly one model message containing hi,
+  preserve the full visible reply and usage evidence, then /quit without resume.
+  Retain raw screenshots and rollouts outside Git. Publish only redacted screenshots
+  and minimal sanitized events. Do not measure or attribute shared subscription quota.
+
+known_non_target_diagnostics_before_r1:
+  codex doctor and codex debug prompt-input were run in a separate empty diagnostic
+  directory. They did not send a model request and did not create files in an attempt
+  workspace.
+
+pre-r1 launch addendum:
+  The first local PTY launch was refused before a Codex session started because the
+  host PTY reported TERM=dumb. No model request occurred. The launch command was
+  amended before r1 to set TERM=xterm-256color; this terminal capability setting is
+  fixed for all three valid attempts. The failed pre-session launch is retained as r0.
+  The host PTY still did not render a usable TUI after the trust prompt, so that
+  pre-session probe was cancelled with Ctrl-C before any target request. Before r1,
+  the fixed valid-run command was changed to the official machine-readable
+  `codex exec --json` surface, matching the accepted repository collection pattern.
+  All three valid attempts will use this exact exec command. Visual evidence is
+  unavailable and will be marked not_provided; native event records remain in scope.

@@ -1,0 +1,5 @@
+{"type":"session_meta","timestamp":"2026-09-02T03:11:24.104Z","cli_version":"0.151.0-alpha.7.2","source":"exec"}
+{"type":"turn_context","timestamp":"2026-09-02T03:11:26.264Z","model":"gpt-5.6-sol","effort":"high"}
+{"type":"response_item","timestamp":"2026-09-02T03:11:26.381Z","role":"user","text":"hi"}
+{"type":"response_item","timestamp":"2026-09-02T03:11:28.049Z","role":"assistant","text":"Hi! What are we working on today?"}
+{"type":"event_msg","timestamp":"2026-09-02T03:11:28.072Z","usage":{"input_tokens":20421,"cached_input_tokens":11008,"cache_write_input_tokens":0,"output_tokens":13,"reasoning_output_tokens":0,"total_tokens":20434},"model_context_window":258400}

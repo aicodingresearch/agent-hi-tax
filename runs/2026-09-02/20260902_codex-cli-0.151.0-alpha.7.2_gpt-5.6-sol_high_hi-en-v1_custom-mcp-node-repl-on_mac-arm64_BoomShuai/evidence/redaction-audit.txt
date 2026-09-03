@@ -1,0 +1,14 @@
+Public redaction and privacy audit — T-31 MCP ON
+
+- Raw screenshots and machine records were collected outside the Git repositories.
+- Public JSONL was rebuilt from a safe-field allowlist; raw session/thread IDs,
+  complete developer/system content, local absolute paths, config bodies, and account
+  identifiers are omitted.
+- Public text uses <RUN_DIR>, <LAB_ROOT>, and <CODEX_HOME> placeholders where needed.
+- The subscription image and attempt images were individually inspected at original
+  resolution. They contain no email, personal name, username, hostname, account ID,
+  payment detail, credential, absolute path, session ID, resume command, or unrelated
+  private content.
+- The public PNG files are exact-byte copies of safe originals. No blur, mosaic,
+  crop after receipt, pixel replacement, reconstruction, or generative edit was used.
+- Public text was scanned with the repository privacy detector before submission.

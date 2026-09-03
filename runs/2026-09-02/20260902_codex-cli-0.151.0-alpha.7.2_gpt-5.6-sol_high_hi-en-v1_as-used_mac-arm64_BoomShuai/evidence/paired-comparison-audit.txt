@@ -1,0 +1,49 @@
+Same-machine medium/high paired comparison audit
+
+Medium sibling:
+https://github.com/aicodingresearch/agent-hi-tax/pull/50
+20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_medium_hi-en-v1_as-used_mac-arm64_BoomShuai
+
+High sibling:
+20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_BoomShuai
+
+Held constant and verified from public or retained evidence:
+- contributor, machine, OS version/build, architecture, locale, and timezone;
+- Codex CLI version, account, subscription route, requested/observed model;
+- exact prompt bytes and hash, fresh session state, empty non-Git workspace profile;
+- official exec JSON surface, sandbox, approval policy, and network policy;
+- global AGENTS.md hash, enabled MCP, enabled plugins, 202-skill name inventory/hash;
+- normalized model-visible base/developer/user input hashes;
+- one model turn per attempt and absence of tool calls and approvals.
+
+Intended variable:
+- medium sibling: model_reasoning_effort=medium
+- high sibling: model_reasoning_effort=high
+
+Observed result:
+- each of the twelve attempts reported input_tokens=20421;
+- each reported cached_input_tokens=11008, cache_write_input_tokens=0,
+  non_cached_input_tokens=9413, and reasoning_output_tokens=0;
+- all six medium attempts and high R1-R3/R5-R6 returned
+  Hi! What would you like to work on? with output_tokens=14;
+- high R4 returned Hi! What are we working on today? with output_tokens=13;
+- high R4 therefore had context_total_tokens=20434 and
+  cli_total_excluding_cached=9426; the other eleven attempts had 20435 and 9427;
+- both six-run blocks nevertheless have identical medians for every reported and
+  derived token field, including output-dependent totals.
+
+Boundary:
+This supports the narrow observation that the exposed effort setting did not change
+the measured injected-input footprint for this exact hi case in this twelve-run
+block. The one alternate greeting is retained as response variability and is not
+attributed to effort. The evidence does not establish that effort never affects
+hidden compute, latency, longer outputs, other prompts, or subscription quota.
+Latencies remain descriptive because the effort blocks were sequential rather than
+randomized or interleaved.
+
+Known non-model-visible change:
+Codex accumulated path-specific trusted-project registry entries for all twelve
+attempt directories. The whole private config hash therefore changed, but the normalized
+model-visible input and effective turn-context fields remained identical apart from
+the intended effort value. This is disclosed rather than silently treating the
+entire private config file as byte-identical.

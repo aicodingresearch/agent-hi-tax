@@ -1,0 +1,33 @@
+{
+  "configured_enabled": true,
+  "protocol_version": "2025-06-18",
+  "server_name": "node_repl",
+  "tool_count": 3,
+  "tools": [
+    {
+      "description_bytes": 696,
+      "input_schema_property_count": 3,
+      "input_schema_required_count": 1,
+      "input_schema_sha256": "53b190f8fa83aadf2fb59ea2cc3bb624c7c66a3baf7c77d294c611a87213701f",
+      "input_schema_type": "object",
+      "name": "js"
+    },
+    {
+      "description_bytes": 111,
+      "input_schema_property_count": 1,
+      "input_schema_required_count": 1,
+      "input_schema_sha256": "13c026eade989d3fd2eb14929855e866aee1fd7f16cb09f3f32ac91bc8ee8806",
+      "input_schema_type": "object",
+      "name": "js_add_node_module_dir"
+    },
+    {
+      "description_bytes": 51,
+      "input_schema_property_count": 0,
+      "input_schema_required_count": 0,
+      "input_schema_sha256": "99334726611ccf58a148b0814696bfa6fe08c1b2d027e946beccf5a74331c9aa",
+      "input_schema_type": "object",
+      "name": "js_reset"
+    }
+  ],
+  "tools_canonical_sha256": "3ff64c325e18992b39da03e361b06ca830b26b4e8b0447f46d3f2d0f72c68ca6"
+}

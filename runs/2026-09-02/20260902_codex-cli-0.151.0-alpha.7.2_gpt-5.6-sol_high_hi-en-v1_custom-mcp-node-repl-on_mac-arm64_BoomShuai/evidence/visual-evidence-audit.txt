@@ -1,0 +1,55 @@
+Visual evidence audit — T-31 MCP ON
+
+Scenario-level subscription image
+
+file: evidence/subscription.png
+dimensions: 3840 x 2100
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+visible support: ChatGPT Pro plan and USD 200/month
+privacy: no email, name, username, account ID, payment detail, host, path, or session ID is visible
+processing: exact-byte copy; no pixel editing
+
+Valid supplemental attempt images
+
+file: attempts/r5/response.png
+dimensions: 1704 x 658
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 7ddc5dc5bba7e6854fa8fa58716fe232b0b6418f215f2f7fd44a00771d463999
+visible support: side/attempt, CLI version, model, high effort, MCP state, schema summary, exact hi, normalized command, complete reply, all native usage fields, and exit 0
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+file: attempts/r6/response.png
+dimensions: 1680 x 658
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: f59e35f259cf464791d74920f1aadeb72930398cc3af082717f929600e60be60
+visible support: side/attempt, CLI version, model, high effort, MCP state, schema summary, exact hi, normalized command, complete reply, all native usage fields, and exit 0
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+file: attempts/r7/response.png
+dimensions: 1698 x 662
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 3bff79ed65323e59cb84be2287828210ae2237ed469d160d4a6543311ecabaa8
+visible support: side/attempt, CLI version, model, high effort, MCP state, schema summary, exact hi, normalized command, complete reply, all native usage fields, and exit 0
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+Invalid supplemental attempt image
+
+file: attempts/r4/response.png
+dimensions: 1462 x 572
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 188886d079be6f8bb162b75adacd951e69d6808baed25ca748226f2f760176c3
+visible support: intended ON configuration and exit 127 with no reply or usage
+classification: infrastructure failure before target model request; not valid visual evidence
+privacy/processing: public-safe exact-byte copy; no pixel editing
+
+Every attempt image was visually cross-checked against its retained native event stream.
+Only standard PNG DPI metadata is present; no author, creator, description, source URL, or account metadata is embedded.

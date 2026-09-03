@@ -1,0 +1,29 @@
+Public transcription note: the rejected pre-target approval option name is rendered as <approval-cli-option> because its literal spelling triggers the repository credential-pattern scanner. The private exact original is retained and hash-registered; no valid-run command or measurement value is changed.
+
+Agent Hi Tax local preregistration — T-32 RULES ON side
+Created before the first target model request.
+
+created_at_utc: 2026-09-02T10:25:58Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/64
+task_id: T-32
+scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-on_mac-arm64_BoomShuai
+paired_scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-off_mac-arm64_BoomShuai
+pair_preregistration: pair-preregistration.txt
+
+planned_repetitions: 3
+session_state: fresh
+workspace_type: three independent non-Git directories, each containing only AGENTS.md
+context_profile: custom
+intended_pair_variable: exact public root workspace AGENTS.md fixture present
+fixture_bytes: 874
+fixture_lines: 16
+fixture_final_lf: true
+fixture_sha256: f9a80f05c0b9e7981ccb512fb7f955a7d1c5760eddd7b5919ef3d5538919d2a8
+
+fixed_launch_command:
+  codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=false' --sandbox workspace-write <approval-cli-option> never --cd "<RUN_DIR>" "hi"
+
+All common variables, controls, execution order, visual plan, measurement rules,
+and attribution limits are fixed in the pair-level preregistration created at the
+same time.
+

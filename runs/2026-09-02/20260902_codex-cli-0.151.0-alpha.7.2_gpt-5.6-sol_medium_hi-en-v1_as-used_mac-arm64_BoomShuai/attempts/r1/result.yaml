@@ -1,0 +1,57 @@
+attempt: 1
+status: "valid"
+started_at_utc: "2026-09-02T01:56:17.699Z"
+assistant_message_at_utc: "2026-09-02T01:56:19.426Z"
+usage_recorded_at_utc: "2026-09-02T01:56:19.441Z"
+response_latency_ms: 1727
+response_latency_display_seconds: "not_exposed"
+latency_method: "assistant-message-event"
+model_observed: "gpt-5.6-sol"
+effort_observed: "medium"
+usage:
+  source: "event-log"
+  provider_schema: "openai"
+  input_tokens_including_cached: 20421
+  cached_input_tokens: 11008
+  non_cached_input_tokens: 9413
+  cli_total_excluding_cached: 9427
+  cli_total_source: "derived from event-log fields"
+  cache_write_input_tokens: 0
+  model_context_window_event: 258400
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: "not_applicable"
+  cache_read_input_tokens: "not_applicable"
+  total_input_tokens: "not_applicable"
+  output_tokens: 14
+  reasoning_output_tokens: 0
+  context_total_tokens: 20435
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+  iterations: 1
+  iterations_observation: "one final agent_message event"
+  web_search_requests: 0
+  web_fetch_requests: 0
+response:
+  file: "response.txt"
+  exact_text_sha256: "9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043"
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors:
+    - "Skill descriptions were shortened to fit the skills context budget; the request still completed successfully."
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+evidence:
+  response_screenshot: "not_provided"
+  usage_screenshot: "not_provided"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    quota: "not_provided"
+deviations:
+  - "This valid fresh exec session followed the cancelled TUI preflight in the same still-empty directory; the preflight sent no target model request and created no workspace files."
+  - "The client emitted one local skill-context budget warning before the final reply."

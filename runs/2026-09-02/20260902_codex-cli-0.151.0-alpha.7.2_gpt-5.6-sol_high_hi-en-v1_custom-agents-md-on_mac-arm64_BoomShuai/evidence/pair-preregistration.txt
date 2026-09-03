@@ -1,0 +1,96 @@
+Public transcription note: the rejected pre-target approval option name is rendered as <approval-cli-option> because its literal spelling triggers the repository credential-pattern scanner. The private exact original is retained and hash-registered; no valid-run command or measurement value is changed.
+
+Agent Hi Tax local preregistration — T-32 paired comparison
+Created before the first target model request.
+
+created_at_utc: 2026-09-02T10:25:58Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/64
+task_id: T-32
+contributor: @BoomShuai
+
+pair:
+  rules_off_scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-off_mac-arm64_BoomShuai
+  rules_on_scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-on_mac-arm64_BoomShuai
+  intended_variable: root workspace AGENTS.md fixture absent versus present
+  execution_order: off-r1, on-r1, off-r2, on-r2, off-r3, on-r3
+  execution_mode: sequential; never parallel
+
+fixture:
+  public_name: AGENTS.fixture.md
+  placement_on_side: <RUN_DIR>/AGENTS.md
+  off_side_state: absent; workspace has zero entries
+  on_side_state: present; workspace has exactly this one file
+  encoding: UTF-8
+  bytes: 874
+  lines: 16
+  final_lf: true
+  sha256: f9a80f05c0b9e7981ccb512fb7f955a7d1c5760eddd7b5919ef3d5538919d2a8
+  mutation_policy: immutable after this preregistration
+
+fixed_common_variables:
+  agent: OpenAI Codex CLI
+  agent_version: 0.151.0-alpha.7.2
+  requested_model: gpt-5.6-sol
+  requested_effort: high
+  auth_channel: ChatGPT subscription-login
+  subscription_plan: ChatGPT Pro
+  route: first-party-subscription / native protocol
+  os: macOS 26.6 (build 25G72)
+  architecture: arm64
+  timezone: Asia/Shanghai
+  session_state: fresh
+  context_profile: custom
+  planned_repetitions_per_side: 3
+  prompt_case: hi-en-v1
+  prompt_bytes_hex: 68 69
+  prompt_sha256: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+  sandbox: workspace-write
+  approval_policy: never
+
+fixed_harness_controls:
+  global_AGENTS_md: present but empty; sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  configured_mcp_servers: computer-use, cua_repl, node_repl
+  mcp_state_both_sides: all disabled; node_repl disabled by per-launch override
+  enabled_plugins_both_sides: browser, chrome, codex-app-tools, computer-use, documents, pdf, presentations, sites, spreadsheets, template-creator, visualize
+  enabled_plugin_count_both_sides: 11
+  enabled_plugin_names_sha256_both_sides: 4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999
+  available_skill_catalog_count_both_sides: 202
+  available_skill_catalog_sha256_both_sides: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+  hooks_both_sides: one local notification hook configured; no model call expected
+
+model_visible_preflight:
+  rules_off_fixture_occurrences: 0
+  rules_on_fixture_occurrences: 1 exact byte-for-byte fixture occurrence
+  rules_on_normalized_injection_wrapper_bytes: 945
+  rules_on_normalized_injection_wrapper_sha256: bf3e29f7ffc8c73851a1200fe0b08c26ac6daeac6a5a18897db36f9d3abc0873
+  common_role_content_projection_sha256: f0722794b99fa98b79aafd1540d31d9ef735ad4a7a1025c044cbaf0d21aca28d
+  common_projection_rule: remove only the exact fixture-containing content item, replace each equal-shape diagnostic workspace path with <RUN_DIR>, retain ordered role/content objects, recursively sort keys, and encode compact JSON with final LF
+  common_projection_equal: true
+
+fixed_launch_commands:
+  off: codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=false' --sandbox workspace-write <approval-cli-option> never --cd "<RUN_DIR>" "hi"
+  on: codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=false' --sandbox workspace-write <approval-cli-option> never --cd "<RUN_DIR>" "hi"
+
+measurement_plan:
+  Preserve native exec JSONL, stderr, start/end timestamps, exit status, per-run
+  MCP state, pre/post config hashes, pre/post workspace state, and retained local
+  rollout outside Git. Publish only minimized allowlisted events, exact replies,
+  native usage, the public fixture, public-safe screenshots, and aggregate analysis.
+  Derive non-cached input as input including cached minus cached input. Do not
+  interpret any token total as subscription quota cost. Shared quota is not measured.
+
+visual_plan:
+  Capture every valid attempt in the native macOS Terminal immediately after the
+  native run. The public-safe rendering must show side, attempt, version, model,
+  effort, exact fixture state and hash, MCP state, exact hi, launch command, complete
+  reply, all native usage fields, exit status, and post-run workspace state. Crop out
+  only the Terminal title bar; do not blur, reconstruct, or edit pixels. Retain every
+  invalid capture and append a replacement attempt if necessary.
+
+attribution_rule:
+  Attribute an observed input-token delta to this exact rules-file fixture only if
+  post-run checks confirm common Agent/model/account/OS/prompt/sandbox/approval/MCP/
+  plugins/skills/hooks, base instructions, and non-fixture model-visible content.
+  The conclusion will not generalize to all AGENTS.md files or to backend billing.
+  Every attempt and anomaly is retained; no minimum or preferred reply is selected.
+

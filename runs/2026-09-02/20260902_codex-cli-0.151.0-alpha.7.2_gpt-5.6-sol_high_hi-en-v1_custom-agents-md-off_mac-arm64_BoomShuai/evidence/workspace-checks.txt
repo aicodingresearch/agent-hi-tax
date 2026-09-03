@@ -1,0 +1,48 @@
+T-32 workspace and launch checks — RULES OFF
+
+r2
+start_utc: 2026-09-02T10:41:19Z
+end_utc: 2026-09-02T10:41:45Z
+workspace: <LAB_ROOT>/t32-agents-md-off-BoomShuai-r2
+pre-request directory check: expected non-Git state verified by capture adapter
+rules fixture: absent before and after
+post-run top-level entries: none
+configured MCP servers enabled immediately before run: none
+whole local config byte hash changed during run: true
+fixed launch controls and model-visible non-fixture input: independently verified
+exit status: 0
+
+r3
+start_utc: 2026-09-02T11:26:16Z
+end_utc: 2026-09-02T11:26:23Z
+workspace: <LAB_ROOT>/t32-agents-md-off-BoomShuai-r3
+pre-request directory check: expected non-Git state verified by capture adapter
+rules fixture: absent before and after
+post-run top-level entries: none
+configured MCP servers enabled immediately before run: none
+whole local config byte hash changed during run: true
+fixed launch controls and model-visible non-fixture input: independently verified
+exit status: 0
+
+r4
+start_utc: 2026-09-02T12:35:14Z
+end_utc: 2026-09-02T12:35:29Z
+workspace: <LAB_ROOT>/t32-agents-md-off-BoomShuai-r4
+pre-request directory check: expected non-Git state verified by capture adapter
+rules fixture: absent before and after
+post-run top-level entries: none
+configured MCP servers enabled immediately before run: none
+whole local config byte hash changed during run: true
+fixed launch controls and model-visible non-fixture input: independently verified
+exit status: 0
+
+r1 (invalid pre-target parser attempt)
+start_utc: 2026-09-02T10:28:59Z
+end_utc: 2026-09-02T10:29:00Z
+workspace: <LAB_ROOT>/t32-agents-md-off-BoomShuai-r1
+pre-request directory check: empty and outside Git
+post-failure top-level entries: none
+native target event bytes: 0
+target model request sent: false
+exit status: 2
+classification: invalid local argument-parsing failure

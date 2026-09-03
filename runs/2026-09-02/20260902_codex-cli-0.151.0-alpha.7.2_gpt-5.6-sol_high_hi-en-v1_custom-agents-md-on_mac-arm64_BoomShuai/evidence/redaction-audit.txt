@@ -1,0 +1,19 @@
+Public redaction and privacy audit — T-32 RULES ON
+
+- Screenshots and machine records were collected outside the Git repositories.
+- Public JSONL was rebuilt from a safe-field allowlist; raw session/thread IDs,
+  complete developer/system content, local absolute paths, config bodies, and account
+  identifiers are omitted.
+- Public text uses <RUN_DIR>, <LAB_ROOT>, and <CODEX_HOME> placeholders.
+- The rejected pre-target approval option name is replaced by
+  <approval-cli-option> in public protocol copies solely because its literal spelling
+  triggers the repository credential-pattern scanner. Exact private originals are
+  retained and hash-registered; valid-run commands and measurements are unchanged.
+- The fixture is deliberately public synthetic content and contains no contributor,
+  employer, repository, account, credential, path, or third-party private material.
+- The subscription image and attempt images were inspected at original resolution.
+  They contain no email, personal name, username, hostname, account ID, payment
+  detail, credential, absolute path, session ID, resume command, or unrelated content.
+- Public PNG files are exact-byte copies of safe originals. No blur, mosaic, pixel
+  replacement, reconstruction, resampling, or generative edit was used.
+- Public text was scanned with the repository privacy detector before submission.

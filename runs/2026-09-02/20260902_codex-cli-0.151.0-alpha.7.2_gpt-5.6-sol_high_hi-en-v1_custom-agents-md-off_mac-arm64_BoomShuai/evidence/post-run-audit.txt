@@ -1,0 +1,48 @@
+T-32 post-run consistency and extraction audit — RULES OFF
+
+Three valid retained rollouts were inspected locally for this side: r2, r3, and r4.
+Public files contain only the safe fields listed in manifest.yaml.
+
+For each valid attempt on this side:
+- one session_meta record and one turn_context record;
+- exactly one target user message equal to UTF-8 bytes 68 69 (`hi`);
+- exactly one final assistant message and one final token-count record;
+- zero tool calls, zero approvals, and no hook model call;
+- exit status 0;
+- post-run workspace contained no entries;
+- exact fixture occurrence count in model-visible messages: 0;
+- all configured MCP servers were disabled immediately before launch.
+
+Cross-pair controls across all six valid attempts:
+- Agent/version/model/effort: Codex CLI 0.151.0-alpha.7.2 / gpt-5.6-sol / high;
+- base-instructions SHA-256: a91357a1cd2727a0be06d461248d6e3a7274746e38108f548a3adf2cc2430415;
+- normalized non-fixture developer/user role-content SHA-256: 5d4835ebc49f343dd58294d2c87cb014f7c51e29956cb2174ca75fa9c6db3e33;
+- preflight debug common-projection SHA-256: f0722794b99fa98b79aafd1540d31d9ef735ad4a7a1025c044cbaf0d21aca28d
+  (different evidence-record shape; equality was checked within that surface);
+- normalized ON fixture-wrapper SHA-256: bf3e29f7ffc8c73851a1200fe0b08c26ac6daeac6a5a18897db36f9d3abc0873;
+- sorted 202-skill inventory SHA-256: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2;
+- 11-plugin name inventory SHA-256: 4ee6398724971cc17419d15122b871a81a4d6916275ad607b7ee6b65c5cc6999;
+- prompt, account, OS, sandbox, approval policy, MCP state, plugins, skills,
+  global empty rules file, hook, fresh-session rule, and collection method were fixed.
+
+The complete private local-config byte hash changed during each target process.
+Per-launch controls and model-visible non-fixture inputs were independently verified;
+no claim is made that unrelated private config bytes stayed fixed.
+
+The intended variable was independently verified. RULES ON contained only the exact
+874-byte public fixture at workspace root, unchanged after every run, and the exact
+fixture appeared once in every retained model input. RULES OFF remained empty and
+the fixture appeared zero times. Removing only the fixture-bearing content item and
+normalizing equal-shaped workspace paths made the ordered role/content projection
+identical across all six runs.
+
+OFF input tokens were [20435, 20435, 20435]; ON input tokens were
+[20655, 20655, 20655]. Paired ON-minus-OFF deltas were [220, 220, 220].
+Cache-write input and reasoning output were zero throughout. Cache decomposition
+and output wording varied as preserved in the attempt records. Latency is descriptive.
+
+OFF-r2 recorded non-fatal model-list-refresh and WebSocket-connect diagnostics; OFF-r4 recorded a non-fatal model-list-refresh diagnostic. Both completed the target request, produced native usage, and exited 0.
+
+OFF-r1 is retained as an invalid pre-target parser failure with zero native event
+bytes. ON-r1 was not started. The approval-option spelling was amended before the
+first model request, and the complete valid pairs were preregistered as r2-r4.

@@ -1,0 +1,4 @@
+{"type":"session_context","timestamp":"2026-09-02T13:02:18.228Z","agent":"OpenAI Codex CLI","version":"0.151.0-alpha.7.2","model":"gpt-5.6-sol","effort":"high","rules_file_present":true,"rules_fixture_sha256":"f9a80f05c0b9e7981ccb512fb7f955a7d1c5760eddd7b5919ef3d5538919d2a8","rules_fixture_model_visible_occurrences":1,"all_configured_mcp_servers_disabled":true}
+{"type":"response_item","timestamp":"2026-09-02T13:02:24.047Z","role":"user","text":"hi"}
+{"type":"response_item","timestamp":"2026-09-02T13:02:26.276Z","role":"assistant","text":"Hi! How can I help?"}
+{"type":"event_msg","timestamp":"2026-09-02T13:02:26.328Z","usage":{"input_tokens":20655,"cached_input_tokens":11008,"cache_write_input_tokens":0,"output_tokens":11,"reasoning_output_tokens":0,"total_tokens":20666},"model_context_window":258400}

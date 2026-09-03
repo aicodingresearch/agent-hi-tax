@@ -8,9 +8,9 @@
 
 [返回项目首页](README.zh-CN.md) | [查看场景目录](runs/README.zh-CN.md) | [阅读贡献与口径规则](CONTRIBUTING.zh-CN.md)
 
-- 场景数：12
+- 场景数：17
 - Agent 产品数：5
-- 有效 attempts：36
+- 有效 attempts：60
 
 ## 阅读规则
 
@@ -35,6 +35,11 @@
 | [OpenAI Codex CLI 0.149.1](runs/2026-08-31/20260831_codex-cli_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_XiaoCooder/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Linux x86_64</sub> | 3 | 19,160 (17,609–19,160) | 19,173 (17,631–19,173) | 13 (13–22) | — | B · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0](runs/2026-08-31/20260831_codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_black-pwq/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Linux (WSL2) x86_64</sub> | 3 | 17,902 | 17,915 (17,915–17,916) | 13 (13–14) | 2.798 (2.629–4.082) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0](runs/2026-08-31/codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_leonadoor/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>官方订阅</sub> | as-used · fresh<br><sub>Windows 11 Professional x64</sub> | 3 | 16,055 | 16,068 (16,068–16,069) | 13 (13–14) | 9.333 (8.872–10.31) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>官方订阅</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,421 | 20,435 (20,434–20,435) | 14 (13–14) | 1.901 (1.668–2.408) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-off_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 3 | 20,435 | 20,449 (20,448–20,449) | 14 (13–14) | 2.343 (1.798–10.928) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-agents-md-on_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 3 | 20,655 | 20,666 | 11 | 2.229 (1.786–3.267) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-on_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro<br><sub>官方订阅</sub> | custom · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,435 | 20,449 (20,448–20,449) | 14 (13–14) | 2.332 (2.181–6.084) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_medium_hi-en-v1_as-used_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>medium</sub> | ChatGPT Pro 20x<br><sub>官方订阅</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,421 | 20,435 | 14 | 2.022 (1.611–3.761) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: not_measured</sub> |
 | [WorkBuddy 5.3.13](runs/2026-08-15/workbuddy-5.3.13_auto_craft_hi-en-v1_as-used_mac-arm64/README.md)<br><sub>2026-08-15</sub> | glm-5.2 (R1,R2); deepseek-v4-flash (R3)<br><sub>—</sub> | —<br><sub>官方产品</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 33,043 (32,119–33,193) | 33,479 (32,501–33,824) | 436 (382–631) | 8.47 (7.893–11.628) s<br><sub>事件时间戳</sub> | A · 公开视觉<br><sub>quota: per_attempt_native_credit_verified</sub> |
 
 ## 更新这个页面

@@ -1,0 +1,64 @@
+Agent Hi Tax local preregistration
+Created before the first target model request.
+
+created_at_utc: 2026-09-02T02:42:08Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/51
+task_id: T-01
+scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_BoomShuai
+agent: OpenAI Codex CLI
+agent_version: 0.151.0-alpha.7.2
+requested_model: gpt-5.6-sol
+requested_effort: high
+auth_channel: ChatGPT subscription-login
+subscription_plan: ChatGPT Pro
+usage_multiplier: 20x
+plan_evidence: pre-run public-safe screenshot showing Pro at USD 200/month; SHA-256 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+route: first-party-subscription
+os: macOS 26.6 (build 25G72)
+architecture: arm64
+locale: C.UTF-8
+timezone: Asia/Shanghai
+session_state: fresh
+workspace_type: three independent empty non-Git directories
+context_profile: as-used
+planned_repetitions: 3
+prompt_case: hi-en-v1
+prompt_bytes_hex: 68 69
+prompt_sha256: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+
+fixed_launch_command:
+  codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+
+fixed_harness_inventory:
+  global_AGENTS_md: present but empty; sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  global_config: present; private original remains outside Git; pre-run sha256 9bc1e3ec0d86d7c096b5ef526f62bd0ccf032085355cdf66da8b033543d61b66
+  enabled_mcp_servers: node_repl
+  disabled_mcp_servers: computer-use, cua_repl
+  enabled_plugins: codex-app-tools, sites, browser, chrome, computer-use, visualize, documents, pdf, spreadsheets, presentations, template-creator
+  available_skill_catalog_count: 202
+  available_skill_catalog_sha256: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+  hooks: one local notification hook configured; no model call expected
+  permission_mode_expected: workspace-write / never, to be confirmed in retained rollout
+
+paired_comparison:
+  sibling_draft_pr: https://github.com/aicodingresearch/agent-hi-tax/pull/50
+  sibling_effort: medium
+  intended_variable: reasoning effort medium to high
+  controls_intended_constant: agent version, model, account, OS, architecture, route, prompt, exec surface, workspace profile, sandbox, MCP, plugins, skills, AGENTS.md, and hook inventory
+  attribution_rule: claim an effort effect only if all post-run controls and inventory hashes match; otherwise record confounders
+
+measurement_plan:
+  Run r1, r2, and r3 sequentially. Create only the current attempt directory.
+  Confirm each directory is empty and not a Git repository before its request.
+  Start a fresh official codex exec --json session with the fixed launch command.
+  Send exactly one model message containing hi, save native event output and retained
+  rollout outside Git, and preserve a screenshot containing the launch command, hi,
+  full reply, and usage. Do not resume any attempt. Do not measure or attribute the
+  shared subscription quota.
+
+pre-run_diagnostics:
+  codex debug prompt-input was used in a separate empty diagnostic directory. It
+  sent no model request and left the target workspaces untouched. It confirmed the
+  same 202-name skill inventory and hash as the medium sibling. The account profile
+  screenshot containing identity and aggregate activity remains local-only and is
+  not part of this scenario's public evidence.

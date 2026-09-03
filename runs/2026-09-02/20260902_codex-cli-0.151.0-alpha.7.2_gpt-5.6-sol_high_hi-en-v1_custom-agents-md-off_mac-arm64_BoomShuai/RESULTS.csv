@@ -1,0 +1,4 @@
+attempt,status,started_at_utc,response_latency_ms,usage_source,input_tokens_including_cached,cached_input_tokens,non_cached_input_tokens,output_tokens,reasoning_output_tokens,context_total_tokens,cli_total_excluding_cached,cli_total_source,quota_attribution,response_text_sha256
+r2,valid,2026-09-02T10:41:31.014Z,10928,event-log,20435,11264,9171,14,0,20449,9185,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043
+r3,valid,2026-09-02T11:26:20.048Z,1798,event-log,20435,11008,9427,13,0,20448,9440,derived-from-event-log,not_measured,534c1f3f77ad57049da1dbc26fd87f1abfdcab2d8f8adbcb166b6d3a23a88212
+r4,valid,2026-09-02T12:35:24.261Z,2343,event-log,20435,11264,9171,14,0,20449,9185,derived-from-event-log,not_measured,9024cb7a5b7baab60c6512dcaf3a24adaceb3c4ae20867e90fbddb7bc1c44043

@@ -1,0 +1,24 @@
+Agent Hi Tax local preregistration — T-31 MCP-on side
+Created before the first target model request.
+
+created_at_utc: 2026-09-02T07:19:02Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/54
+task_id: T-31
+scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-on_mac-arm64_BoomShuai
+paired_scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-off_mac-arm64_BoomShuai
+pair_preregistration: pair-preregistration.txt
+
+planned_repetitions: 3
+session_state: fresh
+workspace_type: three independent empty non-Git directories
+context_profile: custom
+intended_pair_variable: node_repl MCP enabled
+effective_mcp_state: node_repl enabled; computer-use and cua_repl disabled
+registered_mcp_tools: 3 (js, js_add_node_module_dir, js_reset)
+registered_tools_canonical_sha256: 3ff64c325e18992b39da03e361b06ca830b26b4e8b0447f46d3f2d0f72c68ca6
+
+fixed_launch_command:
+  codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=true' --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+
+All common variables, controls, execution order, measurement rules, and attribution
+limits are fixed in the pair-level preregistration created at the same time.

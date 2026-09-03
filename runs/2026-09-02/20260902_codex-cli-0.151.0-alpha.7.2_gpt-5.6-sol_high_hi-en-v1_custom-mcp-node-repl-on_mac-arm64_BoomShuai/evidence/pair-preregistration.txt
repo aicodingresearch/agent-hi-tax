@@ -1,0 +1,77 @@
+Agent Hi Tax local preregistration — T-31 paired comparison
+Created before the first target model request.
+
+created_at_utc: 2026-09-02T07:19:02Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/54
+task_id: T-31
+contributor: @BoomShuai
+
+pair:
+  mcp_on_scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-on_mac-arm64_BoomShuai
+  mcp_off_scenario_id: 20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_custom-mcp-node-repl-off_mac-arm64_BoomShuai
+  intended_variable: node_repl MCP registration enabled versus disabled
+  execution_order: on-r1, off-r1, on-r2, off-r2, on-r3, off-r3
+  execution_mode: sequential; never parallel
+
+fixed_common_variables:
+  agent: OpenAI Codex CLI
+  agent_version: 0.151.0-alpha.7.2
+  requested_model: gpt-5.6-sol
+  requested_effort: high
+  auth_channel: ChatGPT subscription-login
+  subscription_plan: ChatGPT Pro
+  route: first-party-subscription / native protocol
+  os: macOS 26.6 (build 25G72)
+  architecture: arm64
+  locale: C.UTF-8
+  timezone: Asia/Shanghai
+  session_state: fresh
+  workspace_type: independent empty non-Git directory per attempt
+  context_profile: custom
+  planned_repetitions_per_side: 3
+  prompt_case: hi-en-v1
+  prompt_bytes_hex: 68 69
+  prompt_sha256: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+  sandbox: workspace-write
+  approval_policy: never
+
+fixed_harness_controls:
+  global_AGENTS_md: present but empty; sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  global_config_pre_run_sha256: f0ee697ff365e4dd7fb8c1c6760364c157af55e9ce62664266f6458bb3fc3c31
+  disabled_mcp_servers_both_sides: computer-use, cua_repl
+  enabled_plugins_both_sides: codex-app-tools, sites, browser, chrome, computer-use, visualize, documents, pdf, spreadsheets, presentations, template-creator
+  available_skill_catalog_count_both_sides: 202
+  available_skill_catalog_sha256_both_sides: e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+  hooks_both_sides: one local notification hook configured; no model call expected
+  normalized_role_content_prompt_input_sha256_both_sides: de090327ea6619dd48e84cf465e46ffe5627e9a15e361f4d4dba00032ee26f2e
+  prompt_input_normalization: replace the equal-shape diagnostic workspace path, project to ordered role/content objects, recursively sort JSON keys, compact with jq -Sc, retain final newline
+
+mcp_on_preflight:
+  launch_override: mcp_servers.node_repl.enabled=true
+  effective_state: enabled
+  protocol_version: 2025-06-18
+  registered_tool_count: 3
+  registered_tool_names: js, js_add_node_module_dir, js_reset
+  tools_canonical_sha256: 3ff64c325e18992b39da03e361b06ca830b26b4e8b0447f46d3f2d0f72c68ca6
+  schema_condition: satisfied; tools/list returned nonempty object input schemas
+
+mcp_off_preflight:
+  launch_override: mcp_servers.node_repl.enabled=false
+  effective_state: disabled
+
+fixed_launch_commands:
+  on: codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=true' --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+  off: codex exec --json --skip-git-repo-check --model "gpt-5.6-sol" --config 'model_reasoning_effort="high"' --config 'mcp_servers.node_repl.enabled=false' --sandbox workspace-write --cd "<RUN_DIR>" "hi"
+
+measurement_plan:
+  Preserve native exec JSONL, stderr, start/end timestamps, exit status, and the
+  retained local rollout outside Git. Publish only minimized sanitized events,
+  exact reply, native usage, and public-safe screenshots. Derive non-cached input
+  as input including cached minus cached input. Do not interpret any token total
+  as subscription quota cost. Shared quota is not measured.
+
+attribution_rule:
+  Attribute a token-footprint delta to MCP registration only if post-run checks
+  confirm common Agent/model/account/OS/prompt/sandbox/plugins/skills/rules/hooks,
+  normalized model-visible message input, and empty-workspace controls. Retain and
+  disclose every valid or failed attempt; do not cherry-pick outputs or minima.

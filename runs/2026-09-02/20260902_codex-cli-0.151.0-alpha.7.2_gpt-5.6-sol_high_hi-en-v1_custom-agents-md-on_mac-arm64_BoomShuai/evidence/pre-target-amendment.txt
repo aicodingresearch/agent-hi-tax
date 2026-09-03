@@ -1,0 +1,55 @@
+Public transcription note: the rejected pre-target approval option name is rendered as <approval-cli-option> because its literal spelling triggers the repository credential-pattern scanner. The private exact original is retained and hash-registered; no valid-run command or measurement value is changed.
+
+Agent Hi Tax T-32 preregistration amendment
+Created after a pre-target CLI parser failure and before the first model request.
+
+created_at_utc: 2026-09-02T10:32:26Z
+claim_issue: https://github.com/aicodingresearch/agent-hi-tax/issues/64
+
+retained_invalid_attempt:
+  side: rules-off
+  attempt: r1
+  phase: pre-target command parsing
+  cause: this CLI build rejected <approval-cli-option> when placed after the exec subcommand
+  exit_status: 2
+  native_event_bytes: 0
+  native_event_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stderr_bytes: 251
+  stderr_sha256: c206a405769cb087010d604fab55fd38b0612d2dfc6435797cfba6df5240b7e7
+  target_model_request_sent: false
+  workspace_entries_after: 0
+  screenshot: not captured because no target request, reply, or usage existed
+
+method_correction:
+  semantic_setting: approval policy remains never
+  old_form: <approval-cli-option> never after the exec subcommand
+  corrected_form: --config 'approval_policy="never"' after the exec subcommand
+  parser_preflight: corrected form accepted by codex exec --help before the next target request
+  all_other_launch_arguments: unchanged
+  original_capture_script_sha256: ba2a966012f7cccf87608a3cd193c1b65e796666954ce9a0678d250fca10b200
+  corrected_capture_script_sha256: d22aa4f101e1ae32315aa82f44c37d60f1997ef2479d3a142b5131a2becd41ee
+
+amended_valid_plan:
+  valid_attempt_ids_each_side: r2, r3, r4
+  execution_order: off-r2, on-r2, off-r3, on-r3, off-r4, on-r4
+  execution_mode: sequential; never parallel
+  on-r1: not started after its paired OFF-side pre-target failure
+  new_r4_workspaces: created before the next target request
+  rules_off_r4: empty, non-Git
+  rules_on_r4: contains only the exact preregistered AGENTS.md fixture
+
+unchanged_controls:
+  fixture_sha256: f9a80f05c0b9e7981ccb512fb7f955a7d1c5760eddd7b5919ef3d5538919d2a8
+  fixture_bytes: 874
+  model_effort: gpt-5.6-sol / high
+  session_state: fresh
+  MCP: all configured servers disabled
+  sandbox: workspace-write
+  approval_policy: never
+  prompt: exact UTF-8 bytes 68 69
+  visual_plan: capture every valid attempt immediately in the native Terminal
+
+No observation was removed or replaced. The invalid r1 records remain outside Git
+until the public package is built, where a minimized invalid result will disclose
+the failure. Pairwise analysis will use the preregistered complete valid pairs r2-r4.
+

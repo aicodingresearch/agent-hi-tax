@@ -1,0 +1,44 @@
+Visual evidence audit — T-32 RULES ON
+
+Scenario-level subscription image
+
+file: evidence/subscription.png
+dimensions: 3840 x 2100
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+visible support: ChatGPT Pro plan and USD 200/month
+privacy: no email, name, username, account ID, payment detail, host, path, or session ID is visible
+processing: exact-byte copy; no pixel editing
+
+Valid attempt images
+
+file: attempts/r2/response.png
+dimensions: 1694 x 720
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 12afbfbb31036bf902556c1718f91101e2062b528eadbec6eea28d2d9970346b
+visible support: side/attempt, CLI version, model, high effort, exact rules state/hash, all-MCP-disabled state, exact hi, normalized command, complete reply, all native usage fields, exit 0, and post-run workspace state
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+file: attempts/r3/response.png
+dimensions: 1692 x 692
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: 4fe6cbe00d7f16ba73c054566e282c56bb69e58d8c61fc2c3dc53e042d611c89
+visible support: side/attempt, CLI version, model, high effort, exact rules state/hash, all-MCP-disabled state, exact hi, normalized command, complete reply, all native usage fields, exit 0, and post-run workspace state
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+file: attempts/r4/response.png
+dimensions: 1706 x 698
+format/mode: PNG / RGBA
+metadata keys: dpi
+SHA-256: cb8684e86c958f0d2db3836ca8bdc2f8c593c3f8217a612c685d43abf648c849
+visible support: side/attempt, CLI version, model, high effort, exact rules state/hash, all-MCP-disabled state, exact hi, normalized command, complete reply, all native usage fields, exit 0, and post-run workspace state
+privacy: no title bar, account UI, email, personal name, username, hostname, absolute path, session ID, resume identifier, credential, or unrelated window is visible
+processing: exact-byte copy; no crop after receipt, redaction, blur, reconstruction, resampling, or generative editing
+
+Every attempt image was visually cross-checked against its retained native event stream.
+Only standard PNG metadata is present; no author, creator, description, source URL, or account metadata is embedded.

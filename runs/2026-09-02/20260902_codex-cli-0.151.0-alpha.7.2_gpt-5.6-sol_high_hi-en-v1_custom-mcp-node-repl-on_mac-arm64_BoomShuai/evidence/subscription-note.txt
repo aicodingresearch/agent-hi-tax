@@ -1,0 +1,10 @@
+Subscription evidence note
+
+The contributor supplied evidence/subscription.png on 2026-09-02 as same-day
+scenario-level account evidence. It visibly shows ChatGPT Pro at USD 200/month.
+The screenshot is a public-safe exact-byte copy and contains no account identifier.
+
+This verifies only the subscription plan displayed by the account settings page.
+It does not link any account identifier to a public run, expose the product-native
+usage multiplier, or provide before/after quota attribution. No attempt-level quota
+delta is reported.
