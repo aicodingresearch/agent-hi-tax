@@ -1,0 +1,52 @@
+Visual evidence audit
+
+Public subscription file: evidence/subscription.png
+Dimensions: 3840 x 2100 pixels
+Format: PNG, 8-bit RGBA, non-interlaced
+SHA-256: 843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+
+Visible support:
+- the usage-and-billing screen identifies the current plan as Pro;
+- the same plan card displays USD 200/month;
+- OpenAI's public pricing documentation viewed on 2026-09-02 maps that tier to
+  ChatGPT Pro 20x: https://learn.chatgpt.com/zh-Hans/docs/pricing
+
+Privacy review:
+- no email address, personal name, username, account ID, order ID, payment detail,
+  hostname, local path, session ID, resume identifier, or credential;
+- no embedded author, creator, download-source, or where-from metadata was found;
+- the screenshot also shows non-identifying quota balances and reset times;
+- no crop, pixel redaction, blur, reconstruction, or generative editing was applied.
+
+Supplemental attempt screenshots
+
+attempts/r4/response.png
+- dimensions: 1692 x 648 pixels
+- SHA-256: ab87bbad7d413d6ee2df223b66c30d0212ec32c83d673f9e3951d1d83a4e1f0d
+
+attempts/r5/response.png
+- dimensions: 1702 x 692 pixels
+- SHA-256: 4bb8ad1be0cf696010d569d2acb5fac0fdd2a0c86717ddd122045a7f4b960843
+
+attempts/r6/response.png
+- dimensions: 1692 x 666 pixels
+- SHA-256: dcec58b573fe9bfa0002dda3cc8aa9a2ce5aeb46ef2cf7caf3c533998c7ead73
+
+Visible support in each R4-R6 image:
+- Codex CLI version 0.151.0-alpha.7.2, gpt-5.6-sol, and high effort;
+- exact hi input, fresh-session and empty-workspace assertions, and fixed command;
+- complete assistant reply, native input/cache/output/reasoning usage, and exit 0.
+
+Attempt-image privacy and provenance review:
+- each public image was inspected at original size and cross-checked against the
+  corresponding retained raw exec event stream and rollout;
+- no title bar, account UI, email, personal name, username, hostname, absolute path,
+  session ID, resume identifier, credential, or unrelated private content is visible;
+- no embedded author, creator, download-source, or where-from metadata was found;
+- the public files are byte-identical to the contributor-supplied terminal-content
+  captures; no post-receipt crop, redaction, blur, reconstruction, resampling, or
+  generative editing was applied;
+- R4-R6 are explicitly supplemental post-registration attempts. R1-R3 remain valid
+  and retained without screenshots; no original attempt was replaced or excluded.
+- High R4 visibly records the alternate 13-token greeting, matching its sanitized
+  event record and result.yaml rather than being normalized to the other attempts.

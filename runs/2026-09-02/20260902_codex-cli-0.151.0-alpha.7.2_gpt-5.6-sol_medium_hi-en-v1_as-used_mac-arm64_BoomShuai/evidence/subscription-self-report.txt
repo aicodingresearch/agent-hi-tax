@@ -1,0 +1,21 @@
+Subscription evidence addendum
+
+Recorded after the three valid attempts and after opening the Draft PR.
+
+The contributor reported on 2026-09-02 that the tested account used the USD
+200/month ChatGPT subscription. OpenAI's public pricing documentation viewed on
+2026-09-02 identifies the USD 200/month tier as ChatGPT Pro 20x:
+https://learn.chatgpt.com/zh-Hans/docs/pricing
+
+After that initial self-report, the contributor supplied evidence/subscription.png.
+It visibly shows a Pro plan at USD 200/month. Visual and metadata inspection found
+no contributor identity, account identifier, payment detail, host identifier, local
+path, session identifier, embedded author tag, or source URL. The public file is an
+exact-byte copy of the supplied original, SHA-256:
+
+843e01353912b2700581d29a3eef6c4e9e87fe9b0227a08d4590e63a91b7d1e7
+
+The manifest therefore upgrades subscription_plan and usage_multiplier to verified.
+The screenshot was collected after the attempts and does not provide attempt-level
+visual evidence. No before/after subscription quota observation was made, and this
+addendum does not alter any native token or latency measurement.

@@ -1,0 +1,38 @@
+attempt: 0
+status: "cancelled"
+started_at_utc: "not_exposed"
+assistant_message_at_utc: "not_applicable"
+usage_recorded_at_utc: "not_applicable"
+response_latency_ms: "not_exposed"
+response_latency_display_seconds: "not_exposed"
+latency_method: "not_exposed"
+model_observed: "gpt-5.6-sol"
+effort_observed: "medium"
+usage:
+  source: "not_exposed"
+  provider_schema: "openai"
+response:
+  file: "not_applicable"
+  exact_text_sha256: "not_exposed"
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors:
+    - "The first local PTY launch was refused before session start because TERM=dumb."
+    - "A second interactive TUI probe reached the trust screen but did not render a usable post-trust interface; it was cancelled before any target model request."
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "not_measured"
+evidence:
+  response_screenshot: "not_provided"
+  usage_screenshot: "not_provided"
+  sanitized_events: "not_provided"
+  field_statuses:
+    prompt_and_response: "not_provided"
+    usage: "not_provided"
+    timing: "not_provided"
+    quota: "not_provided"
+deviations:
+  - "Cancelled before a valid assistant response and native usage record."
+  - "The valid-run surface was fixed to official codex exec --json before r1 and held constant thereafter."

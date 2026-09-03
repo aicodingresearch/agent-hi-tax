@@ -1,0 +1,60 @@
+Post-run consistency and extraction audit
+
+Private raw exec events and retained rollouts for R1-R6 were inspected
+locally. Public files contain only the minimal sanitized fields listed in
+manifest.yaml.
+
+For each of R1-R6:
+- session_meta records: 1
+- turn_context records: 1
+- exact target user messages equal to hi: 1
+- final assistant messages: 1
+- token-count records with native usage: 1
+- tool-call records: 0
+- client skill-context budget warnings: 1
+- top-level workspace entries after the run: 0
+- stderr bytes from codex exec: 0
+
+Observed model and effort were gpt-5.6-sol / high in all six runs. Effective turn
+context in all six recorded approval_policy=never, workspace-write sandbox,
+network_access=false, and default collaboration mode.
+
+Response and output variation:
+- R1-R3, R5, and R6: Hi! What would you like to work on?; output_tokens=14
+- R4: Hi! What are we working on today?; output_tokens=13
+- all six: input_tokens=20421, cached_input_tokens=11008,
+  cache_write_input_tokens=0, and reasoning_output_tokens=0
+
+The R4 greeting variation is a valid observation. It was not discarded or replaced,
+and it is not attributed to effort.
+
+Skill inventory:
+- unique full-name count in each retained rollout: 202
+- sorted-name inventory SHA-256 in each retained rollout:
+  e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+- each exec event stream contained the same one client warning, SHA-256:
+  d400fbb34939f9f6dad7105dbdafaf8de06cda2629eb60882e068511ed7149ca
+
+Model-visible input consistency:
+- base-instructions JSON.stringify SHA-256 in all twelve medium/high rollouts:
+  b3ec1058b94376d82caad2755cf34a6472030fa140ec7c9919b01e7266bd8039
+- ordered developer/user {role, content} JSON, after replacing only the equal-shape
+  attempt path with <RUN_DIR>, SHA-256 in all twelve rollouts:
+  00a214ac428ff7c94424e7f63dba0022d1ebc2e8be3369a212ac96cfb759a635
+
+Global config registry audit:
+- private whole-file SHA-256 before R1:
+  9bc1e3ec0d86d7c096b5ef526f62bd0ccf032085355cdf66da8b033543d61b66
+- private whole-file SHA-256 after R3:
+  e247378dd6f202b68ffaeebc249852d57dc5bce532d1a60f53fa0db2fe22711a
+- private whole-file SHA-256 after R6 and both supplemental blocks:
+  e09ece960100a441bc830ef39a38e5384c4ebcb03541d4aa0eebaf55538b1a8a
+- post-run structural inspection found one trusted-project entry for each of the
+  twelve equal-shape medium/high attempt paths;
+- the path registry change is disclosed because it changed the private file hash;
+  it did not change the recorded model-visible input hash, effective turn context,
+  skill inventory, plugin/MCP inventory, workspace contents, or native input-side
+  token fields.
+
+The global AGENTS.md remained empty with SHA-256
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.

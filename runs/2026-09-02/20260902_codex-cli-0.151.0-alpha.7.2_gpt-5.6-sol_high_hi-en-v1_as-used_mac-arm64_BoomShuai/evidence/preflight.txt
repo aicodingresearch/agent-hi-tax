@@ -1,0 +1,82 @@
+Agent Hi Tax preflight (public-safe transcription)
+
+captured_utc
+2026-09-02T02:40:10Z
+
+command -v codex
+<REDACTED_ABSOLUTE_PATH>/codex
+
+codex --version
+codex-cli 0.151.0-alpha.7.2
+
+codex login status
+Logged in using ChatGPT
+
+sw_vers
+ProductName: macOS
+ProductVersion: 26.6
+BuildVersion: 25G72
+
+uname -m
+arm64
+
+locale
+C.UTF-8
+
+timezone
+Asia/Shanghai
+
+prompt_case
+hi-en-v1; UTF-8 bytes 68 69; no leading or trailing whitespace
+sha256 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+
+route_and_subscription
+first-party-subscription via ChatGPT subscription-login
+ChatGPT Pro at USD 200/month is visible in the public subscription screenshot.
+OpenAI's public pricing documentation identifies the USD 200/month tier as Pro 20x.
+Shared quota was not measured or attributed.
+
+workspace_and_rules
+Each attempt used a newly created empty non-Git directory.
+The global AGENTS.md was present but empty.
+global AGENTS.md sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+mcp
+enabled: node_repl
+disabled: computer-use, cua_repl
+
+plugins_enabled
+codex-app-tools 0.1.3
+sites 0.1.46
+browser 26.825.51511
+chrome 26.825.51511
+computer-use 1.0.1000919
+visualize 1.0.23
+documents 26.826.12353
+pdf 26.826.12353
+spreadsheets 26.826.12353
+presentations 26.826.12353
+template-creator 26.826.12353
+
+skills_and_hooks
+The model-visible catalog contained 202 available skill names.
+sorted full-name inventory sha256 e87232c41965bb991979cf6c3d8078164d589b872d9b623dd7e1038f6a7935a2
+One local notification hook was configured. Retained rollout inspection found no
+tool or hook model calls.
+
+valid_run_surface
+Official Codex CLI non-interactive exec surface with JSONL event output.
+The same --json, --skip-git-repo-check, model, high effort, sandbox, and --cd
+arguments were held constant across R1-R3; only the equal-length attempt suffix
+changed. Effective approval policy was never and network access was false.
+
+diagnostics
+codex debug prompt-input ran in a separate empty diagnostic directory before R1.
+It sent no model request and confirmed the 202-name skill inventory and hash.
+
+config_registry_note
+The private global config hash before R1 was
+9bc1e3ec0d86d7c096b5ef526f62bd0ccf032085355cdf66da8b033543d61b66.
+Codex persisted one trusted-project registry entry for each newly used attempt path,
+so the whole-file hash changed after R3. These path-specific registry writes are
+documented in post-run-audit.txt; normalized model-visible input remained identical.

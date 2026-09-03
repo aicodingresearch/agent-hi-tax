@@ -1,0 +1,74 @@
+Agent Hi Tax preflight (public-safe transcription)
+
+command -v codex
+<REDACTED_ABSOLUTE_PATH>/codex
+
+codex --version
+codex-cli 0.151.0-alpha.7.2
+
+codex login status
+Logged in using ChatGPT
+
+sw_vers
+ProductName: macOS
+ProductVersion: 26.6
+BuildVersion: 25G72
+
+uname -m
+arm64
+
+locale
+C.UTF-8
+
+timezone
+Asia/Shanghai
+
+preflight_utc
+2026-09-02T01:49:14Z
+
+prompt_case
+hi-en-v1; UTF-8 bytes 68 69; no leading or trailing whitespace
+sha256 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
+
+workspace_and_rules
+Each target attempt uses a newly created empty non-Git directory.
+The global AGENTS.md is present but empty.
+global AGENTS.md sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+route_and_subscription
+first-party-subscription via ChatGPT subscription-login
+Exact subscription tier is not exposed by Codex CLI and is not inferred.
+Shared quota is not measured.
+
+mcp
+enabled: node_repl
+disabled: computer-use, cua_repl
+
+plugins_enabled
+codex-app-tools 0.1.3
+sites 0.1.46
+browser 26.825.51511
+chrome 26.825.51511
+computer-use 1.0.1000919
+visualize 1.0.23
+documents 26.826.12353
+pdf 26.826.12353
+spreadsheets 26.826.12353
+presentations 26.826.12353
+template-creator 26.826.12353
+
+skills_and_hooks
+The model-visible catalog contains 199 available skill names; a filtered public-safe
+name inventory is stored separately. One local notification hook is configured.
+No hook model call is expected; retained rollout inspection will be used after r3.
+
+diagnostics
+codex doctor reported that auth, config, MCP configuration, provider endpoints,
+Responses WebSocket, sandbox configuration, and installation were usable. A separate
+prompt-input diagnostic produced four model-visible message items and left its empty
+diagnostic directory unchanged. Neither diagnostic sent a target model request.
+
+valid-run_surface
+Official Codex CLI non-interactive exec surface with JSONL event output.
+The same --json, --skip-git-repo-check, model, effort, sandbox, and --cd arguments
+are held constant across r1-r3; only the attempt directory suffix changes.

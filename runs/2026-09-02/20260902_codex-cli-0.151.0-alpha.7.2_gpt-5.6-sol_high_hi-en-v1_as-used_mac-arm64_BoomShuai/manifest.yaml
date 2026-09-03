@@ -1,0 +1,235 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_BoomShuai"
+  captured_from_utc: "2026-09-02T02:43:10.829Z"
+  captured_to_utc: "2026-09-02T03:12:10.820Z"
+  planned_repetitions: 3
+  valid_repetitions: 6
+
+contributor:
+  github_handle: "@BoomShuai"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.151.0-alpha.7.2"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "macOS"
+  os_version: "26.6"
+  os_build: "25G72"
+  architecture: "arm64"
+  locale: "C.UTF-8"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Pro"
+  usage_multiplier: "20x"
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "local-session-transcript"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: true
+  instruction_files:
+    - "<CODEX_HOME>/AGENTS.md (empty; SHA-256 recorded in preflight)"
+  built_in_tools: "not_exposed"
+  plugins_enabled:
+    - "codex-app-tools"
+    - "sites"
+    - "browser"
+    - "chrome"
+    - "computer-use"
+    - "visualize"
+    - "documents"
+    - "pdf"
+    - "spreadsheets"
+    - "presentations"
+    - "template-creator"
+  skills_enabled:
+    - "202 model-visible skill entries; see evidence/available-skill-names.txt"
+  mcp_servers_enabled:
+    - "node_repl"
+  hooks_enabled:
+    - "user-configured local notification hook"
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "retained rollout inspection after all six attempts; each had one turn context and no tool calls"
+  network_mode: "restricted"
+  permission_mode: "never"
+  filesystem_profile_observed: "workspace-write with restricted filesystem profile"
+  settings_sources:
+    - "local Codex config"
+    - "CLI launch arguments"
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "command-argument"
+
+measurement:
+  primary_metric: "context_total_tokens"
+  secondary_metric: "cli_total_excluding_cached"
+  native_input_definition: "input_tokens_including_cached; cached_input_tokens is a subset"
+  total_input_definition: "input_tokens_including_cached"
+  context_total_definition: "input_tokens_including_cached + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "user-message event to assistant-message event"
+  transcript_extraction: "post-run extraction from local Codex rollout"
+  transcript_deduplication: "one exact hi target message and one final assistant message; token-count events are not summed"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [20421, 20421, 20421, 20421, 20421, 20421]
+    min: 20421
+    median: 20421
+    max: 20421
+    mean: 20421
+  cached_input_tokens:
+    values: [11008, 11008, 11008, 11008, 11008, 11008]
+    min: 11008
+    median: 11008
+    max: 11008
+    mean: 11008
+  non_cached_input_tokens:
+    values: [9413, 9413, 9413, 9413, 9413, 9413]
+    min: 9413
+    median: 9413
+    max: 9413
+    mean: 9413
+  output_tokens:
+    values: [14, 14, 14, 13, 14, 14]
+    min: 13
+    median: 14
+    max: 14
+    mean: 13.83
+  reasoning_output_tokens:
+    values: [0, 0, 0, 0, 0, 0]
+    min: 0
+    median: 0
+    max: 0
+    mean: 0
+  context_total_tokens:
+    values: [20435, 20435, 20435, 20434, 20435, 20435]
+    min: 20434
+    median: 20435
+    max: 20435
+    mean: 20434.83
+  cli_total_excluding_cached:
+    values: [9427, 9427, 9427, 9426, 9427, 9427]
+    min: 9426
+    median: 9427
+    max: 9427
+    mean: 9426.83
+  response_latency_ms:
+    values: [2342, 1863, 1671, 1668, 2408, 1940]
+    min: 1668
+    median: 1901.5
+    max: 2408
+    mean: 1982
+
+quota:
+  attribution: "not_measured"
+  notes: "No before/after quota observation was captured; session-native usage remains in scope."
+
+comparison:
+  status: "paired-controls-verified"
+  reference_scenario: "20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_medium_hi-en-v1_as-used_mac-arm64_BoomShuai"
+  reference_draft_pr: "https://github.com/aicodingresearch/agent-hi-tax/pull/50"
+  intended_variable: "reasoning effort: medium to high"
+  observed_token_delta: "zero for all input-side and reasoning fields across twelve attempts; one high attempt had a 13-token alternate greeting, while both six-run medians remained equal for output-dependent totals"
+  confounder: "sequential block order for latency; path-specific trusted-project registry entries accumulated but were not model-visible"
+  notes: "Agent/version/account/OS/route/prompt/workspace/sandbox/MCP/plugins/skills/AGENTS.md/hooks and normalized model-visible input were held constant. High R4's alternate greeting is retained as output variation and is not attributed to effort. The result supports a zero observed input-footprint delta for this exact hi case; it does not identify hidden compute, quota, latency, or other-prompt effects."
+
+evidence:
+  package_level: "A"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "verified"
+    route: "self_reported"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "self_reported"
+    mcp_plugins_and_hooks: "self_reported"
+  public_files:
+    - "launch-command.txt"
+    - "evidence/preregistration.txt"
+    - "evidence/preflight.txt"
+    - "evidence/workspace-checks.txt"
+    - "evidence/available-skill-names.txt"
+    - "evidence/post-run-audit.txt"
+    - "evidence/paired-comparison-audit.txt"
+    - "evidence/subscription.png"
+    - "evidence/visual-evidence-audit.txt"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/events.sanitized.jsonl"
+    - "attempts/r4/events.sanitized.jsonl"
+    - "attempts/r4/response.png"
+    - "attempts/r5/events.sanitized.jsonl"
+    - "attempts/r5/response.png"
+    - "attempts/r6/events.sanitized.jsonl"
+    - "attempts/r6/response.png"
+  withheld_private_evidence: false
+  redactions:
+    - "Removed complete developer/system context, local absolute paths, session identifiers, and account-related content from public event logs."
+    - "Raw exec JSONL, rollouts, and whole private config remained outside Git; public events retain only version, model, effort, target hi, final reply, usage, and timestamps."
+    - "The public subscription screenshot was visually and metadata audited; no identity, account, payment, host, path, session, author, or source identifier was present, so no pixel editing was applied."
+    - "The R4-R6 public terminal images are byte-identical to the contributor-supplied terminal-content captures. They contain no OS title bar, account UI, username, hostname, absolute path, or session identifier; no post-receipt pixel editing was applied."
+
+protocol:
+  deviations:
+    - "Each fresh exec launch persisted a path-specific trusted-project registry entry for its new empty directory, changing the private whole-config hash. Normalized model-visible inputs, effective turn context, and input-side token fields remained identical; the R4 output variation is separately retained and documented in evidence/post-run-audit.txt."
+    - "Each valid run emitted the same local skill-context budget warning because 202 skill entries exceeded the full-description budget; all skills remained visible with shortened descriptions."
+    - "The original R1-R3 block has no attempt screenshots. Three supplemental post-registration valid attempts, R4-R6, were added without replacing or excluding any original run; each has a public terminal screenshot and matching native event record."
+    - "Subscription quota before/after was not measured."
+  notes: "Six successful fresh-session runs were executed sequentially in separate empty non-Git directories with the same model, high effort, sandbox, prompt, and CLI arguments. R4-R6 are explicitly supplemental visual-evidence attempts."
