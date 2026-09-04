@@ -115,12 +115,12 @@ evidence:
   package_level: "C"
   visual_evidence_access: "not_provided"
   field_statuses:
-    agent_version: "self_reported"
+    agent_version: "verified"
     subscription_plan: "not_provided"
     usage_multiplier: "not_exposed"
-    route: "self_reported"
-    model: "not_exposed"
-    reasoning_effort: "self_reported"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "verified"
     harness: "self_reported"
     environment: "self_reported"
     workspace_and_session: "self_reported"
@@ -128,6 +128,7 @@ evidence:
     mcp_plugins_and_hooks: "not_exposed"
   public_files:
     - "evidence/preregistration.md"
+    - "evidence/preflight.redacted.png"
   withheld_private_evidence: false
   redactions: []
 
@@ -140,4 +141,3 @@ comparison:
 protocol:
   deviations: []
   notes: "Pre-registration only. No formal hi has been sent. The gateway protocol/base path and exact usage surface must be verified before R1. The credential is supplied privately through an environment variable and is not recorded."
-
