@@ -46,13 +46,14 @@
 评审 Agent：<产品，例如 Claude Code 或 Codex>
 评审模型：<准确模型，例如 claude-opus-5 或 gpt-5.6-sol>
 Reasoning effort：<准确 effort，例如 xhigh>
+Independence key：agent:<model-family>
 
 按本仓库的 Agent 评审与计分入口执行。评审当前精确 head；在发布本次
 独立 verdict 前，不得读取已有评审评论或其他 reviewer findings。只发布
 comment，不使用 GitHub 的正式 Approve 或 Request changes。
 ```
 
-Agent 产品、模型和 effort 必须描述真实运行环境。把它们写进 prompt 不会切换或配置运行时。用户填写的身份与产品实际暴露值冲突时，Agent 必须报告不一致并使用观察值；拿不到时写 `not exposed`，不得照抄或猜测。
+Agent 产品、模型、effort 和 Independence key 必须描述真实运行环境。把它们写进 prompt 不会切换或配置运行时。用户填写的身份与产品实际暴露值冲突时，Agent 必须报告不一致并使用观察值；拿不到时写 `not exposed`，不得照抄或猜测。
 
 合并后计分建议使用：
 
@@ -84,7 +85,7 @@ Agent 产品、模型和 effort 必须描述真实运行环境。把它们写进
 - **场景数据 PR**：新增或修改 `runs/` 下的场景包及其生成索引。使用数据评审维度和 L1/L2 流程；合并后可能符合计分条件。
 - **协议、治理、软件或文档 PR**：修改规则、prompts、templates、scripts、workflows、安全策略、流程文档或普通文档，但不交付场景。权威评审流程要求时走 L3，否则走维护者主导的代码/文档评审；通常不获得场景积分。
 - **积分台账 PR**：主要为一个已经合并的源 PR 新增或更正积分台账。由维护者评审台账操作本身；台账 PR 绝不因“登记积分”而再次获得积分。
-- **混合 PR**：同时交付以上多类内容。合并所有适用评审维度并采用风险最高的决策路径，不得默认为普通 L1 数据 PR。
+- **混合 PR**：同时交付以上多类内容。普通组合应合并所有适用评审维度并采用风险最高的决策路径；如果场景提交同时修改受保护协议路径，则不按混合 PR 直接评审，必须先把协议修改拆成单独 PR。
 
 场景数据 PR 的 L1 要求两份独立结构化评审，L2 按规则升级。L3 和维护者主导的非数据评审不会仅因它是 open PR 就自动获得“两份评审多数制”要求。所有类型仍分别受 GitHub 正式批准、CI 和 thread resolution 机械门禁约束。
 
@@ -98,9 +99,9 @@ Agent 按以下顺序执行：
    - 场景数据：脱敏、证据交叉一致、协议符合度、结论克制；
    - 协议/软件/文档：行为正确性、与权威规则的冲突、中英文和链接一致性、可执行性与安全边界；
    - 积分台账：源 PR 资格、重新计算的分值与不叠加依据、中英文 append-only 一致性和防重复、校验结果；
-   - 混合 PR：合并全部适用维度，并明确写出决策级别。
+   - 允许的混合 PR：合并全部适用维度，并明确写出决策级别；如果把场景数据与受保护协议路径混在一起，则停止并要求拆成两个 PR，不发布 verdict。
 4. 在 PR head 运行 `./scripts/verify-packages.sh`（若该 PR 改动了生成的索引，则运行 `./scripts/verify-all.sh`），再运行变更文件需要的专项检查。绿色检查只构成结构证据，绝不替代评审。
-5. 对发布证据的场景数据或混合 PR，按原尺寸逐张打开全部公开图片，再交叉核对图片、`RESULTS.csv`、`manifest.yaml`、attempt result、events 或 usage 记录、哈希、包 README 与 PR 声称。不得把数据包检查表强套在没有发布场景证据的 PR 上。
+5. 对发布证据的场景数据或允许的混合 PR，按原尺寸逐张打开全部公开图片，再交叉核对图片、`RESULTS.csv`、`manifest.yaml`、attempt result、events 或 usage 记录、哈希、包 README 与 PR 声称。不得把数据包检查表强套在没有发布场景证据的 PR 上。
 6. 按适用级别独立形成 verdict。AI 协助评审必须写出 Agent 产品、准确模型和 reasoning effort；没有暴露的值写 `not exposed`，不得猜测。
 7. 对符合条件的场景数据交付，在 `Advisory` 中给出任务、候选分值、叠加或不叠加判断及证据边界。仅协议、文档、软件或台账的 PR 写 `points: not_applicable`，除非已有明确计价任务。
 8. 发布适用的结构化 verdict comment。场景数据评审使用 `docs/review-process.zh-CN.md` 模板。非数据评审保留版本、verdict、head、reviewer、日期、findings、verification、`Could not verify` 和 Advisory 字段，但使用上述对应维度，不得在数据证据表里伪造 `n/a` 行。AI 评审只发 comment，绝不使用 GitHub 的正式 **Approve** 或 **Request changes**。

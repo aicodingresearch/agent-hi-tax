@@ -24,12 +24,13 @@ Review exists for the four things a script cannot do:
 | Level | When it applies | Configuration and decision |
 | --- | --- | --- |
 | **L1 — default** | Ordinary data PRs | At least 2 independent reviews (human, or human-directed with AI assistance), plus the maintainer's final read. Two APPROVE verdicts: the maintainer merges and awards points. Any REQUEST_CHANGES: the contributor revises and the reviewers look again. |
-| **L2 — escalated** | The two verdicts disagree; a ★★★ first sample of a new product with no reference package to compare against; any package that carries a `private_evidence` upgrade | A third review is added, from a different model family or a different person than the first two. Two out of three carries the decision, and the maintainer executes it. |
+| **L2 — escalated** | A ★★★ first sample of a new product with no reference package to compare against; any package that carries a `private_evidence` upgrade; or a disagreement that remains unresolved after the normal revision cycle | A maintainer explicitly selects the additional evidence or review needed. There is no automatic third-review majority. |
 | **L3 — maintainer only** | Changes to protocol files (`prompts/`, `templates/`, `scripts/`, and the rest of the paths called out in [CODEOWNERS](../.github/CODEOWNERS)); scoring disputes; suspected dishonesty; security incidents | No majority vote. The maintainer decides, and writes the decision back onto the relevant list under the existing meta-rule that pricing and normalization calls are recorded where they were made. |
 
 ## Decision rules
 
-- **"Disagreement" means the Verdict lines differ.** Two REQUEST_CHANGES verdicts that raise entirely different findings are not a disagreement — they are two lists, and the contributor is expected to address both.
+- **A REQUEST_CHANGES verdict blocks the current head rather than starting a majority vote.** The contributor revises, and the assigned reviewer checks the new head. A disagreement that remains after this normal revision cycle is escalated to a maintainer instead of automatically adding a third vote.
+- **A scenario submission must not also change protected protocol paths.** Split changes to `.github/`, `prompts/`, `scripts/`, `templates/`, `tests/`, the four review-process documents, contribution rules, licenses, or security policy into a separate PR. The automated status reports this split requirement and does not alter the owner review request.
 - **Every review names the head commit it was performed at.** After a force-push or a new commit, the affected reviews are redone against the new head; a verdict written against an older tree does not carry forward.
 - **A draft PR is not reviewed.** Review starts when the contributor marks the PR Ready for review, and an explicit request to review a draft does not change that — a verdict on a moving head is scheduled to be redone, and [CONTRIBUTING](../CONTRIBUTING.md#submitting-a-pull-request) puts the automated verification and the screenshot re-check before that transition, not after it. Looking at a draft and leaving ordinary comments is welcome; it is a pre-review consultation, not a verdict, and it counts toward no gate.
 - **Re-review appends; it does not rewrite verdict history.** After a contributor responds to a verdict by pushing commits or updating the PR description, leave the earlier verdict comment unchanged and post a new structured verdict after the contributor's update, even when the head SHA did not change. The follow-up links the earlier comment in `Supersedes`, states what was re-reviewed, and discloses that the preceding discussion was read. It replaces that reviewer's earlier verdict for the current gate, but it is still the same review and does not count as another independent L1 review. Editing an earlier verdict is limited to typo, link, or formatting corrections that do not change its decision or findings; an explicit maintainer-directed historical correction must retain an edit note.
@@ -37,9 +38,15 @@ Review exists for the four things a script cannot do:
 
 ## Reviewer independence
 
-The two reviews are dispatched in parallel and each reaches its own conclusion before publication. Not reading the reviews already posted on the PR is a hard requirement of [the verdict comment](#the-verdict-comment), not a courtesy: a review written after seeing another reviewer's findings must disclose that, and it does not count toward the two-independent-review minimum. An explicitly requested same-reviewer re-review may read that reviewer's earlier verdict and the contributor's subsequent response because it is validating a revision, not creating another independent review; the follow-up must disclose this boundary.
+The reviews are dispatched sequentially. The first reviewer publishes a current-head verdict before the second reviewer is selected. A first `REQUEST_CHANGES` stays with that reviewer until re-review; a privacy verdict stops the flow. Only a first `APPROVE` causes one reviewer from a different model family to be invited for the second review.
+
+Automation classifies review capacity on two separate axes: **Agent product** (for example, Codex, Claude Code, or WorkBuddy) and **model family** (for example, OpenAI/GPT, GLM, Claude, or Kimi). One GitHub account may advertise multiple product-family capabilities. Each assignment pins one exact capability pair in its trusted marker. For a new second assignment, account order in `second_reviewers` or `glm_first_fallback_reviewers` is strict priority order; within an account, capability list order is strict priority order. First-review assignments alone rotate across their pool by PR number. The second assignment still chooses a model family different from the accepted first verdict.
+
+Sequential dispatch does not relax independence. The second reviewer must work from the diff and files without reading the first reviewer's findings. A review written after seeing another reviewer's findings must disclose that, and it does not count toward the two-independent-review minimum. An explicitly requested same-reviewer re-review may read that reviewer's earlier verdict and the contributor's subsequent response because it is validating a revision, not creating another independent review; the follow-up must disclose this boundary.
 
 Reviews performed with AI assistance must come from **different model families**. Two reviews from the same family count as one, and the second one does not satisfy the L1 minimum.
+
+After two eligible current-head APPROVE verdicts, automation requests formal GitHub review from both non-author accounts in the Maintainer pool. Only one formal Maintainer approval is required. This is the final responsibility check, not a third independent structured review, so a Maintainer may also have performed one of the two structured reviews. The first eligible current-head approval completes that step; scheduled reconciliation removes only the other outstanding Maintainer request and preserves unrelated requests. A Maintainer who authored the PR is excluded from both the request and the decision. An approval that was valid for a trusted request remains valid if the Maintainer configuration later changes.
 
 ## The verdict comment
 
@@ -52,6 +59,7 @@ Reviewed under: docs/review-process.md @ <template commit>
 
 Reviewed at head: <commit SHA>
 Reviewer: <human name, or agent product + model + reasoning effort>
+Independence key: human:<github-login> | agent:<model-family>
 Date: <YYYY-MM-DD>
 Supersedes (re-review only): <prior verdict comment URL>
 
@@ -74,12 +82,13 @@ Advisory (optional): <task and point-value suggestions, for the maintainer's ref
 git log -1 --format=%h -- docs/review-process.md
 ```
 
-Five requirements are not optional:
+Six requirements are not optional:
 
 - **The first line of a review comment must declare the template version it was written under**, identified by that commit. Later revisions of this page are not retroactive: each review is judged against the version it declared, unless the maintainer explicitly asks for a re-review under the current one.
 - **Do not read any review already posted on the PR before publishing your own; reach your conclusion independently.** Review from the diff and the files themselves, without opening the PR conversation page. If you did see another reviewer's findings, disclose it in your comment: that review no longer counts toward the two-independent-review minimum and stands as reference only.
 - **A re-review posts a new comment and names the verdict it supersedes.** Do not edit an earlier verdict into a different decision after the contributor has acted on it. Keep the old comment as the visible reason for the contributor's response, and use the new comment as that reviewer's current verdict.
 - **A review performed with AI assistance must name the agent product, the exact model, and the reasoning effort.** When the product does not expose the model or the effort, write `not exposed` — do not guess. This is the same honesty rule the repository applies to evidence fields: an unavailable value is recorded as unavailable, never inferred.
+- **The independence key is stable across re-reviews and deliberately coarser than the exact Reviewer line.** A human-only review must use `human:<github-login>`. An AI-assisted review must use exactly one of `agent:openai-gpt`, `agent:anthropic-claude`, `agent:zhipu-glm`, `agent:google-gemini`, `agent:moonshot-kimi`, or `agent:not-exposed`; model versions and effort levels do not create new keys. `agent:not-exposed` records an honest limitation but cannot satisfy the automated two-family gate. Supporting another family requires updating both the canonical-key implementation and the reviewer capability configuration first. Two APPROVE verdicts count separately only when both the GitHub reviewers and their accepted model families differ.
 - **"Could not verify" is a required line.** State the boundary of what your review could actually establish. At minimum it includes the class of claim that only the contributor can check — for example, that the published images correspond to the private originals they were masked from, or that no additional attempts were discarded before submission. A review that silently omits its own limits overstates itself, which is the same failure this project asks contributors to avoid.
 
 ## The privacy exception

@@ -5,5 +5,41 @@
     "AHMEDALATTAR416",
     "black-pwq",
     "leonadoor"
+  ],
+  "reviewer_capabilities": {
+    "beautyarbutin": [
+      {"agent_product": "codex", "model_family": "openai-gpt"}
+    ],
+    "XiaoCooder": [
+      {"agent_product": "codex", "model_family": "openai-gpt"}
+    ],
+    "AHMEDALATTAR416": [
+      {"agent_product": "claude-code", "model_family": "zhipu-glm"}
+    ],
+    "black-pwq": [
+      {"agent_product": "codex", "model_family": "openai-gpt"}
+    ],
+    "leonadoor": [
+      {"agent_product": "codex", "model_family": "openai-gpt"}
+    ],
+    "keting": [
+      {"agent_product": "claude-code", "model_family": "anthropic-claude"},
+      {"agent_product": "workbuddy", "model_family": "moonshot-kimi"},
+      {"agent_product": "codex", "model_family": "openai-gpt"}
+    ]
+  },
+  "second_reviewers": [
+    "keting",
+    "AHMEDALATTAR416"
+  ],
+  "glm_first_fallback_reviewers": [
+    "beautyarbutin",
+    "XiaoCooder",
+    "black-pwq",
+    "leonadoor"
+  ],
+  "maintainers": [
+    "beautyarbutin",
+    "XiaoCooder"
   ]
 }
