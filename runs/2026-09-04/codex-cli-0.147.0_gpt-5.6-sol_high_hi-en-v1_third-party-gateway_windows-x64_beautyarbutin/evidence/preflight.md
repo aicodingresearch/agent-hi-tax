@@ -6,8 +6,7 @@
 - Provider: OpenAI — https://api.ikungod.online
 - Permissions: Workspace (Ask for approval)
 - Agents.md: none
-- Token usage: 0 total (0 input + 0 output)
-- Formal prompt: not sent
+- Token usage observed in the accidental probe: 13.2K total (13.1K input + 14 output)
+- Formal T-50 attempt: not started; this probe is invalid and excluded from R1-R3
 
-The public screenshot preflight.redacted.png masks the full local directory and session identifier with opaque rectangles. The original screenshot remains local and is not committed.
-
+The preflight workspace accidentally received hi. It is retained as invalid diagnostic evidence and is not counted as a formal attempt. The public screenshots mask the local directory and session identifier with opaque rectangles. The original screenshots remain local and are not committed.

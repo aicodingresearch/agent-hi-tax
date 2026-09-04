@@ -129,6 +129,8 @@ evidence:
   public_files:
     - "evidence/preregistration.md"
     - "evidence/preflight.redacted.png"
+    - "evidence/preflight.invalid-response.redacted.png"
+    - "evidence/preflight.invalid-status.redacted.png"
   withheld_private_evidence: false
   redactions: []
 
@@ -139,5 +141,6 @@ comparison:
   notes: "The intended variable is route (IKUN Family gateway versus official API). Codex CLI version, model label, effort, OS, prompt, fresh workspace, and execution order are frozen before the gateway runs."
 
 protocol:
-  deviations: []
-  notes: "Pre-registration only. No formal hi has been sent. The gateway protocol/base path and exact usage surface must be verified before R1. The credential is supplied privately through an environment variable and is not recorded."
+  deviations:
+    - "hi was sent accidentally in the preflight workspace; retained as invalid diagnostic evidence and excluded from R1-R3 aggregates"
+  notes: "The preflight workspace accidentally received hi and is retained as invalid diagnostic evidence; it is excluded from R1-R3 and from aggregate results. A fresh R1 workspace is required. The credential is supplied privately through an environment variable and is not recorded."

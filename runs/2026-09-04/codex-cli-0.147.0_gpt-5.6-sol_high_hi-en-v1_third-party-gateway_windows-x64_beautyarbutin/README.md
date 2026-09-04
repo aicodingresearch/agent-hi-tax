@@ -8,5 +8,4 @@
 - 标准输入：`hi-en-v1`，文件内容严格为两个 UTF-8 字节 `hi`
 - 计划运行：R1、R2、R3，均为独立 fresh 会话，先完成本中转站侧，再建立官方 API 侧；两侧不交替
 
-当前仅完成预注册，`valid_repetitions` 为 0，尚未发送正式 `hi`。网关兼容协议、实际观测模型、token usage 和额度字段须在 preflight/运行证据中如实记录；API key 只在本机私有环境变量中提供，绝不进入仓库。
-
+当前正式 R1-R3 尚未开始，valid_repetitions 仍为 0。此前误在 preflight 目录发送过一次 hi，该 probe 已标为 invalid，仅作诊断证据，不计入聚合结果。网关兼容协议、正式运行 token usage 和额度字段须在 R1-R3 证据中如实记录；API key 只在本机私有环境变量中提供，绝不进入仓库。
