@@ -55,13 +55,17 @@ GRAPHQL_URL = "https://api.github.com/graphql"
 # is deliberately not tied to the walk limit below.
 QUEUE_PAGE_SIZE = 100
 # Bound the pagination loop so a server that never clears `hasNextPage` cannot
-# spin forever. At 100 entries per page this covers 10,000 queue entries.
+# spin forever.
 MAX_QUEUE_PAGES = 100
-# A guard on the first-parent walk, not a claim about how long a merge group may
-# be. GitHub's documented "maximum entries to build" cap describes concurrent
-# builds, not the length of this chain, so this is set well above any queue this
-# repository will run and only exists to stop a malformed chain from looping.
-MAX_GROUP_ENTRIES = 1000
+# The walk costs one REST call per commit, and the Actions token is limited to
+# 1,000 REST requests per hour per repository. Each source pull request then
+# costs several more calls for its files, comments and reviews, so the walk
+# cannot be allowed to consume the whole budget on its own. GitHub will not
+# build a group larger than its "maximum entries" settings allow, which cap at
+# 100, so 100 is both the largest chain that can legitimately occur and a limit
+# that leaves room for the per-pull-request reads. The suggested ruleset keeps
+# "maximum entries to build" at 1, where a group costs roughly six requests.
+MAX_GROUP_ENTRIES = 100
 
 QUEUE_QUERY = """
 query($owner:String!,$name:String!,$branch:String!,$page:Int!,$after:String){

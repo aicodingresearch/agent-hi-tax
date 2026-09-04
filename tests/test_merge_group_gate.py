@@ -56,6 +56,24 @@ def page(nodes, has_next=False, cursor=None):
     }
 
 
+def paginating_queue(entries):
+    """A fake that slices by the `first`/`after` variables the caller sends.
+
+    Ignoring them would let a page size that GitHub rejects, or one too small to
+    reach the end of the queue, still pass every test.
+    """
+
+    def fake(token, query, variables):
+        size = variables["page"]
+        assert isinstance(size, int) and 1 <= size <= 100, f"illegal first: {size}"
+        start = 0 if variables["after"] is None else int(variables["after"])
+        chunk = entries[start : start + size]
+        has_next = start + size < len(entries)
+        return page(chunk, has_next, str(start + size) if has_next else None)
+
+    return fake
+
+
 def entry(position, group_sha, number, head, state="AWAITING_CHECKS"):
     return {
         "position": position,
@@ -133,6 +151,12 @@ class MergeGroupTopologyTests(unittest.TestCase):
         # queue settings allow up to 100 entries, so the walk must accept a
         # 100-commit chain and the constant must not be quietly lowered.
         self.assertGreaterEqual(MAX_GROUP_ENTRIES, 100)
+        # And an upper bound, for a different reason: every commit on the chain
+        # costs one REST call, the Actions token is limited to 1,000 REST
+        # requests per hour per repository, and each source pull request needs
+        # several more. GitHub will not build a group larger than 100 entries,
+        # so anything above that spends budget on a chain that cannot occur.
+        self.assertLessEqual(MAX_GROUP_ENTRIES, 100)
         commits, shas = self._chain(100)
         chain = group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
         self.assertEqual(len(chain), 100)
@@ -237,10 +261,14 @@ class SourcePullRequestTests(unittest.TestCase):
                 queue_entries_by_commit("token", "o/r", "main")
 
     def test_endless_pagination_fails_closed(self):
+        from merge_group_gate import MAX_QUEUE_PAGES
+
         endless = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c")
-        with patch("merge_group_gate.graphql", return_value=endless):
+        with patch("merge_group_gate.graphql", return_value=endless) as call:
             with self.assertRaises(GateFailure):
                 queue_entries_by_commit("token", "o/r", "main")
+        # Exactly the declared bound: neither an off-by-one nor a doubled loop.
+        self.assertEqual(call.call_count, MAX_QUEUE_PAGES)
 
     def test_page_size_is_sent_as_a_query_variable(self):
         from merge_group_gate import QUEUE_PAGE_SIZE
@@ -252,15 +280,43 @@ class SourcePullRequestTests(unittest.TestCase):
             queue_entries_by_commit("token", "o/r", "main")
         self.assertEqual(call.call_args_list[0].args[2]["page"], QUEUE_PAGE_SIZE)
 
-    def test_pagination_can_reach_the_largest_queue_github_allows(self):
-        from merge_group_gate import MAX_QUEUE_PAGES, QUEUE_PAGE_SIZE
+    def test_page_size_stays_inside_the_graphql_contract(self):
+        from merge_group_gate import QUEUE_PAGE_SIZE
 
-        # Page size no longer affects the resulting map, but the loop bound
-        # does: at most `QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES` entries can be read
-        # before the walk gives up, so that product must cover any queue GitHub
-        # will build. Shrinking either constant alone must not silently make a
-        # legal queue unreadable.
-        self.assertGreaterEqual(QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES, 100)
+        # GraphQL rejects `first` outside 1..100, so a page size beyond that
+        # would fail against real GitHub while every mock happily accepted it.
+        self.assertGreaterEqual(QUEUE_PAGE_SIZE, 1)
+        self.assertLessEqual(QUEUE_PAGE_SIZE, 100)
+
+    def test_pagination_can_reach_the_longest_group_the_walk_allows(self):
+        from merge_group_gate import (
+            MAX_GROUP_ENTRIES,
+            MAX_QUEUE_PAGES,
+            QUEUE_PAGE_SIZE,
+        )
+
+        # At most `QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES` entries can be read before
+        # the loop gives up. That has to cover every commit the walk is willing
+        # to accept, otherwise a group the walk considers legal could still be
+        # unmappable.
+        self.assertGreaterEqual(QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES, MAX_GROUP_ENTRIES)
+
+    def test_a_full_length_queue_is_read_with_the_real_page_size(self):
+        from merge_group_gate import MAX_GROUP_ENTRIES
+
+        entries = [
+            entry(index, f"{index:040x}", index, f"{index + 900:040x}")
+            for index in range(1, MAX_GROUP_ENTRIES + 1)
+        ]
+        with patch(
+            "merge_group_gate.graphql", side_effect=paginating_queue(entries)
+        ) as call:
+            mapping = queue_entries_by_commit("token", "o/r", "main")
+        self.assertEqual(len(mapping), MAX_GROUP_ENTRIES)
+        # Reading the longest legal queue must stay cheap. A page size small
+        # enough to need a request per entry would satisfy every correctness
+        # assertion while spending a hundred round trips on one gate run.
+        self.assertLessEqual(call.call_count, 2)
 
     def test_unreadable_merge_queue_fails_closed(self):
         with patch(
@@ -346,6 +402,21 @@ class EvaluatePullTests(unittest.TestCase):
         ok, reason = evaluate_pull(client, self.config, client.value)
         self.assertTrue(ok, reason)
         self.assertEqual(client.statuses, [])
+
+    def test_evaluate_pull_calls_the_shared_maintainer_helper(self):
+        # Identity of the imported name is not enough: production code could
+        # keep the import for the identity assertion and call a local copy.
+        # Patching the name the module actually resolves at call time pins the
+        # call site itself.
+        client = self.two_approvals()
+        client.reviews_data.append(approved_maintainer_review())
+        with patch(
+            "merge_group_gate.maintainer_approved", return_value=False
+        ) as shared:
+            ok, reason = evaluate_pull(client, self.config, client.value)
+        shared.assert_called_once()
+        self.assertFalse(ok)
+        self.assertIn("maintainer", reason)
 
     def test_missing_maintainer_approval_fails(self):
         client = self.two_approvals()
