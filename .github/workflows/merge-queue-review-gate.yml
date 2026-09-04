@@ -1,0 +1,71 @@
+name: Merge queue review gate
+
+# `review-gate` is reported on a pull request as a commit status by
+# `scenario_review_flow.py`. A merge group is a different SHA that nothing else
+# reports on, so this workflow produces the same check name for the merge group
+# and nothing else. Both producers are required: GitHub refuses to enqueue a
+# pull request whose required check has never reported on the pull request
+# itself, and it refuses to merge a group whose required check never reports on
+# the group.
+#
+# The job name below is the required status check context. Keep it exactly
+# `review-gate`, and keep this workflow limited to `merge_group`: a job of the
+# same name that is skipped on ordinary pull requests would report a second,
+# conflicting `review-gate` conclusion on the pull request head.
+
+on:
+  merge_group:
+    types:
+      - checks_requested
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: merge-queue-review-gate-${{ github.event.merge_group.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  review-gate:
+    name: review-gate
+    runs-on: ubuntu-latest
+    # The request budget bounds how many GitHub calls a run may make, but each
+    # of those may wait out a 30 second timeout, so a pathological run could sit
+    # on a runner for over an hour and hold the queue open. A real run costs a
+    # handful of requests and finishes in seconds.
+    timeout-minutes: 20
+    steps:
+      # Check out the base branch so the evaluator, its configuration and the
+      # verdict rules all come from `main` rather than from the code under
+      # review.
+      #
+      # Scope of that guarantee: it pins the *scripts* this job runs. It does
+      # not pin this workflow file. GitHub runs the version of a workflow that
+      # is present at the ref associated with the triggering event, and for a
+      # `merge_group` event that ref is the merge group itself, which contains
+      # the queued pull requests. A pull request that edits this file therefore
+      # defines the job that is supposed to gate it.
+      #
+      # The scenario/protocol split rule blocks that for scenario submissions,
+      # since it fails any scenario pull request touching `.github/`. It does
+      # not cover a workflow-only pull request. CODEOWNERS maps `/.github/` to
+      # @keting, but that is inert while the ruleset keeps
+      # `require_code_owner_review: false`.
+      #
+      # Hard precondition, not a nice-to-have: before `review-gate` is added to
+      # required status checks, either enable `require_code_owner_review` so
+      # every change to this file needs owner approval, or move the gate to an
+      # external required workflow that a pull request cannot redefine.
+      - name: Check out trusted review automation
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+
+      - name: Evaluate every source pull request in the merge group
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MERGE_GROUP_HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+          MERGE_GROUP_BASE_REF: ${{ github.event.merge_group.base_ref }}
+        run: python3 scripts/merge_group_gate.py
