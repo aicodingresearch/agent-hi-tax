@@ -29,16 +29,16 @@
 
 ## 判定细则
 
-- **REQUEST_CHANGES 会阻止当前 head，不启动多数表决。** 贡献者修订后，由被分配的 Reviewer 检查新 head；正常修订周期后仍无法解决的分歧升级给 Maintainer，不自动追加第三票。
+- **REQUEST_CHANGES 会继续阻止流程，不启动多数表决。** 它不会因为 head 变化而消失。贡献者修订后，由被分配的 Reviewer 检查发生变化的场景内容；正常修订周期后仍无法解决的分歧升级给 Maintainer，不自动追加第三票。
 - **场景提交不得同时修改受保护的协议路径。** 对 `.github/`、`prompts/`、`scripts/`、`templates/`、`tests/`、四份评审流程文档、贡献规则、许可证或安全策略的修改必须拆成单独 PR。自动状态会明确要求拆分，并保留用户的 owner Review Request。
-- **每份评审都要写明所针对的 head commit。** force-push 或追加提交之后，受影响的评审针对新的 head 重做；针对旧树写下的判定不自动延续。
-- **draft PR 不评审。** 评审从贡献者把 PR 转为 Ready for review 那一刻开始；明确要求评审一个 draft 也不改变这一点——针对移动中的 head 写下的判定注定要重做，而[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)把自动核验和逐张复看截图放在这次状态切换之前，而不是之后。看 draft 并留下普通评论当然欢迎：那是评审前的沟通，不是 verdict，不计入任何门禁。
+- **每份评审都要写明所针对的 head commit，但 APPROVE 跟随实际评过的场景内容。** head 变化后，自动化比较每个已提交场景包的 Git tree；只有这些目录逐字节不变时，旧 APPROVE 才自动沿用，例如仅同步 `main`。可信 Bot 会记录新旧 head 的沿用标记，但不要求 Reviewer 再操作。场景包内任一文件变化仍须复审；REQUEST_CHANGES 和隐私 verdict 则持续可见，直到后续有效 verdict 明确取代。
+- **draft PR 不评审。** 评审从贡献者把 PR 转为 Ready for review 那一刻开始；明确要求评审一个 draft 也不改变这一点。[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)把自动核验和逐张复看截图放在这次状态切换之前；提前评审等于把精力花在贡献者尚未完成的场景包上。看 draft 并留下普通评论当然欢迎：那是评审前的沟通，不是 verdict，不计入任何门禁。
 - **复审采用追加评论，不改写 verdict 历史。** 贡献者针对 verdict 推送 commit 或更新 PR 描述后，旧 verdict comment 保持不变；评审者在贡献者更新之后另发一条新的结构化 verdict，即使 head SHA 没有变化也一样。新评论在 `Supersedes` 中链接旧评论，说明复核了什么，并披露已经读过前序讨论。门禁以这条新评论作为该 reviewer 的当前 verdict，但它仍是同一份评审，不得重复计入 L1 独立评审数。旧 verdict 只允许修正不改变结论或 findings 的错字、链接或格式；维护者明确要求修正历史记录时，必须保留编辑说明。
 - **目标响应时间约为 3 个工作日**，与 [SECURITY.md](../SECURITY.zh-CN.md) 里的响应窗口一致。
 
 ## 评审的独立性
 
-两份评审改为顺序派发。第一名 Reviewer 先发布当前 head 的 verdict，再决定是否邀请第二人。首评为 `REQUEST_CHANGES` 时仍由原 Reviewer 跟进复审；首评为隐私 verdict 时停止流程；只有首评为 `APPROVE`，才邀请一名不同模型家族的第二 Reviewer。
+两份评审改为顺序派发。第一名 Reviewer 先对已提交的场景内容发布 verdict，再决定是否邀请第二人。首评为 `REQUEST_CHANGES` 时仍由原 Reviewer 跟进复审；首评为隐私 verdict 时停止流程；只有首评为 `APPROVE`（包括场景包内容未变时由可信 Bot 记录的沿用），才邀请一名不同模型家族的第二 Reviewer。
 
 自动化按两个独立维度登记评审能力：**Agent 产品**（例如 Codex、Claude Code、WorkBuddy）和**模型家族**（例如 OpenAI/GPT、GLM、Claude、Kimi）。同一个 GitHub 账号可以登记多个“产品 + 模型家族”能力组合。每次分配都会在可信 marker 中固定本轮准确的能力组合。新二评分配严格按 `second_reviewers` 或 `glm_first_fallback_reviewers` 中的账号顺序选择；同一账号内再严格按 capability 列表顺序选择。只有首评池按 PR 编号轮转。二评仍必须选择与已接受首评不同的模型家族。
 
@@ -46,7 +46,7 @@
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。
 
-当前 head 获得两份合格的 APPROVE verdict 后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审。终审只要求其中一份正式 Maintainer Approve；这是最终责任确认，不是第三份独立结构化评审，因此 Maintainer 也可以是前两名结构化 Reviewer 之一。第一名合格 Maintainer 批准当前 head 后，这一步即完成。定时归约只撤销另一名 Maintainer 尚未完成的 Review Request，并保留无关请求。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。受信任请求下原本有效的批准，不会因之后的 Maintainer 配置变更而失效。
+两份合格的 APPROVE verdict 覆盖当前场景内容后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审。终审只要求其中一份正式 Maintainer Approve；这是最终责任确认，不是第三份独立结构化评审，因此 Maintainer 也可以是前两名结构化 Reviewer 之一。第一名合格 Maintainer 正式批准当前 head 后，这一步即完成。定时归约只撤销另一名 Maintainer 尚未完成的 Review Request，并保留无关请求。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。受信任请求下原本有效的批准，不会因之后的 Maintainer 配置变更而失效。
 
 ## 意见模板
 

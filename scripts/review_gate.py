@@ -179,8 +179,11 @@ def evaluate_review_gate(
     records: Iterable[dict[str, Any]],
     current_head: str,
     expected_reviewers: Iterable[str] | None = None,
+    carried_verdicts: Iterable[ParsedVerdict] = (),
 ) -> dict[str, Any]:
     latest = current_verdicts(records, current_head)
+    for verdict in carried_verdicts:
+        latest.setdefault(verdict.commenter, verdict)
     if expected_reviewers is not None:
         allowed = {login.lower() for login in expected_reviewers}
         latest = {login: verdict for login, verdict in latest.items() if login in allowed}

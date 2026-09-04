@@ -88,6 +88,39 @@ class ReviewNotificationTests(unittest.TestCase):
         )
         self.assertFalse(has_completed_verdict(assigned, HEAD, [review], []))
 
+    def test_trusted_carried_approval_completes_current_assignment(self):
+        assigned = Assignment("black-pwq", NOW - timedelta(hours=30), HEAD)
+        carried = comment(
+            " ".join(
+                [
+                    "<!-- scenario-review-carried:black-pwq",
+                    "stage:first",
+                    f"reviewed-head:{'b' * 40}",
+                    f"head:{HEAD}",
+                    "verdict:42 -->",
+                ]
+            ),
+            hours_ago=20,
+        )
+        self.assertTrue(has_completed_verdict(assigned, HEAD, [carried], []))
+
+    def test_external_carried_marker_does_not_suppress_watchdog(self):
+        assigned = Assignment("black-pwq", NOW - timedelta(hours=30), HEAD)
+        carried = comment(
+            " ".join(
+                [
+                    "<!-- scenario-review-carried:black-pwq",
+                    "stage:first",
+                    f"reviewed-head:{'b' * 40}",
+                    f"head:{HEAD}",
+                    "verdict:42 -->",
+                ]
+            ),
+            login="external-author",
+            hours_ago=20,
+        )
+        self.assertFalse(has_completed_verdict(assigned, HEAD, [carried], []))
+
     def test_unassigned_pull_alerts_after_threshold(self):
         alert = classify_watchdog_alert(
             pull(), [], [], [], NOW, timedelta(hours=24)

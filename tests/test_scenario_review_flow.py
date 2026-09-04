@@ -151,6 +151,8 @@ class FakeClient:
         self.scenario = True
         self.protocol_change = False
         self.fail_files = False
+        self.fail_trees = False
+        self.tree_shas = {HEAD: "scenario-tree-v1"}
 
     def paginate(self, path):
         if path.startswith(f"/pulls/{self.value['number']}/files"):
@@ -168,6 +170,20 @@ class FakeClient:
         raise AssertionError(path)
 
     def request(self, path, method="GET", payload=None):
+        if path.startswith("/git/trees/") and path.endswith("?recursive=1"):
+            if self.fail_trees:
+                raise RuntimeError("tree API unavailable")
+            head = path.removeprefix("/git/trees/").removesuffix("?recursive=1")
+            return {
+                "truncated": False,
+                "tree": [
+                    {
+                        "path": "runs/2026-09-03/example",
+                        "type": "tree",
+                        "sha": self.tree_shas.get(head, f"scenario-tree-{head}"),
+                    }
+                ],
+            }
         if path.startswith("/contents/.github/scenario-reviewers.json"):
             raw = json.dumps(self.config).encode("utf-8")
             return {
@@ -668,6 +684,188 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertEqual(first.reviewer, original.reviewer)
         self.assertIn("Scenario re-review requested", client.comments_data[-1]["body"])
         self.assertIn("your own prior verdict", client.comments_data[-1]["body"])
+
+    def test_approved_first_review_is_carried_when_scenario_content_is_unchanged(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        new_head = "c" * 40
+        client.value["head"]["sha"] = new_head
+        client.tree_shas[new_head] = client.tree_shas[HEAD]
+        client.comment_time = "2026-09-03T10:00:00Z"
+
+        self.assertEqual(process_pull(client, client.value), "1")
+
+        carried = [
+            item["body"]
+            for item in client.comments_data
+            if "scenario-review-carried:beautyarbutin" in item["body"]
+        ]
+        self.assertEqual(len(carried), 1)
+        self.assertIn(f"reviewed-head:{HEAD} head:{new_head}", carried[0])
+        self.assertIn("No reviewer action is required", carried[0])
+        self.assertNotIn("@beautyarbutin", carried[0])
+        self.assertFalse(
+            any("Scenario re-review requested" in item["body"] for item in client.comments_data)
+        )
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", new_head
+        )
+        self.assertEqual(second.reviewer, "keting")
+        self.assertEqual(client.requested, ["keting"])
+
+    def test_existing_re_review_request_is_retired_when_old_approval_still_covers_content(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        new_head = "c" * 40
+        client.value["head"]["sha"] = new_head
+        client.comment_time = "2026-09-03T10:00:00Z"
+        process_pull(client, client.value)
+        self.assertIn("Scenario re-review requested", client.comments_data[-1]["body"])
+
+        client.tree_shas[new_head] = client.tree_shas[HEAD]
+        client.comment_time = "2026-09-03T11:00:00Z"
+        self.assertEqual(process_pull(client, client.value), "1")
+
+        self.assertEqual(client.requested, ["keting"])
+        self.assertEqual(
+            sum(
+                "scenario-review-carried:beautyarbutin" in item["body"]
+                for item in client.comments_data
+            ),
+            1,
+        )
+
+    def test_approval_requires_re_review_when_scenario_content_changes(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.value["head"]["sha"] = "c" * 40
+        client.comment_time = "2026-09-03T10:00:00Z"
+
+        process_pull(client, client.value)
+
+        self.assertIn("Scenario re-review requested", client.comments_data[-1]["body"])
+        self.assertEqual(client.requested, ["beautyarbutin"])
+        self.assertFalse(
+            any("scenario-review-carried:" in item["body"] for item in client.comments_data)
+        )
+
+    def test_two_approvals_are_carried_to_unchanged_scenario_content(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        process_pull(client, client.value)
+        client.add_verdict(
+            "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
+        )
+        process_pull(client, client.value)
+
+        new_head = "c" * 40
+        client.value["head"]["sha"] = new_head
+        client.tree_shas[new_head] = client.tree_shas[HEAD]
+        client.comment_time = "2026-09-03T11:00:00Z"
+        process_pull(client, client.value)
+
+        carried = [
+            item for item in client.comments_data if "scenario-review-carried:" in item["body"]
+        ]
+        self.assertEqual(len(carried), 2)
+        self.assertEqual(client.requested, ["beautyarbutin", "XiaoCooder"])
+        self.assertEqual(client.statuses[-1]["state"], "success")
+        self.assertIn("current scenario content", client.statuses[-1]["description"])
+
+        before = len(client.comments_data)
+        process_pull(client, client.value)
+        self.assertEqual(len(client.comments_data), before)
+
+    def test_privacy_verdict_remains_visible_after_head_changes(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict(
+            "beautyarbutin", "openai-gpt", "PRIVACY-CONCERN-RAISED-PRIVATELY"
+        )
+        process_pull(client, client.value)
+        client.value["head"]["sha"] = "c" * 40
+        client.comment_time = "2026-09-03T10:00:00Z"
+
+        process_pull(client, client.value)
+
+        self.assertEqual(client.requested, [])
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertIn("remains unresolved", client.statuses[-1]["description"])
+        self.assertIsNone(
+            latest_assignment(
+                assignment_records(client.comments_data), "first", "c" * 40
+            )
+        )
+
+    def test_legacy_assignment_privacy_verdict_remains_visible_after_head_changes(self):
+        client = FakeClient(pull(number=1))
+        client.comments_data.append(
+            {
+                "id": 1,
+                "created_at": NOW,
+                "user": {"login": "keting"},
+                "body": "<!-- scenario-review-assignment:black-pwq -->",
+            }
+        )
+        client.next_comment = 2
+        client.add_verdict(
+            "black-pwq", "openai-gpt", "PRIVACY-CONCERN-RAISED-PRIVATELY"
+        )
+        client.value["head"]["sha"] = "c" * 40
+
+        process_pull(client, client.value)
+
+        self.assertEqual(client.requested, [])
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertIn("remains unresolved", client.statuses[-1]["description"])
+
+    def test_legacy_assignment_approval_can_be_carried_from_declared_head(self):
+        client = FakeClient(pull(number=1))
+        client.comments_data.append(
+            {
+                "id": 1,
+                "created_at": NOW,
+                "user": {"login": "keting"},
+                "body": "<!-- scenario-review-assignment:beautyarbutin -->",
+            }
+        )
+        client.next_comment = 2
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        new_head = "c" * 40
+        client.value["head"]["sha"] = new_head
+        client.tree_shas[new_head] = client.tree_shas[HEAD]
+        client.comment_time = "2026-09-03T10:00:00Z"
+
+        self.assertEqual(process_pull(client, client.value), "1")
+
+        self.assertTrue(
+            any(
+                f"reviewed-head:{HEAD} head:{new_head}" in item["body"]
+                for item in client.comments_data
+            )
+        )
+        self.assertEqual(client.requested, ["keting"])
+
+    def test_tree_lookup_failure_does_not_issue_a_re_review_request(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.value["head"]["sha"] = "c" * 40
+        client.fail_trees = True
+
+        with self.assertRaisesRegex(RuntimeError, "tree API unavailable"):
+            process_pull(client, client.value)
+
+        self.assertEqual(client.requested, ["beautyarbutin"])
+        self.assertIsNone(
+            latest_assignment(
+                assignment_records(client.comments_data), "first", "c" * 40
+            )
+        )
 
     def test_privacy_verdict_stops_flow_and_clears_request(self):
         client = FakeClient(pull(number=1))

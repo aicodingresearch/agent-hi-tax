@@ -42,6 +42,10 @@ CAPABILITY_RE = re.compile(
     re.IGNORECASE,
 )
 VERDICT_HEADING_RE = re.compile(r"^## Review verdict:", re.MULTILINE)
+REVIEWED_HEAD_RE = re.compile(
+    r"^Reviewed at head:[ \t]*`?([0-9a-f]{7,40})`?[ \t]*$",
+    re.IGNORECASE | re.MULTILINE,
+)
 MAINTAINER_RE = re.compile(
     r"<!--\s*scenario-maintainer-request:([A-Za-z0-9-]+(?:,[A-Za-z0-9-]+)*)"
     r"\s+head:([0-9a-f]{7,40})\s*-->",
@@ -179,7 +183,8 @@ def latest_assignment(
 def assigned_verdict(
     records: Iterable[dict[str, Any]],
     assignment: Assignment,
-    current_head: str,
+    current_head: str | None,
+    before: datetime | None = None,
 ) -> tuple[ParsedVerdict | None, str | None]:
     attempts: list[tuple[datetime, int, dict[str, Any]]] = []
     for record in records:
@@ -192,13 +197,169 @@ def assigned_verdict(
         # Only a line that starts the verdict heading is a verdict attempt. An
         # ordinary reply that merely mentions `## Review verdict:` inline, or
         # quotes it with a `>` prefix, must not supersede a published verdict.
-        if submitted_at < assignment.created_at or not VERDICT_HEADING_RE.search(body):
+        if (
+            submitted_at < assignment.created_at
+            or (before is not None and submitted_at >= before)
+            or not VERDICT_HEADING_RE.search(body)
+        ):
             continue
         attempts.append((submitted_at, int(record.get("id") or 0), record))
     if not attempts:
         return None, None
     latest = max(attempts, key=lambda item: (item[0], item[1]))[2]
-    return parse_verdict_with_reason(latest, current_head)
+    expected_head = current_head
+    if expected_head is None:
+        match = REVIEWED_HEAD_RE.search(str(latest.get("body") or ""))
+        if not match:
+            return None, "missing Reviewed at head"
+        expected_head = match.group(1)
+    return parse_verdict_with_reason(latest, expected_head)
+
+
+def previous_stage_verdict(
+    records: Iterable[dict[str, Any]],
+    assignments: Iterable[Assignment],
+    stage: str,
+    current_head: str,
+) -> tuple[Assignment | None, ParsedVerdict | None]:
+    ordered = sorted(
+        (assignment for assignment in assignments if assignment.stage == stage),
+        key=lambda item: (item.created_at, item.comment_id),
+    )
+    for index in range(len(ordered) - 1, -1, -1):
+        assignment = ordered[index]
+        if assignment.head and head_matches(current_head, assignment.head):
+            continue
+        before = ordered[index + 1].created_at if index + 1 < len(ordered) else None
+        verdict, reason = assigned_verdict(
+            records,
+            assignment,
+            assignment.head,
+            before=before,
+        )
+        if reason:
+            return None, None
+        if verdict:
+            return assignment, verdict
+    return None, None
+
+
+def scenario_package_roots(files: Iterable[dict[str, Any]]) -> tuple[str, ...]:
+    roots = {
+        str(item.get("filename") or "").rsplit("/", 1)[0]
+        for item in files
+        if item.get("status") == "added"
+        and SCENARIO_RE.fullmatch(str(item.get("filename") or ""))
+    }
+    return tuple(sorted(roots))
+
+
+def scenario_tree_shas(
+    client: GitHubClient,
+    head: str,
+    roots: Iterable[str],
+    cache: dict[str, dict[str, str]],
+) -> dict[str, str]:
+    if head not in cache:
+        response = client.request(f"/git/trees/{head}?recursive=1")
+        if not isinstance(response, dict) or response.get("truncated"):
+            raise RuntimeError(f"Could not prove scenario content at {head[:12]} is complete")
+        cache[head] = {
+            str(item.get("path") or ""): str(item.get("sha") or "")
+            for item in response.get("tree", [])
+            if item.get("type") == "tree"
+        }
+    return {root: cache[head].get(root, "") for root in roots}
+
+
+def scenario_content_unchanged(
+    client: GitHubClient,
+    files: Iterable[dict[str, Any]],
+    reviewed_head: str,
+    current_head: str,
+    cache: dict[str, dict[str, str]],
+) -> bool:
+    roots = scenario_package_roots(files)
+    if not roots or len(reviewed_head) != 40 or len(current_head) != 40:
+        return False
+    reviewed = scenario_tree_shas(client, reviewed_head, roots, cache)
+    current = scenario_tree_shas(client, current_head, roots, cache)
+    return all(reviewed[root] and reviewed[root] == current[root] for root in roots)
+
+
+def carried_marker(
+    reviewer: str,
+    stage: str,
+    reviewed_head: str,
+    current_head: str,
+    verdict_id: int,
+) -> str:
+    return (
+        f"<!-- scenario-review-carried:{reviewer.lower()} stage:{stage} "
+        f"reviewed-head:{reviewed_head.lower()} head:{current_head.lower()} "
+        f"verdict:{verdict_id} -->"
+    )
+
+
+def ensure_carried_assignment(
+    client: GitHubClient,
+    pull: dict[str, Any],
+    comments: list[dict[str, Any]],
+    assignment: Assignment,
+    verdict: ParsedVerdict,
+    capability: Capability,
+) -> Assignment:
+    current_head = str(pull["head"]["sha"])
+    reviewed_head = verdict.reviewed_head
+    marker = carried_marker(
+        assignment.reviewer,
+        assignment.stage,
+        reviewed_head,
+        current_head,
+        verdict.record_id,
+    )
+    for comment in comments:
+        login = str((comment.get("user") or {}).get("login") or "").lower()
+        if login in TRUSTED_ASSIGNERS and marker in str(comment.get("body") or ""):
+            existing = latest_assignment(
+                assignment_records([comment]), assignment.stage, current_head
+            )
+            if existing:
+                return existing
+
+    number = int(pull["number"])
+    refreshed = client.comments(number)
+    for comment in refreshed:
+        login = str((comment.get("user") or {}).get("login") or "").lower()
+        if login in TRUSTED_ASSIGNERS and marker in str(comment.get("body") or ""):
+            existing = latest_assignment(
+                assignment_records([comment]), assignment.stage, current_head
+            )
+            if existing:
+                return existing
+
+    body = "\n".join(
+        [
+            f"<!-- scenario-review-assignment:{assignment.reviewer.lower()} head:{current_head.lower()} -->",
+            f"<!-- scenario-review-stage:{assignment.stage} -->",
+            f"<!-- scenario-review-capability:{capability.agent_product} model-family:{capability.model_family} -->",
+            marker,
+            "## Review carried forward / 评审已沿用",
+            "",
+            f"The APPROVE from `{assignment.reviewer}` at `{reviewed_head[:12]}` remains valid because the submitted scenario package content is unchanged at `{current_head[:12]}`.",
+            "No reviewer action is required. Changes inside the scenario package will still require re-review.",
+        ]
+    )
+    comment = client.add_comment(number, body)
+    return Assignment(
+        reviewer=assignment.reviewer,
+        stage=assignment.stage,
+        head=current_head,
+        created_at=parse_time(str(comment["created_at"])),
+        comment_id=int(comment["id"]),
+        agent_product=capability.agent_product,
+        model_family=capability.model_family,
+    )
 
 
 def maintainer_assignment(
@@ -327,6 +488,21 @@ def assignment_supported(
             continue
         return True
     return False
+
+
+def matching_capability(
+    config: dict[str, Any],
+    assignment: Assignment,
+    candidates: Iterable[Capability],
+) -> Capability | None:
+    return next(
+        (
+            capability
+            for capability in candidates
+            if assignment_supported(config, assignment, [capability])
+        ),
+        None,
+    )
 
 
 def allowed_assignment_families(
@@ -719,7 +895,7 @@ def ensure_maintainers(
                     marker,
                     "## Maintainer final review requested / 维护者终审邀请",
                     "",
-                    f"{mentions}, `review-gate` has recorded two independent current-head APPROVE verdicts.",
+                    f"{mentions}, `review-gate` has recorded two independent APPROVE verdicts covering the current scenario content.",
                     "The first eligible Maintainer to finish may use GitHub's formal Approve action. After one approval, the other Review Request is no longer needed and will be removed automatically.",
                     "Do not approve your own PR.",
                 ]
@@ -749,8 +925,11 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
     config = load_config()
     comments = client.comments(number)
     reviews = client.reviews(number)
+    records = comments + reviews
     assignments = assignment_records(comments)
     current_head = pull["head"]["sha"]
+    tree_cache: dict[str, dict[str, str]] = {}
+    carried_verdicts: list[ParsedVerdict] = []
     first = latest_assignment(assignments, "first", current_head)
     first_candidates = [
         capabilities_for(config, login)[0]
@@ -761,13 +940,60 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         first = request_first(client, pull, config, assignments)
         post_status(client, pull, "pending", f"Reassigned first review to @{first.reviewer}")
         return None
+
+    first_verdict: ParsedVerdict | None = None
+    first_reason: str | None = None
+    if first:
+        first_verdict, first_reason = assigned_verdict(records, first, current_head)
+    if first_verdict is None and (first_reason is None or (first and first.head is None)):
+        prior_assignment, prior_verdict = previous_stage_verdict(
+            records, assignments, "first", current_head
+        )
+        if prior_verdict and prior_verdict.verdict == "PRIVACY-CONCERN-RAISED-PRIVATELY":
+            clear_review_requests(client, number)
+            post_status(
+                client,
+                pull,
+                "failure",
+                "Privacy concern from an earlier head remains unresolved",
+            )
+            return None
+        if prior_assignment and prior_verdict and prior_verdict.verdict == "APPROVE":
+            target = first or prior_assignment
+            capability = matching_capability(config, target, first_candidates)
+            same_reviewer = (
+                first is None
+                or first.reviewer.lower() == prior_assignment.reviewer.lower()
+            )
+            allowed = allowed_assignment_families(config, target) | {"human"}
+            if (
+                same_reviewer
+                and capability
+                and prior_verdict.model_family in allowed
+                and scenario_content_unchanged(
+                    client,
+                    files,
+                    prior_verdict.reviewed_head,
+                    current_head,
+                    tree_cache,
+                )
+            ):
+                first = ensure_carried_assignment(
+                    client,
+                    pull,
+                    comments,
+                    prior_assignment,
+                    prior_verdict,
+                    capability,
+                )
+                first_verdict = prior_verdict
+                carried_verdicts.append(prior_verdict)
+
     if first is None:
         first = request_first(client, pull, config, assignments)
         post_status(client, pull, "pending", f"Waiting for first verdict from @{first.reviewer}")
         return None
 
-    records = comments + reviews
-    first_verdict, first_reason = assigned_verdict(records, first, current_head)
     if first_verdict is None:
         sync_review_request(client, number, first.reviewer)
         description = (
@@ -798,12 +1024,60 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         second = request_second(client, pull, config, first_verdict, assignments)
         post_status(client, pull, "pending", f"Reassigned second review to @{second.reviewer}")
         return str(number) if second.reviewer.lower() == "keting" else None
+
+    second_verdict: ParsedVerdict | None = None
+    second_reason: str | None = None
+    if second:
+        second_verdict, second_reason = assigned_verdict(records, second, current_head)
+    if second_verdict is None and (second_reason is None or (second and second.head is None)):
+        prior_assignment, prior_verdict = previous_stage_verdict(
+            records, assignments, "second", current_head
+        )
+        if prior_verdict and prior_verdict.verdict == "PRIVACY-CONCERN-RAISED-PRIVATELY":
+            clear_review_requests(client, number)
+            post_status(
+                client,
+                pull,
+                "failure",
+                "Privacy concern from an earlier head remains unresolved",
+            )
+            return None
+        if prior_assignment and prior_verdict and prior_verdict.verdict == "APPROVE":
+            target = second or prior_assignment
+            capability = matching_capability(config, target, second_candidates)
+            same_reviewer = (
+                second is None
+                or second.reviewer.lower() == prior_assignment.reviewer.lower()
+            )
+            allowed = allowed_assignment_families(config, target) | {"human"}
+            if (
+                same_reviewer
+                and capability
+                and prior_verdict.model_family in allowed
+                and scenario_content_unchanged(
+                    client,
+                    files,
+                    prior_verdict.reviewed_head,
+                    current_head,
+                    tree_cache,
+                )
+            ):
+                second = ensure_carried_assignment(
+                    client,
+                    pull,
+                    comments,
+                    prior_assignment,
+                    prior_verdict,
+                    capability,
+                )
+                second_verdict = prior_verdict
+                carried_verdicts.append(prior_verdict)
+
     if second is None:
         second = request_second(client, pull, config, first_verdict, assignments)
         post_status(client, pull, "pending", f"Waiting for second verdict from @{second.reviewer}")
         return str(number) if second.reviewer.lower() == "keting" else None
 
-    second_verdict, second_reason = assigned_verdict(records, second, current_head)
     if second_verdict is None:
         sync_review_request(client, number, second.reviewer)
         description = (
@@ -831,12 +1105,18 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         records,
         current_head,
         expected_reviewers=(first.reviewer, second.reviewer),
+        carried_verdicts=carried_verdicts,
     )
     if not gate["eligible"]:
         post_status(client, pull, "failure", "Two different reviewers and model families are required")
         return None
 
-    post_status(client, pull, "success", "Two independent current-head APPROVE verdicts recorded")
+    post_status(
+        client,
+        pull,
+        "success",
+        "Two independent APPROVE verdicts cover the current scenario content",
+    )
     ensure_maintainers(
         client,
         pull,

@@ -180,6 +180,34 @@ class ReviewGateTests(unittest.TestCase):
         value["submitted_at"] = value.pop("created_at")
         self.assertEqual(evaluate_review_gate([value], HEAD)["approval_count"], 1)
 
+    def test_verified_carried_approvals_can_satisfy_the_gate(self):
+        old_head = "a" * 40
+        first, _ = parse_verdict_with_reason(record(1, head=old_head), old_head)
+        second, _ = parse_verdict_with_reason(
+            record(
+                2,
+                reviewer="Claude / opus / high",
+                key="agent:anthropic-claude",
+                head=old_head,
+                login="other-reviewer",
+            ),
+            old_head,
+        )
+        result = evaluate_review_gate(
+            [], HEAD, carried_verdicts=(first, second)
+        )
+        self.assertTrue(result["eligible"])
+
+    def test_current_head_verdict_supersedes_a_carried_approval(self):
+        old_head = "a" * 40
+        carried, _ = parse_verdict_with_reason(record(1, head=old_head), old_head)
+        result = evaluate_review_gate(
+            [record(2, verdict="REQUEST_CHANGES")],
+            HEAD,
+            carried_verdicts=(carried,),
+        )
+        self.assertEqual(result["approval_count"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -39,6 +39,12 @@ REVIEWED_HEAD_RE = re.compile(
     r"^Reviewed at head:\s*`?([0-9a-f]{7,40})`?\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
+CARRIED_RE = re.compile(
+    r"<!--\s*scenario-review-carried:([A-Za-z0-9-]+)"
+    r"\s+stage:(first|second)\s+reviewed-head:[0-9a-f]{40}"
+    r"\s+head:([0-9a-f]{40})\s+verdict:\d+\s*-->",
+    re.IGNORECASE,
+)
 NOTIFICATION_RE = re.compile(
     r"<!--\s*review-notification:v1\s+reason:([a-z-]+)\s+"
     r"head:([0-9a-f]{40})\s+reviewer:([A-Za-z0-9_-]+)\s*-->",
@@ -101,6 +107,17 @@ def has_completed_verdict(
     comments: list[dict[str, Any]],
     reviews: list[dict[str, Any]],
 ) -> bool:
+    for comment in comments:
+        login = str((comment.get("user") or {}).get("login") or "").lower()
+        if login not in TRUSTED_ASSIGNERS:
+            continue
+        for match in CARRIED_RE.finditer(str(comment.get("body") or "")):
+            if (
+                match.group(1).lower() == assignment.reviewer.lower()
+                and head_matches(current_head, match.group(3))
+            ):
+                return True
+
     candidates: list[tuple[str, str, str]] = []
     for comment in comments:
         candidates.append(
