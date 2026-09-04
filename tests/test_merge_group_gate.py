@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from merge_group_gate import (  # noqa: E402
+    BudgetedGitHubClient,
     GateFailure,
     base_branch_name,
     evaluate_pull,
@@ -151,11 +152,12 @@ class MergeGroupTopologyTests(unittest.TestCase):
         # queue settings allow up to 100 entries, so the walk must accept a
         # 100-commit chain and the constant must not be quietly lowered.
         self.assertGreaterEqual(MAX_GROUP_ENTRIES, 100)
-        # And an upper bound, for a different reason: every commit on the chain
-        # costs one REST call, the Actions token is limited to 1,000 REST
-        # requests per hour per repository, and each source pull request needs
-        # several more. GitHub will not build a group larger than 100 entries,
-        # so anything above that spends budget on a chain that cannot occur.
+        # And an upper bound, for a different reason and with a different
+        # justification than the platform's. GitHub documents that a stacked
+        # merge group may exceed the configured maximum by up to 50%, so 100 is
+        # not "the largest group GitHub can build". It is this repository's
+        # operational ceiling: beyond it a run cannot be examined inside the
+        # request budget, so the gate refuses instead of draining the quota.
         self.assertLessEqual(MAX_GROUP_ENTRIES, 100)
         commits, shas = self._chain(100)
         chain = group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
@@ -302,21 +304,31 @@ class SourcePullRequestTests(unittest.TestCase):
         self.assertGreaterEqual(QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES, MAX_GROUP_ENTRIES)
 
     def test_a_full_length_queue_is_read_with_the_real_page_size(self):
-        from merge_group_gate import MAX_GROUP_ENTRIES
+        from merge_group_gate import MAX_GROUP_ENTRIES, QUEUE_PAGE_SIZE
 
+        # One more entry than a single page holds, so the `after` branch of the
+        # fake is actually exercised: a fixture that fits in one page would let
+        # a fake that ignores the cursor pass.
+        total = max(MAX_GROUP_ENTRIES, QUEUE_PAGE_SIZE + 1)
         entries = [
             entry(index, f"{index:040x}", index, f"{index + 900:040x}")
-            for index in range(1, MAX_GROUP_ENTRIES + 1)
+            for index in range(1, total + 1)
         ]
         with patch(
             "merge_group_gate.graphql", side_effect=paginating_queue(entries)
         ) as call:
             mapping = queue_entries_by_commit("token", "o/r", "main")
-        self.assertEqual(len(mapping), MAX_GROUP_ENTRIES)
-        # Reading the longest legal queue must stay cheap. A page size small
-        # enough to need a request per entry would satisfy every correctness
-        # assertion while spending a hundred round trips on one gate run.
-        self.assertLessEqual(call.call_count, 2)
+        self.assertEqual(len(mapping), total)
+        self.assertGreaterEqual(call.call_count, 2)
+        # The second request must resume where the first stopped.
+        self.assertIsNone(call.call_args_list[0].args[2]["after"])
+        self.assertEqual(
+            call.call_args_list[1].args[2]["after"], str(QUEUE_PAGE_SIZE)
+        )
+        # Reading the longest queue must stay cheap. A page size small enough to
+        # need a request per entry would satisfy every correctness assertion
+        # while spending a hundred round trips on one gate run.
+        self.assertLessEqual(call.call_count, 3)
 
     def test_unreadable_merge_queue_fails_closed(self):
         with patch(
@@ -606,7 +618,7 @@ class MergeGroupMainTests(unittest.TestCase):
 
         with patch("merge_group_gate.source_pull_requests", return_value=pulls), patch(
             "merge_group_gate.load_config", return_value=normalized_config(config())
-        ), patch("merge_group_gate.GitHubClient") as client_class, patch(
+        ), patch("merge_group_gate.BudgetedGitHubClient") as client_class, patch(
             "merge_group_gate.evaluate_pull", side_effect=evaluations
         ), patch.dict(
             "os.environ",
@@ -648,7 +660,7 @@ class MergeGroupMainTests(unittest.TestCase):
         pulls = [{"number": 11, "head": PR_A_HEAD}]
         with patch("merge_group_gate.source_pull_requests", return_value=pulls), patch(
             "merge_group_gate.load_config", return_value=normalized_config(config())
-        ), patch("merge_group_gate.GitHubClient") as client_class, patch(
+        ), patch("merge_group_gate.BudgetedGitHubClient") as client_class, patch(
             "merge_group_gate.evaluate_pull", return_value=(True, "ok")
         ) as evaluate, patch.dict(
             "os.environ",
@@ -680,6 +692,54 @@ class MergeGroupMainTests(unittest.TestCase):
             },
         ):
             self.assertEqual(main([]), 1)
+
+
+class RequestBudgetTests(unittest.TestCase):
+    def client(self, budget):
+        return BudgetedGitHubClient("o/r", "token", budget=budget)
+
+    def test_reads_are_counted_across_every_helper(self):
+        # `paginate`, `pull`, `comments` and `reviews` all funnel through
+        # `request`, so counting there bounds the whole run rather than one
+        # call site.
+        client = self.client(10)
+        with patch(
+            "notify_review_escalation.GitHubClient.request", return_value={"sha": "x"}
+        ):
+            client.request("/commits/main")
+            client.pull(1)
+        self.assertEqual(client.spent, 2)
+
+    def test_running_out_of_budget_fails_closed(self):
+        client = self.client(2)
+        with patch(
+            "notify_review_escalation.GitHubClient.request", return_value={}
+        ):
+            client.request("/one")
+            client.request("/two")
+            with self.assertRaises(GateFailure):
+                client.request("/three")
+
+    def test_budget_leaves_room_for_other_workflows(self):
+        from merge_group_gate import REST_REQUEST_BUDGET
+
+        # The Actions token allows 1,000 REST requests per hour per repository,
+        # shared with the scenario review flow that runs every fifteen minutes.
+        # One gate run may not claim most of that.
+        self.assertLessEqual(REST_REQUEST_BUDGET, 500)
+        self.assertGreaterEqual(REST_REQUEST_BUDGET, 50)
+
+    def test_a_paginating_read_cannot_outrun_the_budget(self):
+        # The worst case the reviewer identified: a pull request whose files,
+        # comments and reviews each paginate to the 100-page limit.
+        client = self.client(10)
+        pages = [[{"x": index} for index in range(100)] for _ in range(20)]
+        with patch(
+            "notify_review_escalation.GitHubClient.request", side_effect=pages
+        ):
+            with self.assertRaises(GateFailure):
+                client.paginate("/pulls/1/files")
+        self.assertEqual(client.spent, 11)
 
 
 class MergeQueueWorkflowTests(unittest.TestCase):

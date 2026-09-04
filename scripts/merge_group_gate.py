@@ -57,15 +57,23 @@ QUEUE_PAGE_SIZE = 100
 # Bound the pagination loop so a server that never clears `hasNextPage` cannot
 # spin forever.
 MAX_QUEUE_PAGES = 100
-# The walk costs one REST call per commit, and the Actions token is limited to
-# 1,000 REST requests per hour per repository. Each source pull request then
-# costs several more calls for its files, comments and reviews, so the walk
-# cannot be allowed to consume the whole budget on its own. GitHub will not
-# build a group larger than its "maximum entries" settings allow, which cap at
-# 100, so 100 is both the largest chain that can legitimately occur and a limit
-# that leaves room for the per-pull-request reads. The suggested ruleset keeps
-# "maximum entries to build" at 1, where a group costs roughly six requests.
+# An operational ceiling for this repository, not a claim about the largest
+# group GitHub can build: GitHub documents that a stacked merge group may exceed
+# the configured maximum by up to 50%, so at its own maximum configuration of
+# 100 a legal group can reach 150. This repository's suggested queue keeps
+# "maximum entries to build" at 1, and the enablement checklist requires that
+# `configured maximum x 1.5` stays at or below this ceiling before the queue is
+# turned on. A longer group fails the gate rather than being evaluated on a
+# budget that cannot cover it.
 MAX_GROUP_ENTRIES = 100
+# The real protection is the request budget, because the chain length alone does
+# not bound the run: `GitHubClient.paginate` will read up to 100 pages each for
+# a pull request's files, comments and reviews, so the worst case is roughly
+# `1 + N + 301N` REST calls for N source pull requests — over 1,000 by N = 4.
+# The Actions token allows 1,000 REST requests per hour per repository, shared
+# with every other workflow here, so one gate run is held to a fraction of it
+# and fails closed on exhaustion instead of draining the repository's quota.
+REST_REQUEST_BUDGET = 400
 
 QUEUE_QUERY = """
 query($owner:String!,$name:String!,$branch:String!,$page:Int!,$after:String){
@@ -89,6 +97,34 @@ query($owner:String!,$name:String!,$branch:String!,$page:Int!,$after:String){
 
 class GateFailure(RuntimeError):
     """The gate could not be satisfied, or could not be proven satisfied."""
+
+
+class BudgetedGitHubClient(GitHubClient):
+    """A client that refuses to spend more than one run's share of the quota.
+
+    Every read this gate performs goes through `request`, including the ones
+    `paginate`, `pull`, `comments` and `reviews` issue, so counting here bounds
+    the whole run. Running out is a gate failure, never a pass: a group that
+    cannot be fully examined has not been shown to be safe.
+    """
+
+    def __init__(
+        self, repository: str, token: str, budget: int = REST_REQUEST_BUDGET
+    ) -> None:
+        super().__init__(repository, token)
+        self.budget = budget
+        self.spent = 0
+
+    def request(
+        self, path: str, method: str = "GET", payload: dict[str, Any] | None = None
+    ) -> Any:
+        self.spent += 1
+        if self.spent > self.budget:
+            raise GateFailure(
+                f"Merge group review-gate exceeded its budget of {self.budget} "
+                "GitHub requests before it could examine every pull request"
+            )
+        return super().request(path, method=method, payload=payload)
 
 
 def base_branch_name(base_ref: str) -> str:
@@ -342,7 +378,7 @@ def main(argv: list[str] | None = None) -> int:
     token = required_env("GITHUB_TOKEN")
     head_sha = required_env("MERGE_GROUP_HEAD_SHA")
     base_ref = required_env("MERGE_GROUP_BASE_REF")
-    client = GitHubClient(repository, token)
+    client = BudgetedGitHubClient(repository, token)
 
     try:
         pulls = source_pull_requests(client, token, repository, head_sha, base_ref)
@@ -350,7 +386,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"::error title=Merge group review-gate::{error}")
         return 1
 
-    print(f"merge group {head_sha[:12]} contains {len(pulls)} pull request(s)")
+    print(
+        f"merge group {head_sha[:12]} contains {len(pulls)} pull request(s); "
+        f"{client.spent}/{client.budget} requests spent identifying them"
+    )
     failures: list[str] = []
     config = load_config()
     for item in pulls:
@@ -372,7 +411,10 @@ def main(argv: list[str] | None = None) -> int:
         for failure in failures:
             print(f"::error title=Merge group review-gate::{failure}")
         return 1
-    print("merge group review-gate: every source pull request satisfies the gate")
+    print(
+        "merge group review-gate: every source pull request satisfies the gate "
+        f"({client.spent}/{client.budget} requests spent)"
+    )
     return 0
 
 
