@@ -634,6 +634,25 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         self.assertEqual(second.reviewer, "keting")
         self.assertEqual(process_pull(client, client.value), "1")
 
+    def test_assigned_read_reviewer_is_accepted_when_actions_hides_association(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.comments_data[-1]["author_association"] = "NONE"
+
+        self.assertEqual(process_pull(client, client.value), "1")
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertEqual(second.reviewer, "keting")
+
+        client.add_verdict(
+            "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "success")
+        self.assertEqual(client.requested, ["beautyarbutin", "XiaoCooder"])
+
     def test_openai_second_reviewer_priority_does_not_rotate(self):
         client = FakeClient(pull(number=2))
         process_pull(client, client.value)
