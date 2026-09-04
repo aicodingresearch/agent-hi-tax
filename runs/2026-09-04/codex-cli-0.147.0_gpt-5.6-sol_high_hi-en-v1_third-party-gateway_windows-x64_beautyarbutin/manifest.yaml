@@ -6,7 +6,7 @@ scenario:
   captured_from_utc: "2026-09-04T15:58:44Z"
   captured_to_utc: "2026-09-04T15:58:44Z"
   planned_repetitions: 3
-  valid_repetitions: 0
+  valid_repetitions: 3
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -105,7 +105,25 @@ measurement:
   transcript_extraction: "not_applicable"
   transcript_deduplication: "not_applicable"
 
-aggregate: {}
+aggregate:
+  input_tokens_including_cached:
+    values: [844, 12492, 13132]
+    min: 844
+    median: 12492
+    max: 13132
+    mean: 8822.6666666667
+  output_tokens:
+    values: [14, 12, 14]
+    min: 12
+    median: 14
+    max: 14
+    mean: 13.3333333333
+  context_total_tokens:
+    values: [858, 12504, 13146]
+    min: 858
+    median: 12504
+    max: 13146
+    mean: 8836
 
 quota:
   attribution: "not_exposed"
@@ -131,6 +149,21 @@ evidence:
     - "evidence/preflight.redacted.png"
     - "evidence/preflight.invalid-response.redacted.png"
     - "evidence/preflight.invalid-status.redacted.png"
+    - "attempts/r1/before-status.png"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/response.txt"
+    - "attempts/r1/result.yaml"
+    - "attempts/r2/before-status.png"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/result.yaml"
+    - "attempts/r3/before-status.png"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/result.yaml"
   withheld_private_evidence: false
   redactions: []
 
