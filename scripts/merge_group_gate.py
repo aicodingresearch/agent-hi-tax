@@ -63,8 +63,9 @@ MAX_QUEUE_PAGES = 100
 # 100 a legal group can reach 150. This repository's suggested queue keeps
 # "maximum entries to build" at 1, and the enablement checklist requires that
 # `configured maximum x 1.5` stays at or below this ceiling before the queue is
-# turned on. A longer group fails the gate rather than being evaluated on a
-# budget that cannot cover it.
+# turned on. This is only the topology guard: the request budget below is an
+# independent, tighter fail-closed limit when pull request data is unusually
+# large. A longer group is rejected before the walk can consume the quota.
 MAX_GROUP_ENTRIES = 100
 # The real protection is the request budget, because the chain length alone does
 # not bound the run: `GitHubClient.paginate` will read up to 100 pages each for
@@ -79,9 +80,11 @@ MAX_GROUP_ENTRIES = 100
 #   * `MAX_REQUEST_ATTEMPTS` is what `GitHubClient.request` will actually spend
 #     on one logical GET, since it retries transient failures. Counting logical
 #     calls without this factor would understate the real cost threefold;
-#   * `GATE_SHARE_OF_HOURLY_LIMIT` leaves the majority of the hour to the other
-#     workflows in this repository — the scenario review flow alone runs every
-#     fifteen minutes.
+#   * `GATE_SHARE_OF_HOURLY_LIMIT` caps one invocation below half of the shared
+#     hourly allowance. It is not an aggregate reservation across multiple
+#     runs; a later run can still encounter GitHub's shared rate limit and fail
+#     closed. The scenario review flow alone runs every fifteen minutes, so a
+#     single merge-group evaluation must never claim the majority.
 REST_HOURLY_LIMIT = 1000
 MAX_REQUEST_ATTEMPTS = 3
 GATE_SHARE_OF_HOURLY_LIMIT = 0.45
@@ -256,7 +259,12 @@ def queue_entries_by_commit(
         for node in entries:
             commit = (node.get("headCommit") or {}).get("oid")
             if commit:
-                mapping[str(commit).lower()] = node
+                key = str(commit).lower()
+                if key in mapping:
+                    raise GateFailure(
+                        f"Merge queue returned duplicate entries for {key[:12]}"
+                    )
+                mapping[key] = node
         # The queue is only fully read when GitHub says so. A missing or
         # malformed `pageInfo` means the map may be incomplete, and an
         # incomplete map would make a real group commit look unexplained, so

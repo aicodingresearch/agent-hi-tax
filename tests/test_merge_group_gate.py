@@ -1,6 +1,9 @@
+import ast
+import io
 import json
 import sys
 import unittest
+import urllib.error
 from pathlib import Path
 from unittest.mock import patch
 
@@ -11,8 +14,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from merge_group_gate import (  # noqa: E402
     BudgetedGitHubClient,
     GateFailure,
+    QUEUE_QUERY,
     base_branch_name,
     evaluate_pull,
+    graphql,
     group_commits,
     main,
     maintainer_approved,
@@ -75,6 +80,23 @@ def paginating_queue(entries):
     return fake
 
 
+def endless_queue():
+    """Return a non-terminating queue whose pages do not duplicate entries."""
+    position = 0
+
+    def fake(token, query, variables):
+        nonlocal position
+        position += 1
+        group_sha = f"{position:040x}"
+        return page(
+            [entry(position, group_sha, position, f"{position + 900:040x}")],
+            has_next=True,
+            cursor=str(position),
+        )
+
+    return fake
+
+
 def entry(position, group_sha, number, head, state="AWAITING_CHECKS"):
     return {
         "position": position,
@@ -127,6 +149,11 @@ class MergeGroupTopologyTests(unittest.TestCase):
     def test_commit_without_two_parents_fails_closed(self):
         commits = {GROUP_A: commit(GROUP_A, [MAIN_TIP])}
         with self.assertRaises(GateFailure):
+            group_commits(TopologyClient(commits), GROUP_A, MAIN_TIP)
+
+    def test_non_object_commit_payload_fails_closed(self):
+        commits = {GROUP_A: []}
+        with self.assertRaisesRegex(GateFailure, "Could not read"):
             group_commits(TopologyClient(commits), GROUP_A, MAIN_TIP)
 
     def test_octopus_commit_fails_closed(self):
@@ -210,6 +237,12 @@ class SourcePullRequestTests(unittest.TestCase):
         with self.assertRaises(GateFailure):
             self.resolve([broken, entry(2, GROUP_B, 22, PR_B_HEAD)])
 
+    def test_entry_without_a_pull_request_number_fails_closed(self):
+        broken = entry(1, GROUP_A, 11, PR_A_HEAD)
+        broken["pullRequest"].pop("number")
+        with self.assertRaises(GateFailure):
+            self.resolve([broken, entry(2, GROUP_B, 22, PR_B_HEAD)])
+
     def test_head_changed_after_enqueue_fails_closed(self):
         with self.assertRaises(GateFailure):
             self.resolve(
@@ -229,6 +262,12 @@ class SourcePullRequestTests(unittest.TestCase):
                     TopologyClient(), "o/r", MAIN_TIP, "refs/heads/main"
                 )
 
+    def test_unreadable_base_tip_fails_closed(self):
+        with self.assertRaisesRegex(GateFailure, "Could not resolve"):
+            source_pull_requests(
+                TopologyClient(tip=""), "o/r", GROUP_A, "refs/heads/main"
+            )
+
     def test_queue_is_read_across_every_page(self):
         pages = [
             page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c1"),
@@ -240,6 +279,15 @@ class SourcePullRequestTests(unittest.TestCase):
         self.assertEqual(call.call_count, 2)
         self.assertIsNone(call.call_args_list[0].args[2]["after"])
         self.assertEqual(call.call_args_list[1].args[2]["after"], "c1")
+
+    def test_duplicate_group_commit_entries_fail_closed(self):
+        duplicate = [
+            entry(1, GROUP_A, 11, PR_A_HEAD),
+            entry(2, GROUP_A, 22, PR_B_HEAD),
+        ]
+        with patch("merge_group_gate.graphql", return_value=page(duplicate)):
+            with self.assertRaisesRegex(GateFailure, "duplicate entries"):
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
 
     def test_missing_page_info_fails_closed(self):
         response = page([entry(1, GROUP_A, 11, PR_A_HEAD)])
@@ -268,8 +316,7 @@ class SourcePullRequestTests(unittest.TestCase):
     def test_endless_pagination_fails_closed(self):
         from merge_group_gate import MAX_QUEUE_PAGES
 
-        endless = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c")
-        with patch("merge_group_gate.graphql", return_value=endless) as call:
+        with patch("merge_group_gate.graphql", side_effect=endless_queue()) as call:
             with self.assertRaises(GateFailure):
                 queue_entries_by_commit(self.budgeted(), "o/r", "main")
         # Exactly the declared bound: neither an off-by-one nor a doubled loop.
@@ -370,6 +417,49 @@ class SourcePullRequestTests(unittest.TestCase):
         with patch("merge_group_gate.graphql", return_value=response):
             with self.assertRaises(GateFailure):
                 queue_entries_by_commit(self.budgeted(), "o/r", "main")
+
+    def test_error_on_entries_fails_even_with_partial_data(self):
+        response = page([entry(1, GROUP_A, 11, PR_A_HEAD)])
+        response["errors"] = [
+            {
+                "path": ["repository", "mergeQueue", "entries", "nodes", 0],
+                "message": "Partial merge queue data",
+            }
+        ]
+        with patch("merge_group_gate.graphql", return_value=response):
+            with self.assertRaisesRegex(GateFailure, "GraphQL error"):
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
+
+    def test_graphql_transport_failure_fails_closed(self):
+        with patch(
+            "merge_group_gate.urllib.request.urlopen",
+            side_effect=TimeoutError("timed out"),
+        ):
+            with self.assertRaisesRegex(GateFailure, "GraphQL request failed"):
+                graphql("token", "query { viewer { login } }", {})
+
+    def test_graphql_http_error_fails_closed(self):
+        error = urllib.error.HTTPError(
+            "https://api.github.com/graphql",
+            403,
+            "Forbidden",
+            {},
+            io.BytesIO(b"denied"),
+        )
+        self.addCleanup(error.close)
+        with patch("merge_group_gate.urllib.request.urlopen", side_effect=error):
+            with self.assertRaisesRegex(GateFailure, "403 denied"):
+                graphql("token", "query { viewer { login } }", {})
+
+    def test_graphql_success_is_decoded(self):
+        with patch("merge_group_gate.urllib.request.urlopen") as urlopen:
+            urlopen.return_value.__enter__.return_value.read.return_value = (
+                b'{"data":{"viewer":{"login":"octocat"}}}'
+            )
+            self.assertEqual(
+                graphql("token", "query { viewer { login } }", {}),
+                {"data": {"viewer": {"login": "octocat"}}},
+            )
 
 
 class GateClient(FakeClient):
@@ -504,6 +594,28 @@ class EvaluatePullTests(unittest.TestCase):
         ok, reason = evaluate_pull(client, self.config, client.value)
         self.assertFalse(ok)
         self.assertIn("REQUEST_CHANGES", reason)
+
+    def test_assigned_model_family_mismatch_fails(self):
+        from scenario_review_flow import process_pull
+
+        client = GateClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "zhipu-glm")
+        client.reviews_data.append(approved_maintainer_review())
+        ok, reason = evaluate_pull(client, self.config, client.value)
+        self.assertFalse(ok)
+        self.assertIn("assigned model family", reason)
+
+    def test_independence_gate_failure_is_not_ignored(self):
+        client = self.two_approvals()
+        client.reviews_data.append(approved_maintainer_review())
+        with patch(
+            "merge_group_gate.evaluate_review_gate",
+            return_value={"eligible": False},
+        ):
+            ok, reason = evaluate_pull(client, self.config, client.value)
+        self.assertFalse(ok)
+        self.assertIn("different reviewers and model families", reason)
 
     def test_privacy_verdict_fails(self):
         from scenario_review_flow import process_pull
@@ -700,6 +812,12 @@ class MergeGroupMainTests(unittest.TestCase):
         ):
             self.assertEqual(main([]), 1)
 
+    def test_unknown_pull_request_evaluation_error_fails_the_group(self):
+        pulls = [{"number": 11, "head": PR_A_HEAD}]
+        self.assertEqual(
+            self.run_main(pulls, [RuntimeError("unexpected response")]), 1
+        )
+
 
 class RequestBudgetTests(unittest.TestCase):
     def client(self, budget):
@@ -793,8 +911,7 @@ class RequestBudgetTests(unittest.TestCase):
 
     def test_an_endless_queue_exhausts_the_graphql_budget_not_the_loop(self):
         client = BudgetedGitHubClient("o/r", "token", graphql_budget=3)
-        endless = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c")
-        with patch("merge_group_gate.graphql", return_value=endless) as call:
+        with patch("merge_group_gate.graphql", side_effect=endless_queue()) as call:
             with self.assertRaises(GateFailure):
                 queue_entries_by_commit(client, "o/r", "main")
         self.assertEqual(call.call_count, 3)
@@ -813,6 +930,10 @@ class RequestBudgetTests(unittest.TestCase):
 
 
 class MergeQueueWorkflowTests(unittest.TestCase):
+    workflows = {
+        path.name: path.read_text(encoding="utf-8")
+        for path in sorted((ROOT / ".github/workflows").glob("*.y*ml"))
+    }
     verify = (ROOT / ".github/workflows/verify-data.yml").read_text(encoding="utf-8")
     gate = (ROOT / ".github/workflows/merge-queue-review-gate.yml").read_text(
         encoding="utf-8"
@@ -876,23 +997,48 @@ class MergeQueueWorkflowTests(unittest.TestCase):
         self.assertIn("\n  review-gate:\n    name: review-gate\n", self.gate)
 
     def test_no_other_workflow_declares_a_review_gate_job(self):
-        for text in (self.verify, self.flow):
-            self.assertNotIn("name: review-gate", text)
+        for name, text in self.workflows.items():
+            if name == "merge-queue-review-gate.yml":
+                continue
+            with self.subTest(workflow=name):
+                self.assertNotIn("\n  review-gate:\n", text)
+                self.assertNotIn("\n    name: review-gate\n", text)
 
     def test_merge_group_gate_checks_out_trusted_main_only(self):
         self.assertIn("ref: main", self.gate)
         self.assertNotIn("merge_group.head_sha }}\n          ref", self.gate)
         self.assertNotIn("github.event.pull_request.head", self.gate)
+        uses = [
+            line.strip()
+            for line in self.gate.splitlines()
+            if line.startswith("        uses:")
+        ]
+        runs = [
+            line.strip()
+            for line in self.gate.splitlines()
+            if line.startswith("        run:")
+        ]
+        self.assertEqual(
+            uses,
+            [
+                "uses: actions/checkout@"
+                "11d5960a326750d5838078e36cf38b85af677262 # v4"
+            ],
+        )
+        self.assertEqual(runs, ["run: python3 scripts/merge_group_gate.py"])
+        self.assertLess(self.gate.index("ref: main"), self.gate.index(runs[0]))
 
     def test_merge_group_gate_has_a_wall_clock_bound(self):
         # The request budget bounds call count, not time: each call can wait out
         # a 30 second timeout, so a run needs its own ceiling or it can hold a
         # runner and the queue open for over an hour.
-        self.assertIn("timeout-minutes:", self.gate)
+        self.assertIn("\n    timeout-minutes: 20\n", self.gate)
 
     def test_merge_group_gate_permissions_are_read_only(self):
         header = self.gate.split("jobs:")[0]
         self.assertIn("permissions:\n  contents: read\n  pull-requests: read\n", header)
+        job = self.gate.split("\n  review-gate:\n", 1)[1]
+        self.assertNotIn("\n    permissions:", job)
         for scope in ("issues: write", "pull-requests: write", "statuses: write", "contents: write"):
             self.assertNotIn(scope, self.gate)
 
@@ -900,6 +1046,32 @@ class MergeQueueWorkflowTests(unittest.TestCase):
         source = (ROOT / "scripts/merge_group_gate.py").read_text(encoding="utf-8")
         for forbidden in ("add_comment", "post_status", "sync_review_request", "send_email", "requested_reviewers"):
             self.assertNotIn(forbidden, source)
+        self.assertTrue(QUEUE_QUERY.lstrip().startswith("query("))
+        self.assertNotIn("mutation", QUEUE_QUERY.lower())
+        tree = ast.parse(source)
+        mutating_client_calls = []
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            function = node.func
+            if not (
+                isinstance(function, ast.Attribute)
+                and function.attr == "request"
+                and isinstance(function.value, ast.Name)
+                and function.value.id == "client"
+            ):
+                continue
+            method = next(
+                (keyword.value for keyword in node.keywords if keyword.arg == "method"),
+                None,
+            )
+            if method is None and len(node.args) >= 2:
+                method = node.args[1]
+            if method is not None and not (
+                isinstance(method, ast.Constant) and method.value == "GET"
+            ):
+                mutating_client_calls.append(node.lineno)
+        self.assertEqual(mutating_client_calls, [])
 
 
 if __name__ == "__main__":
