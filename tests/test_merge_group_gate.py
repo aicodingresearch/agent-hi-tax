@@ -533,6 +533,31 @@ class EvaluatePullTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn("maintainer", reason)
 
+    def test_non_approved_maintainer_reviews_do_not_count(self):
+        for state in ("COMMENTED", "CHANGES_REQUESTED", "DISMISSED"):
+            with self.subTest(state=state):
+                review = approved_maintainer_review()
+                review["state"] = state
+                self.assertFalse(
+                    maintainer_approved(
+                        self.config, [review], "contributor", HEAD
+                    )
+                )
+
+    def test_approval_from_a_reviewer_outside_maintainers_does_not_count(self):
+        review = approved_maintainer_review(login="AHMEDALATTAR416")
+        self.assertIn(
+            "ahmedalattar416",
+            {login.lower() for login in self.config["reviewers"]},
+        )
+        self.assertNotIn(
+            "ahmedalattar416",
+            {login.lower() for login in self.config["maintainers"]},
+        )
+        self.assertFalse(
+            maintainer_approved(self.config, [review], "contributor", HEAD)
+        )
+
     def test_author_maintainer_approval_does_not_count(self):
         client = self.two_approvals(author="XiaoCooder")
         client.reviews_data.append(approved_maintainer_review(login="XiaoCooder"))
@@ -574,6 +599,29 @@ class EvaluatePullTests(unittest.TestCase):
                 assignment_records(client.comments_data), "second", new_head
             )
         )
+
+    def test_carry_forward_rejects_a_different_current_reviewer(self):
+        client = self.two_approvals()
+        new_head = "c" * 40
+        client.value["head"]["sha"] = new_head
+        client.tree_shas[new_head] = client.tree_shas[HEAD]
+        client.comment_time = "2026-09-03T11:00:00Z"
+        client.add_comment(
+            1,
+            "\n".join(
+                [
+                    f"<!-- scenario-review-assignment:xiaocooder head:{new_head} -->",
+                    "<!-- scenario-review-stage:first -->",
+                    "<!-- scenario-review-capability:codex model-family:openai-gpt -->",
+                ]
+            ),
+        )
+        client.reviews_data.append(approved_maintainer_review(head=new_head))
+
+        ok, reason = evaluate_pull(client, self.config, client.value)
+
+        self.assertFalse(ok)
+        self.assertIn("first verdict is missing", reason)
 
     def test_changed_package_content_fails(self):
         client = self.two_approvals()
@@ -958,6 +1006,14 @@ class MergeQueueWorkflowTests(unittest.TestCase):
         self.assertIn("refs/merge-group-base", self.verify)
         self.assertIn("github.event.merge_group.base_ref", self.verify)
         self.assertIn('base=\'HEAD^1\'', self.verify)
+        self.assertIn(
+            """if [ "$EVENT_NAME" = "merge_group" ]; then
+            base=refs/merge-group-base
+          else
+            base='HEAD^1'
+          fi""",
+            self.verify,
+        )
         # base_sha is the previous queue entry, not the base branch tip, so it
         # must never be interpolated as the diff base.
         self.assertNotIn("github.event.merge_group.base_sha", self.verify)
