@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import re
@@ -218,7 +219,8 @@ def requested_at_from_timeline(
     for event in timeline:
         if event.get("event") != "review_requested":
             continue
-        login = str(event.get("requested_reviewer", {}).get("login", "")).lower()
+        requested_reviewer = event.get("requested_reviewer") or {}
+        login = str(requested_reviewer.get("login", "")).lower()
         if login in requested and event.get("created_at"):
             times.append(parse_time(str(event["created_at"])))
     return max(times, default=None)
@@ -260,7 +262,7 @@ class GitHubClient:
                 raise RuntimeError(
                     f"GitHub API {method} {path} failed: {error.code} {detail}"
                 ) from error
-            except urllib.error.URLError as error:
+            except (urllib.error.URLError, http.client.HTTPException, TimeoutError) as error:
                 if attempt + 1 < attempts:
                     time.sleep(2**attempt)
                     continue
