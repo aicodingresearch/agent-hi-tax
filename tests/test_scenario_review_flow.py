@@ -2,6 +2,7 @@ import base64
 import json
 import os
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -27,12 +28,33 @@ from scenario_review_flow import (  # noqa: E402
     process_pull,
     request_first,
 )
-from review_gate import parse_time, parse_verdict  # noqa: E402
+from review_gate import (  # noqa: E402
+    parse_time,
+    parse_verdict,
+    parse_verdict_with_reason,
+)
 
 
 HEAD = "a" * 40
 BASE = "b" * 40
 NOW = "2026-09-03T08:00:00Z"
+
+
+def verdict_template(path: Path) -> str:
+    """Return the fenced verdict template published in a review-process page."""
+    block: list[str] = []
+    inside = False
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        if line.startswith("```"):
+            if inside:
+                if any(item.startswith("## Review verdict:") for item in block):
+                    return "\n".join(block)
+                block = []
+            inside = not inside
+            continue
+        if inside:
+            block.append(line)
+    raise AssertionError(f"no verdict template found in {path}")
 
 
 def config():
@@ -930,6 +952,220 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             },
         ]
         self.assertEqual(has_formal_approval(reviews, request, HEAD), "beautyarbutin")
+
+    def _approved_first_review(self, number=1):
+        client = FakeClient(pull(number=number))
+        process_pull(client, client.value)
+        first = latest_assignment(
+            assignment_records(client.comments_data), "first", HEAD
+        )
+        client.add_verdict(first.reviewer, first.model_family)
+        process_pull(client, client.value)
+        return client, first
+
+    def _reply(self, login, body, comment_id, submitted="2026-09-03T12:00:00Z"):
+        return {
+            "id": comment_id,
+            "html_url": "https://example.test/reply",
+            "author_association": "MEMBER",
+            "created_at": submitted,
+            "user": {"login": login},
+            "body": body,
+        }
+
+    def test_inline_verdict_mention_does_not_supersede_a_published_verdict(self):
+        client, first = self._approved_first_review()
+        second = latest_assignment(
+            assignment_records(client.comments_data), "second", HEAD
+        )
+        self.assertIsNotNone(second)
+        client.comments_data.append(
+            self._reply(
+                first.reviewer,
+                "Answering the author: my `## Review verdict:` is already in the "
+                "comment above, so I am not posting it twice.",
+                7001,
+            )
+        )
+        process_pull(client, client.value)
+        self.assertNotIn("First verdict rejected", client.statuses[-1]["description"])
+        self.assertEqual(
+            latest_assignment(
+                assignment_records(client.comments_data), "second", HEAD
+            ).reviewer,
+            second.reviewer,
+        )
+
+    def test_quoted_verdict_heading_does_not_supersede_a_published_verdict(self):
+        client, first = self._approved_first_review()
+        client.comments_data.append(
+            self._reply(
+                first.reviewer,
+                "Quoting my earlier comment for the author:\n\n"
+                "> ## Review verdict: APPROVE\n>\n> Reviewed at head: deadbeef\n",
+                7002,
+            )
+        )
+        process_pull(client, client.value)
+        self.assertNotIn("First verdict rejected", client.statuses[-1]["description"])
+
+    def test_new_verdict_heading_still_supersedes_a_published_verdict(self):
+        client, first = self._approved_first_review()
+        stale = verdict(first.reviewer, "openai-gpt")
+        stale["id"] = 7003
+        stale["created_at"] = "2026-09-03T12:00:00Z"
+        stale["body"] = stale["body"].replace(
+            f"Reviewed at head: {HEAD}", "Reviewed at head: " + "c" * 40
+        )
+        client.comments_data.append(stale)
+        process_pull(client, client.value)
+        self.assertIn("First verdict rejected", client.statuses[-1]["description"])
+
+    def test_maintainer_removed_from_config_is_reassigned(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        process_pull(client, client.value)
+        client.add_verdict(
+            "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
+        )
+        process_pull(client, client.value)
+        first_marker = next(
+            comment
+            for comment in client.comments_data
+            if "scenario-maintainer-request" in comment["body"]
+        )
+        self.assertIn("beautyarbutin,xiaocooder", first_marker["body"])
+        revised = config()
+        revised["maintainers"] = ["XiaoCooder"]
+        with patch(
+            "scenario_review_flow.load_config",
+            return_value=normalized_config(revised),
+        ):
+            process_pull(client, client.value)
+        markers = [
+            comment["body"]
+            for comment in client.comments_data
+            if "scenario-maintainer-request" in comment["body"]
+        ]
+        self.assertEqual(len(markers), 2)
+        self.assertIn("scenario-maintainer-request:xiaocooder ", markers[-1])
+        self.assertEqual(client.requested, ["XiaoCooder"])
+
+    def test_shipped_verdict_template_cannot_be_pasted_as_a_verdict(self):
+        root = Path(__file__).resolve().parents[1]
+        for name in ("docs/review-process.md", "docs/review-process.zh-CN.md"):
+            with self.subTest(document=name):
+                template = verdict_template(root / name)
+                self.assertIn("## Review verdict:", template)
+                # Fill only the placeholders a copier would naturally replace.
+                body = template.replace("<template commit>", "abcdef1").replace(
+                    "<commit SHA>", HEAD
+                )
+                parsed, reason = parse_verdict_with_reason(
+                    {
+                        "id": 1,
+                        "author_association": "MEMBER",
+                        "created_at": NOW,
+                        "user": {"login": "black-pwq"},
+                        "body": body,
+                    },
+                    HEAD,
+                )
+                self.assertIsNone(parsed)
+                self.assertIn("Review verdict", reason)
+
+
+class ReviewFlowWorkflowTests(unittest.TestCase):
+    workflow = (
+        Path(__file__).resolve().parents[1]
+        / ".github/workflows/scenario-review-flow.yml"
+    ).read_text(encoding="utf-8")
+
+    def test_notification_step_runs_even_after_a_partial_failure(self):
+        self.assertIn(
+            "if: always() && steps.flow.outputs.notify_prs != ''", self.workflow
+        )
+
+    def test_notification_step_reads_the_output_the_script_writes(self):
+        script = (
+            Path(__file__).resolve().parents[1] / "scripts/scenario_review_flow.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn('write_output("notify_prs"', script)
+        self.assertIn("NOTIFY_PRS: ${{ steps.flow.outputs.notify_prs }}", self.workflow)
+
+    def test_workflow_only_checks_out_trusted_main(self):
+        self.assertIn("ref: main", self.workflow)
+        self.assertNotIn("github.event.pull_request.head", self.workflow)
+
+    def test_comment_trigger_is_limited_to_verdict_shaped_comments(self):
+        self.assertIn(
+            "contains(github.event.comment.body, '## Review verdict:')", self.workflow
+        )
+
+    def test_workflow_uses_one_global_serialization_group(self):
+        self.assertIn("group: scenario-review-flow\n", self.workflow)
+        self.assertIn("cancel-in-progress: false", self.workflow)
+
+
+class NotifyOutputTests(unittest.TestCase):
+    def _run_main(self, client):
+        with tempfile.TemporaryDirectory() as directory:
+            output_path = Path(directory) / "github_output"
+            output_path.write_text("", encoding="utf-8")
+            with patch(
+                "scenario_review_flow.GitHubClient", return_value=client
+            ), patch.dict(
+                os.environ,
+                {
+                    "REPOSITORY": "aicodingresearch/agent-hi-tax",
+                    "GITHUB_TOKEN": "test",
+                    "GITHUB_OUTPUT": str(output_path),
+                },
+            ):
+                main(["--pull-request-number", str(client.value["number"])])
+            return output_path.read_text(encoding="utf-8")
+
+    def test_owner_second_assignment_publishes_the_notify_output(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        self.assertIn("notify_prs=1\n", self._run_main(client))
+
+    def test_owner_reassignment_publishes_the_notify_output(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        client.comments_data.append(
+            {
+                "id": 7100,
+                "created_at": "2026-09-03T09:30:00Z",
+                "user": {"login": "github-actions[bot]"},
+                "body": (
+                    f"<!-- scenario-review-assignment:keting head:{HEAD} -->\n"
+                    "<!-- scenario-review-stage:second -->\n"
+                    "<!-- scenario-review-capability:workbuddy model-family:moonshot-kimi -->"
+                ),
+            }
+        )
+        self.assertIn("notify_prs=1\n", self._run_main(client))
+
+    def test_owner_still_publishes_the_notify_output_while_a_verdict_is_pending(self):
+        client = FakeClient(pull(number=1))
+        process_pull(client, client.value)
+        client.add_verdict("beautyarbutin", "openai-gpt")
+        process_pull(client, client.value)
+        self.assertEqual(
+            latest_assignment(
+                assignment_records(client.comments_data), "second", HEAD
+            ).reviewer,
+            "keting",
+        )
+        self.assertIn("notify_prs=1\n", self._run_main(client))
+
+    def test_first_review_stage_publishes_an_empty_notify_output(self):
+        client = FakeClient(pull(number=1))
+        self.assertIn("notify_prs=\n", self._run_main(client))
 
 
 if __name__ == "__main__":

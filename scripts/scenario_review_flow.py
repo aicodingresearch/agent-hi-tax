@@ -41,6 +41,7 @@ CAPABILITY_RE = re.compile(
     r"\s+model-family:([a-z0-9][a-z0-9-]*)\s*-->",
     re.IGNORECASE,
 )
+VERDICT_HEADING_RE = re.compile(r"^## Review verdict:", re.MULTILINE)
 MAINTAINER_RE = re.compile(
     r"<!--\s*scenario-maintainer-request:([A-Za-z0-9-]+(?:,[A-Za-z0-9-]+)*)"
     r"\s+head:([0-9a-f]{7,40})\s*-->",
@@ -188,7 +189,10 @@ def assigned_verdict(
         if login != assignment.reviewer.lower() or not submitted:
             continue
         submitted_at = parse_time(str(submitted))
-        if submitted_at < assignment.created_at or "## Review verdict:" not in body:
+        # Only a line that starts the verdict heading is a verdict attempt. An
+        # ordinary reply that merely mentions `## Review verdict:` inline, or
+        # quotes it with a `>` prefix, must not supersede a published verdict.
+        if submitted_at < assignment.created_at or not VERDICT_HEADING_RE.search(body):
             continue
         attempts.append((submitted_at, int(record.get("id") or 0), record))
     if not attempts:

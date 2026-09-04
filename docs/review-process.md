@@ -55,11 +55,11 @@ Reviews are posted as a structured comment on the PR, in this shape:
 ```text
 Reviewed under: docs/review-process.md @ <template commit>
 
-## Review verdict: APPROVE | REQUEST_CHANGES | PRIVACY-CONCERN-RAISED-PRIVATELY
+## Review verdict: <replace this whole placeholder with exactly one of APPROVE, REQUEST_CHANGES, PRIVACY-CONCERN-RAISED-PRIVATELY>
 
 Reviewed at head: <commit SHA>
 Reviewer: <human name, or agent product + model + reasoning effort>
-Independence key: human:<github-login> | agent:<model-family>
+Independence key: <replace with human:your-github-login, or exactly one canonical agent key from the list below>
 Date: <YYYY-MM-DD>
 Supersedes (re-review only): <prior verdict comment URL>
 
