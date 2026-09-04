@@ -179,13 +179,16 @@ class MergeGroupTopologyTests(unittest.TestCase):
 
 
 class SourcePullRequestTests(unittest.TestCase):
+    def budgeted(self):
+        return BudgetedGitHubClient("o/r", "token")
+
     def resolve(self, entries):
         with patch(
             "merge_group_gate.queue_entries_by_commit",
             return_value={item["headCommit"]["oid"].lower(): item for item in entries},
         ):
             return source_pull_requests(
-                TopologyClient(), "token", "o/r", GROUP_B, "refs/heads/main"
+                TopologyClient(), "o/r", GROUP_B, "refs/heads/main"
             )
 
     def test_every_commit_is_mapped_to_its_pull_request(self):
@@ -223,7 +226,7 @@ class SourcePullRequestTests(unittest.TestCase):
         with patch("merge_group_gate.queue_entries_by_commit", return_value={}):
             with self.assertRaises(GateFailure):
                 source_pull_requests(
-                    TopologyClient(), "token", "o/r", MAIN_TIP, "refs/heads/main"
+                    TopologyClient(), "o/r", MAIN_TIP, "refs/heads/main"
                 )
 
     def test_queue_is_read_across_every_page(self):
@@ -232,7 +235,7 @@ class SourcePullRequestTests(unittest.TestCase):
             page([entry(2, GROUP_B, 22, PR_B_HEAD)]),
         ]
         with patch("merge_group_gate.graphql", side_effect=pages) as call:
-            mapping = queue_entries_by_commit("token", "o/r", "main")
+            mapping = queue_entries_by_commit(self.budgeted(), "o/r", "main")
         self.assertEqual(sorted(mapping), sorted([GROUP_A, GROUP_B]))
         self.assertEqual(call.call_count, 2)
         self.assertIsNone(call.call_args_list[0].args[2]["after"])
@@ -243,7 +246,7 @@ class SourcePullRequestTests(unittest.TestCase):
         del response["data"]["repository"]["mergeQueue"]["entries"]["pageInfo"]
         with patch("merge_group_gate.graphql", return_value=response):
             with self.assertRaises(GateFailure):
-                queue_entries_by_commit("token", "o/r", "main")
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
 
     def test_non_boolean_has_next_page_fails_closed(self):
         for value in ("false", 0, None):
@@ -254,13 +257,13 @@ class SourcePullRequestTests(unittest.TestCase):
                 ] = value
                 with patch("merge_group_gate.graphql", return_value=response):
                     with self.assertRaises(GateFailure):
-                        queue_entries_by_commit("token", "o/r", "main")
+                        queue_entries_by_commit(self.budgeted(), "o/r", "main")
 
     def test_more_pages_without_a_cursor_fails_closed(self):
         response = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor=None)
         with patch("merge_group_gate.graphql", return_value=response):
             with self.assertRaises(GateFailure):
-                queue_entries_by_commit("token", "o/r", "main")
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
 
     def test_endless_pagination_fails_closed(self):
         from merge_group_gate import MAX_QUEUE_PAGES
@@ -268,9 +271,13 @@ class SourcePullRequestTests(unittest.TestCase):
         endless = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c")
         with patch("merge_group_gate.graphql", return_value=endless) as call:
             with self.assertRaises(GateFailure):
-                queue_entries_by_commit("token", "o/r", "main")
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
         # Exactly the declared bound: neither an off-by-one nor a doubled loop.
         self.assertEqual(call.call_count, MAX_QUEUE_PAGES)
+        # And an absolute ceiling, so raising the constant cannot move the
+        # assertion with it. One or two pages read the whole queue in practice.
+        self.assertLessEqual(MAX_QUEUE_PAGES, 200)
+        self.assertLessEqual(call.call_count, 200)
 
     def test_page_size_is_sent_as_a_query_variable(self):
         from merge_group_gate import QUEUE_PAGE_SIZE
@@ -279,7 +286,7 @@ class SourcePullRequestTests(unittest.TestCase):
             "merge_group_gate.graphql",
             return_value=page([entry(1, GROUP_A, 11, PR_A_HEAD)]),
         ) as call:
-            queue_entries_by_commit("token", "o/r", "main")
+            queue_entries_by_commit(self.budgeted(), "o/r", "main")
         self.assertEqual(call.call_args_list[0].args[2]["page"], QUEUE_PAGE_SIZE)
 
     def test_page_size_stays_inside_the_graphql_contract(self):
@@ -317,7 +324,7 @@ class SourcePullRequestTests(unittest.TestCase):
         with patch(
             "merge_group_gate.graphql", side_effect=paginating_queue(entries)
         ) as call:
-            mapping = queue_entries_by_commit("token", "o/r", "main")
+            mapping = queue_entries_by_commit(self.budgeted(), "o/r", "main")
         self.assertEqual(len(mapping), total)
         self.assertGreaterEqual(call.call_count, 2)
         # The second request must resume where the first stopped.
@@ -336,7 +343,7 @@ class SourcePullRequestTests(unittest.TestCase):
             return_value={"data": {"repository": {"mergeQueue": None}}},
         ):
             with self.assertRaises(GateFailure):
-                queue_entries_by_commit("token", "o/r", "main")
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
 
     def test_configuration_permission_error_is_tolerated(self):
         response = page([entry(1, GROUP_A, 11, PR_A_HEAD)])
@@ -347,7 +354,7 @@ class SourcePullRequestTests(unittest.TestCase):
             }
         ]
         with patch("merge_group_gate.graphql", return_value=response):
-            mapping = queue_entries_by_commit("token", "o/r", "main")
+            mapping = queue_entries_by_commit(self.budgeted(), "o/r", "main")
         self.assertEqual(list(mapping), [GROUP_A])
 
     def test_permission_error_on_entries_fails_closed(self):
@@ -362,7 +369,7 @@ class SourcePullRequestTests(unittest.TestCase):
         }
         with patch("merge_group_gate.graphql", return_value=response):
             with self.assertRaises(GateFailure):
-                queue_entries_by_commit("token", "o/r", "main")
+                queue_entries_by_commit(self.budgeted(), "o/r", "main")
 
 
 class GateClient(FakeClient):
@@ -720,14 +727,77 @@ class RequestBudgetTests(unittest.TestCase):
             with self.assertRaises(GateFailure):
                 client.request("/three")
 
-    def test_budget_leaves_room_for_other_workflows(self):
-        from merge_group_gate import REST_REQUEST_BUDGET
+    def test_budget_survives_the_retry_amplification(self):
+        from merge_group_gate import (
+            GATE_SHARE_OF_HOURLY_LIMIT,
+            MAX_REQUEST_ATTEMPTS,
+            REST_HOURLY_LIMIT,
+            REST_REQUEST_BUDGET,
+        )
 
-        # The Actions token allows 1,000 REST requests per hour per repository,
-        # shared with the scenario review flow that runs every fifteen minutes.
-        # One gate run may not claim most of that.
-        self.assertLessEqual(REST_REQUEST_BUDGET, 500)
+        # `GitHubClient.request` retries a transient GET, so one counted call can
+        # cost several HTTP requests against the hourly limit. Counting logical
+        # calls without that factor would understate the real cost threefold.
+        # Absolute anchors, not restatements of the constants: every value
+        # below is checked against the documented platform fact rather than
+        # against another constant in the same file, so raising one of them to
+        # make the arithmetic work out cannot pass.
+        self.assertEqual(REST_HOURLY_LIMIT, 1000)  # GITHUB_TOKEN, per repo, per hour
+        self.assertEqual(MAX_REQUEST_ATTEMPTS, self._client_retry_attempts())
+        worst_case = REST_REQUEST_BUDGET * MAX_REQUEST_ATTEMPTS
+        self.assertLessEqual(
+            worst_case, REST_HOURLY_LIMIT * GATE_SHARE_OF_HOURLY_LIMIT
+        )
+        # And the share must genuinely leave the hour to the other workflows.
+        self.assertLess(GATE_SHARE_OF_HOURLY_LIMIT, 0.5)
+        # Still large enough for a realistic group: a single pull request costs
+        # under a dozen requests.
         self.assertGreaterEqual(REST_REQUEST_BUDGET, 50)
+
+    def _client_retry_attempts(self):
+        """Read the retry count out of the client this gate actually uses."""
+        import inspect
+
+        import notify_review_escalation
+
+        source = inspect.getsource(notify_review_escalation.GitHubClient.request)
+        for line in source.splitlines():
+            if "attempts = " in line:
+                return int(line.split("attempts = ")[1].split()[0])
+        raise AssertionError("could not read the retry count from GitHubClient")
+
+    def test_graphql_reads_are_budgeted_too(self):
+        from merge_group_gate import GRAPHQL_REQUEST_BUDGET
+
+        # `graphql` does not go through `request`, so it needs its own accounting
+        # rather than being trusted to the page loop.
+        client = BudgetedGitHubClient("o/r", "token", graphql_budget=2)
+        client.charge_graphql()
+        client.charge_graphql()
+        with self.assertRaises(GateFailure):
+            client.charge_graphql()
+        # Absolute bounds. Reading the queue takes one or two pages in practice,
+        # so a budget in the hundreds already has no legitimate use and a budget
+        # large enough to be meaningless must not pass.
+        self.assertGreaterEqual(GRAPHQL_REQUEST_BUDGET, 1)
+        self.assertLessEqual(GRAPHQL_REQUEST_BUDGET, 200)
+
+    def test_queue_paging_charges_the_graphql_budget(self):
+        client = BudgetedGitHubClient("o/r", "token")
+        entries = [entry(1, GROUP_A, 11, PR_A_HEAD)]
+        with patch(
+            "merge_group_gate.graphql", side_effect=paginating_queue(entries)
+        ):
+            queue_entries_by_commit(client, "o/r", "main")
+        self.assertEqual(client.graphql_spent, 1)
+
+    def test_an_endless_queue_exhausts_the_graphql_budget_not_the_loop(self):
+        client = BudgetedGitHubClient("o/r", "token", graphql_budget=3)
+        endless = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c")
+        with patch("merge_group_gate.graphql", return_value=endless) as call:
+            with self.assertRaises(GateFailure):
+                queue_entries_by_commit(client, "o/r", "main")
+        self.assertEqual(call.call_count, 3)
 
     def test_a_paginating_read_cannot_outrun_the_budget(self):
         # The worst case the reviewer identified: a pull request whose files,
@@ -813,6 +883,12 @@ class MergeQueueWorkflowTests(unittest.TestCase):
         self.assertIn("ref: main", self.gate)
         self.assertNotIn("merge_group.head_sha }}\n          ref", self.gate)
         self.assertNotIn("github.event.pull_request.head", self.gate)
+
+    def test_merge_group_gate_has_a_wall_clock_bound(self):
+        # The request budget bounds call count, not time: each call can wait out
+        # a 30 second timeout, so a run needs its own ceiling or it can hold a
+        # runner and the queue open for over an hour.
+        self.assertIn("timeout-minutes:", self.gate)
 
     def test_merge_group_gate_permissions_are_read_only(self):
         header = self.gate.split("jobs:")[0]

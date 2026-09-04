@@ -70,10 +70,28 @@ MAX_GROUP_ENTRIES = 100
 # not bound the run: `GitHubClient.paginate` will read up to 100 pages each for
 # a pull request's files, comments and reviews, so the worst case is roughly
 # `1 + N + 301N` REST calls for N source pull requests — over 1,000 by N = 4.
-# The Actions token allows 1,000 REST requests per hour per repository, shared
-# with every other workflow here, so one gate run is held to a fraction of it
-# and fails closed on exhaustion instead of draining the repository's quota.
-REST_REQUEST_BUDGET = 400
+#
+# The budget is derived rather than chosen, so it cannot drift away from the
+# constraint it exists to satisfy:
+#
+#   * `REST_HOURLY_LIMIT` is what the Actions token is documented to allow per
+#     repository per hour;
+#   * `MAX_REQUEST_ATTEMPTS` is what `GitHubClient.request` will actually spend
+#     on one logical GET, since it retries transient failures. Counting logical
+#     calls without this factor would understate the real cost threefold;
+#   * `GATE_SHARE_OF_HOURLY_LIMIT` leaves the majority of the hour to the other
+#     workflows in this repository — the scenario review flow alone runs every
+#     fifteen minutes.
+REST_HOURLY_LIMIT = 1000
+MAX_REQUEST_ATTEMPTS = 3
+GATE_SHARE_OF_HOURLY_LIMIT = 0.45
+REST_REQUEST_BUDGET = int(
+    REST_HOURLY_LIMIT * GATE_SHARE_OF_HOURLY_LIMIT / MAX_REQUEST_ATTEMPTS
+)
+# GraphQL is a separate allowance, but it is still finite and still shared, so
+# queue reads are counted and bounded too rather than being trusted to the page
+# loop alone.
+GRAPHQL_REQUEST_BUDGET = MAX_QUEUE_PAGES
 
 QUEUE_QUERY = """
 query($owner:String!,$name:String!,$branch:String!,$page:Int!,$after:String){
@@ -109,11 +127,17 @@ class BudgetedGitHubClient(GitHubClient):
     """
 
     def __init__(
-        self, repository: str, token: str, budget: int = REST_REQUEST_BUDGET
+        self,
+        repository: str,
+        token: str,
+        budget: int = REST_REQUEST_BUDGET,
+        graphql_budget: int = GRAPHQL_REQUEST_BUDGET,
     ) -> None:
         super().__init__(repository, token)
         self.budget = budget
         self.spent = 0
+        self.graphql_budget = graphql_budget
+        self.graphql_spent = 0
 
     def request(
         self, path: str, method: str = "GET", payload: dict[str, Any] | None = None
@@ -122,9 +146,18 @@ class BudgetedGitHubClient(GitHubClient):
         if self.spent > self.budget:
             raise GateFailure(
                 f"Merge group review-gate exceeded its budget of {self.budget} "
-                "GitHub requests before it could examine every pull request"
+                "GitHub REST requests before it could examine every pull request"
             )
         return super().request(path, method=method, payload=payload)
+
+    def charge_graphql(self) -> None:
+        """Account for a GraphQL call, which does not go through `request`."""
+        self.graphql_spent += 1
+        if self.graphql_spent > self.graphql_budget:
+            raise GateFailure(
+                f"Merge group review-gate exceeded its budget of "
+                f"{self.graphql_budget} GitHub GraphQL requests"
+            )
 
 
 def base_branch_name(base_ref: str) -> str:
@@ -184,14 +217,15 @@ def group_commits(
 
 
 def queue_entries_by_commit(
-    token: str, repository: str, branch: str
+    client: BudgetedGitHubClient, repository: str, branch: str
 ) -> dict[str, dict[str, Any]]:
     owner, _, name = repository.partition("/")
     mapping: dict[str, dict[str, Any]] = {}
     cursor: str | None = None
     for _ in range(MAX_QUEUE_PAGES):
+        client.charge_graphql()
         response = graphql(
-            token,
+            client.token,
             QUEUE_QUERY,
             {
                 "owner": owner,
@@ -247,7 +281,7 @@ def queue_entries_by_commit(
 
 
 def source_pull_requests(
-    client: GitHubClient, token: str, repository: str, head_sha: str, base_ref: str
+    client: BudgetedGitHubClient, repository: str, head_sha: str, base_ref: str
 ) -> list[dict[str, Any]]:
     """Identify every pull request in the merge group, or fail closed."""
     branch = base_branch_name(base_ref)
@@ -257,7 +291,7 @@ def source_pull_requests(
     chain = group_commits(client, head_sha, str(tip["sha"]))
     if not chain:
         raise GateFailure("Merge group contains no pull request commits")
-    entries = queue_entries_by_commit(token, repository, branch)
+    entries = queue_entries_by_commit(client, repository, branch)
 
     resolved: list[dict[str, Any]] = []
     for group_sha, pull_head in chain:
@@ -381,14 +415,16 @@ def main(argv: list[str] | None = None) -> int:
     client = BudgetedGitHubClient(repository, token)
 
     try:
-        pulls = source_pull_requests(client, token, repository, head_sha, base_ref)
+        pulls = source_pull_requests(client, repository, head_sha, base_ref)
     except GateFailure as error:
         print(f"::error title=Merge group review-gate::{error}")
         return 1
 
     print(
         f"merge group {head_sha[:12]} contains {len(pulls)} pull request(s); "
-        f"{client.spent}/{client.budget} requests spent identifying them"
+        f"{client.spent}/{client.budget} REST and "
+        f"{client.graphql_spent}/{client.graphql_budget} GraphQL requests spent "
+        "identifying them"
     )
     failures: list[str] = []
     config = load_config()
@@ -413,7 +449,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(
         "merge group review-gate: every source pull request satisfies the gate "
-        f"({client.spent}/{client.budget} requests spent)"
+        f"({client.spent}/{client.budget} REST and "
+        f"{client.graphql_spent}/{client.graphql_budget} GraphQL requests spent)"
     )
     return 0
 

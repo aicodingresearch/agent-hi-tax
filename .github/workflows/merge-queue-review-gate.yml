@@ -30,6 +30,11 @@ jobs:
   review-gate:
     name: review-gate
     runs-on: ubuntu-latest
+    # The request budget bounds how many GitHub calls a run may make, but each
+    # of those may wait out a 30 second timeout, so a pathological run could sit
+    # on a runner for over an hour and hold the queue open. A real run costs a
+    # handful of requests and finishes in seconds.
+    timeout-minutes: 20
     steps:
       # Check out the base branch so the evaluator, its configuration and the
       # verdict rules all come from `main` rather than from the code under
