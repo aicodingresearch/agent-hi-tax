@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+  merge_group:
+    types:
+      - checks_requested
 
 permissions:
   contents: read
@@ -27,6 +30,17 @@ jobs:
           # present locally.
           fetch-depth: 2
 
+      # A merge group is the base branch plus one merge commit per queued pull
+      # request, so its first parent is the *previous* queued pull request, not
+      # the base branch. Observed on a live two-pull-request merge group:
+      # `merge_group.base_sha` was the previous entry's commit, not the tip of
+      # main. Fetch the base branch by name and diff the whole group against it.
+      - name: Fetch the merge group base branch
+        if: github.event_name == 'merge_group'
+        env:
+          BASE_REF: ${{ github.event.merge_group.base_ref }}
+        run: git fetch --no-tags --depth=1 origin "+${BASE_REF}:refs/merge-group-base"
+
       - name: Verify run packages
         run: ./scripts/verify-packages.sh
 
@@ -35,8 +49,15 @@ jobs:
 
       - name: Decide whether the results index must match
         id: index-gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
         run: |
-          required=$(./scripts/index-check-required.sh HEAD^1 HEAD)
+          if [ "$EVENT_NAME" = "merge_group" ]; then
+            base=refs/merge-group-base
+          else
+            base='HEAD^1'
+          fi
+          required=$(./scripts/index-check-required.sh "$base" HEAD)
           echo "required=${required}" >> "$GITHUB_OUTPUT"
 
       - name: Verify the results index is current

@@ -1,0 +1,48 @@
+name: Merge queue review gate
+
+# `review-gate` is reported on a pull request as a commit status by
+# `scenario_review_flow.py`. A merge group is a different SHA that nothing else
+# reports on, so this workflow produces the same check name for the merge group
+# and nothing else. Both producers are required: GitHub refuses to enqueue a
+# pull request whose required check has never reported on the pull request
+# itself, and it refuses to merge a group whose required check never reports on
+# the group.
+#
+# The job name below is the required status check context. Keep it exactly
+# `review-gate`, and keep this workflow limited to `merge_group`: a job of the
+# same name that is skipped on ordinary pull requests would report a second,
+# conflicting `review-gate` conclusion on the pull request head.
+
+on:
+  merge_group:
+    types:
+      - checks_requested
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: merge-queue-review-gate-${{ github.event.merge_group.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  review-gate:
+    name: review-gate
+    runs-on: ubuntu-latest
+    steps:
+      # Always the trusted base branch, never the merge group or any pull
+      # request content: this job decides a merge gate and must not execute
+      # code that is under review.
+      - name: Check out trusted review automation
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+
+      - name: Evaluate every source pull request in the merge group
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MERGE_GROUP_HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+          MERGE_GROUP_BASE_REF: ${{ github.event.merge_group.base_ref }}
+        run: python3 scripts/merge_group_gate.py
