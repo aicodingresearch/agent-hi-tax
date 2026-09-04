@@ -27,6 +27,7 @@ from scenario_review_flow import (  # noqa: E402
     PROTECTED_PROTOCOL_PREFIXES,
     process_pull,
     request_first,
+    scenario_package_roots,
 )
 from review_gate import (  # noqa: E402
     parse_time,
@@ -316,6 +317,33 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         expected = {f"/{prefix}" for prefix in PROTECTED_PROTOCOL_PREFIXES}
         expected.update(f"/{filename}" for filename in PROTECTED_PROTOCOL_FILES)
         self.assertEqual(patterns, expected)
+
+    def test_review_scope_includes_every_touched_run_package(self):
+        files = [
+            {
+                "status": "added",
+                "filename": "runs/2026-09-03/new-package/manifest.yaml",
+            },
+            {
+                "status": "modified",
+                "filename": "runs/2026-08-31/existing-package/attempts/r1/result.yaml",
+            },
+            {
+                "status": "renamed",
+                "filename": "runs/2026-09-01/renamed-package/README.md",
+                "previous_filename": "runs/2026-09-01/original-package/README.md",
+            },
+            {"status": "modified", "filename": "README.md"},
+        ]
+        self.assertEqual(
+            scenario_package_roots(files),
+            (
+                "runs/2026-08-31/existing-package",
+                "runs/2026-09-01/original-package",
+                "runs/2026-09-01/renamed-package",
+                "runs/2026-09-03/new-package",
+            ),
+        )
 
     def test_openai_first_routes_to_keting_or_glm(self):
         parsed = parse_verdict(verdict("beautyarbutin", "openai-gpt"), HEAD)

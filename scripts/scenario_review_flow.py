@@ -245,12 +245,12 @@ def previous_stage_verdict(
 
 
 def scenario_package_roots(files: Iterable[dict[str, Any]]) -> tuple[str, ...]:
-    roots = {
-        str(item.get("filename") or "").rsplit("/", 1)[0]
-        for item in files
-        if item.get("status") == "added"
-        and SCENARIO_RE.fullmatch(str(item.get("filename") or ""))
-    }
+    roots = set()
+    for item in files:
+        for name in ("filename", "previous_filename"):
+            parts = str(item.get(name) or "").split("/")
+            if len(parts) >= 4 and parts[0] == "runs":
+                roots.add("/".join(parts[:3]))
     return tuple(sorted(roots))
 
 
