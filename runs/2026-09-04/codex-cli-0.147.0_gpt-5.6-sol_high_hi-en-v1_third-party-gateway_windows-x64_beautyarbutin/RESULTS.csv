@@ -1,0 +1,2 @@
+attempt,status,assistant_message_at_utc,ui_latency_seconds,usage_source,input_tokens,cache_creation_input_tokens,cache_read_input_tokens,total_input_tokens,output_tokens,context_total_tokens,web_search_requests,web_fetch_requests,quota_attribution,response_text_sha256
+
