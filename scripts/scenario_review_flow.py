@@ -213,7 +213,11 @@ def assigned_verdict(
         if not match:
             return None, "missing Reviewed at head"
         expected_head = match.group(1)
-    return parse_verdict_with_reason(latest, expected_head)
+    return parse_verdict_with_reason(
+        latest,
+        expected_head,
+        trusted_commenters=(assignment.reviewer,),
+    )
 
 
 def previous_stage_verdict(

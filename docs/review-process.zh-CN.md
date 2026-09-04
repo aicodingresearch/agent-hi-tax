@@ -42,6 +42,8 @@
 
 自动化按两个独立维度登记评审能力：**Agent 产品**（例如 Codex、Claude Code、WorkBuddy）和**模型家族**（例如 OpenAI/GPT、GLM、Claude、Kimi）。同一个 GitHub 账号可以登记多个“产品 + 模型家族”能力组合。每次分配都会在可信 marker 中固定本轮准确的能力组合。新二评分配严格按 `second_reviewers` 或 `glm_first_fallback_reviewers` 中的账号顺序选择；同一账号内再严格按 capability 列表顺序选择。只有首评池按 PR 编号轮转。二评仍必须选择与已接受首评不同的模型家族。
 
+即使 Actions token 没有返回 `author_association`，只要结构化 verdict 的 GitHub 登录名与可信 assignment marker 指定的人完全一致，系统仍接受该 verdict。这样配置为 Read 权限的 Reviewer 无需升级写权限即可参加评审；没有可信 assignment 时，仍按普通的仓库成员或协作者身份检查处理。
+
 顺序派发不降低独立性要求。第二 Reviewer 必须从 diff 和文件独立检查，不得阅读第一人的 findings。看过他人意见之后写下的评审必须披露，并且不计入两份独立评审的下限。明确要求由同一 Reviewer 复审时，可以读取自己此前的 verdict 与贡献者后续回复，因为这一步是在核验修订，不是在新增一份独立评审；follow-up 必须披露这一边界。
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。

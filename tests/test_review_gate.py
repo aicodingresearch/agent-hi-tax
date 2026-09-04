@@ -152,6 +152,20 @@ class ReviewGateTests(unittest.TestCase):
         )
         self.assertEqual(result["approval_count"], 0)
 
+    def test_expected_reviewer_is_trusted_when_actions_hides_association(self):
+        hidden = record(1, association="NONE", login="black-pwq")
+        result = evaluate_review_gate(
+            [hidden], HEAD, expected_reviewers=("black-pwq",)
+        )
+        self.assertEqual(result["approval_count"], 1)
+
+    def test_unassigned_hidden_association_reviewer_remains_untrusted(self):
+        hidden = record(1, association="NONE", login="external-author")
+        result = evaluate_review_gate(
+            [hidden], HEAD, expected_reviewers=("black-pwq",)
+        )
+        self.assertEqual(result["approval_count"], 0)
+
     def test_human_key_must_match_comment_author(self):
         valid = record(1, reviewer="Alice", key="human:alice", login="Alice")
         invalid = record(2, reviewer="Alice", key="human:bob", login="Alice")

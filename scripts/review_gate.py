@@ -77,9 +77,18 @@ def model_family(independence_key: str) -> str:
 
 
 def parse_verdict_with_reason(
-    record: dict[str, Any], current_head: str
+    record: dict[str, Any],
+    current_head: str,
+    trusted_commenters: Iterable[str] = (),
 ) -> tuple[ParsedVerdict | None, str | None]:
-    if record.get("author_association") not in TRUSTED_ASSOCIATIONS:
+    commenter = str((record.get("user") or {}).get("login") or "").lower()
+    if not commenter:
+        return None, "missing GitHub reviewer login"
+    trusted = {login.lower() for login in trusted_commenters}
+    if (
+        record.get("author_association") not in TRUSTED_ASSOCIATIONS
+        and commenter not in trusted
+    ):
         return None, "comment author is not a repository member or collaborator"
 
     body = str(record.get("body") or "").replace("\r\n", "\n")
@@ -110,10 +119,6 @@ def parse_verdict_with_reason(
         return None, "Reviewed at head is not a commit SHA"
     if not current_head.lower().startswith(reviewed_head):
         return None, "Reviewed at head does not match the current PR head"
-
-    commenter = str((record.get("user") or {}).get("login") or "").lower()
-    if not commenter:
-        return None, "missing GitHub reviewer login"
 
     explicit_key = _field(body, "Independence key")
     if explicit_key:
@@ -153,17 +158,27 @@ def parse_verdict_with_reason(
     )
 
 
-def parse_verdict(record: dict[str, Any], current_head: str) -> ParsedVerdict | None:
-    parsed, _ = parse_verdict_with_reason(record, current_head)
+def parse_verdict(
+    record: dict[str, Any],
+    current_head: str,
+    trusted_commenters: Iterable[str] = (),
+) -> ParsedVerdict | None:
+    parsed, _ = parse_verdict_with_reason(
+        record, current_head, trusted_commenters=trusted_commenters
+    )
     return parsed
 
 
 def current_verdicts(
-    records: Iterable[dict[str, Any]], current_head: str
+    records: Iterable[dict[str, Any]],
+    current_head: str,
+    trusted_commenters: Iterable[str] = (),
 ) -> dict[str, ParsedVerdict]:
     latest: dict[str, ParsedVerdict] = {}
     for record in records:
-        parsed = parse_verdict(record, current_head)
+        parsed = parse_verdict(
+            record, current_head, trusted_commenters=trusted_commenters
+        )
         if not parsed:
             continue
         previous = latest.get(parsed.commenter)
@@ -181,11 +196,21 @@ def evaluate_review_gate(
     expected_reviewers: Iterable[str] | None = None,
     carried_verdicts: Iterable[ParsedVerdict] = (),
 ) -> dict[str, Any]:
-    latest = current_verdicts(records, current_head)
+    allowed = (
+        {login.lower() for login in expected_reviewers}
+        if expected_reviewers is not None
+        else None
+    )
+    # expected_reviewers comes from trusted assignment markers. GitHub may
+    # hide author_association from the Actions token even for a Read member.
+    latest = current_verdicts(
+        records,
+        current_head,
+        trusted_commenters=allowed or (),
+    )
     for verdict in carried_verdicts:
         latest.setdefault(verdict.commenter, verdict)
-    if expected_reviewers is not None:
-        allowed = {login.lower() for login in expected_reviewers}
+    if allowed is not None:
         latest = {login: verdict for login, verdict in latest.items() if login in allowed}
 
     values = sorted(latest.values(), key=lambda item: (item.submitted_at, item.record_id))
