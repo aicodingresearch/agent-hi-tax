@@ -95,6 +95,35 @@ class MergeGroupTopologyTests(unittest.TestCase):
         with self.assertRaises(GateFailure):
             group_commits(TopologyClient(commits), GROUP_A, MAIN_TIP)
 
+    def test_octopus_commit_fails_closed(self):
+        # Three parents would make `parents[1]` an arbitrary choice among the
+        # merged heads, so the shape is refused rather than interpreted.
+        commits = {GROUP_A: commit(GROUP_A, [MAIN_TIP, PR_A_HEAD, PR_B_HEAD])}
+        with self.assertRaises(GateFailure):
+            group_commits(TopologyClient(commits), GROUP_A, MAIN_TIP)
+
+    def test_a_deep_but_legal_chain_is_accepted(self):
+        # GitHub allows up to 100 entries to build, so a long-but-legal queue
+        # must not be rejected by an over-tight walk limit.
+        commits = {}
+        previous = MAIN_TIP
+        shas = [f"{index:040x}" for index in range(1, 61)]
+        for sha in shas:
+            commits[sha] = commit(sha, [previous, PR_A_HEAD])
+            previous = sha
+        chain = group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
+        self.assertEqual(len(chain), 60)
+
+    def test_a_chain_longer_than_the_queue_cap_fails_closed(self):
+        commits = {}
+        previous = MAIN_TIP
+        shas = [f"{index:040x}" for index in range(1, 130)]
+        for sha in shas:
+            commits[sha] = commit(sha, [previous, PR_A_HEAD])
+            previous = sha
+        with self.assertRaises(GateFailure):
+            group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
+
 
 class SourcePullRequestTests(unittest.TestCase):
     def resolve(self, entries):
@@ -133,6 +162,33 @@ class SourcePullRequestTests(unittest.TestCase):
                     entry(2, GROUP_B, 22, PR_B_HEAD),
                 ]
             )
+
+    def test_empty_merge_group_fails_closed(self):
+        # The group head being the base tip means no queued pull request was
+        # found. Returning an empty list here would let `main` report success
+        # for a group it never examined.
+        with patch("merge_group_gate.queue_entries_by_commit", return_value={}):
+            with self.assertRaises(GateFailure):
+                source_pull_requests(
+                    TopologyClient(), "token", "o/r", MAIN_TIP, "refs/heads/main"
+                )
+
+    def test_truncated_queue_page_fails_closed(self):
+        response = {
+            "data": {
+                "repository": {
+                    "mergeQueue": {
+                        "entries": {
+                            "totalCount": 120,
+                            "nodes": [entry(1, GROUP_A, 11, PR_A_HEAD)],
+                        }
+                    }
+                }
+            }
+        }
+        with patch("merge_group_gate.graphql", return_value=response):
+            with self.assertRaises(GateFailure):
+                queue_entries_by_commit("token", "o/r", "main")
 
     def test_unreadable_merge_queue_fails_closed(self):
         with patch(
@@ -349,6 +405,31 @@ class EvaluatePullTests(unittest.TestCase):
         ok, reason = evaluate_pull(client, self.config, client.value)
         self.assertTrue(ok, reason)
 
+    def test_owner_is_never_a_first_review_candidate(self):
+        # `keting` is excluded from the first-review pool on the pull request
+        # side; the merge-group evaluator must not quietly widen that pool.
+        from scenario_review_flow import process_pull
+
+        client = GateClient(pull(number=1))
+        process_pull(client, client.value)
+        client.comments_data.append(
+            {
+                "id": 960,
+                "created_at": "2026-09-03T09:30:00Z",
+                "user": {"login": "keting"},
+                "body": (
+                    f"<!-- scenario-review-assignment:keting head:{HEAD} -->\n"
+                    "<!-- scenario-review-stage:first -->\n"
+                    "<!-- scenario-review-capability:claude-code model-family:anthropic-claude -->"
+                ),
+            }
+        )
+        client.add_verdict("keting", "anthropic-claude")
+        client.reviews_data.append(approved_maintainer_review())
+        ok, reason = evaluate_pull(client, self.config, client.value)
+        self.assertFalse(ok)
+        self.assertIn("no longer valid", reason)
+
     def test_external_author_verdict_does_not_satisfy_the_gate(self):
         from scenario_review_flow import process_pull
 
@@ -418,6 +499,31 @@ class MergeGroupMainTests(unittest.TestCase):
             self.run_main(pulls, [(False, "first is bad"), (True, "ok")]), 1
         )
 
+    def test_head_that_moves_between_queue_read_and_evaluation_fails_closed(self):
+        # The queue was read first; `main` re-reads each pull request and must
+        # notice a head that changed in between rather than evaluating a
+        # different tree than the one that was queued.
+        pulls = [{"number": 11, "head": PR_A_HEAD}]
+        with patch("merge_group_gate.source_pull_requests", return_value=pulls), patch(
+            "merge_group_gate.load_config", return_value=normalized_config(config())
+        ), patch("merge_group_gate.GitHubClient") as client_class, patch(
+            "merge_group_gate.evaluate_pull", return_value=(True, "ok")
+        ) as evaluate, patch.dict(
+            "os.environ",
+            {
+                "REPOSITORY": "o/r",
+                "GITHUB_TOKEN": "t",
+                "MERGE_GROUP_HEAD_SHA": GROUP_A,
+                "MERGE_GROUP_BASE_REF": "refs/heads/main",
+            },
+        ):
+            client_class.return_value.pull.return_value = {
+                "number": 11,
+                "head": {"sha": "9" * 40},
+            }
+            self.assertEqual(main([]), 1)
+        evaluate.assert_not_called()
+
     def test_unidentifiable_source_pull_requests_fail_closed(self):
         with patch(
             "merge_group_gate.source_pull_requests",
@@ -462,6 +568,26 @@ class MergeQueueWorkflowTests(unittest.TestCase):
         # base_sha is the previous queue entry, not the base branch tip, so it
         # must never be interpolated as the diff base.
         self.assertNotIn("github.event.merge_group.base_sha", self.verify)
+
+    def test_base_branch_fetch_is_limited_to_merge_group_runs(self):
+        # Fetching the base branch on a pull request run would replace the
+        # merge-commit base and change what the index gate compares.
+        self.assertIn(
+            "if: github.event_name == 'merge_group'\n", self.verify
+        )
+        self.assertIn('if [ "$EVENT_NAME" = "merge_group" ]; then', self.verify)
+
+    def test_pull_request_side_review_gate_requires_a_maintainer_approval(self):
+        # Both sides of `review-gate` must ask the same question, or a pull
+        # request that passed on the pull request would be ejected from the
+        # queue for a reason never shown on it.
+        flow = (ROOT / "scripts/scenario_review_flow.py").read_text(encoding="utf-8")
+        gate = (ROOT / "scripts/merge_group_gate.py").read_text(encoding="utf-8")
+        self.assertIn("def maintainer_approved(", flow)
+        self.assertIn("maintainer_approved(config, reviews", flow)
+        # The merge-group gate imports the same helper rather than restating it.
+        self.assertIn("maintainer_approved", gate)
+        self.assertNotIn("def maintainer_approved(", gate)
 
     def test_merge_group_gate_answers_only_merge_group(self):
         self.assertIn("on:\n  merge_group:\n    types:\n      - checks_requested", self.gate)

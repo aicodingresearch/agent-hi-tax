@@ -836,6 +836,32 @@ def request_second(
     return assignment
 
 
+def maintainer_approved(
+    config: dict[str, Any],
+    reviews: Iterable[dict[str, Any]],
+    author: str,
+    head: str,
+) -> bool:
+    """Has a non-author maintainer formally approved exactly this head?
+
+    Shared by the pull-request status and the merge-group check so both sides of
+    `review-gate` answer the same question. The repository ruleset only requires
+    one approving review from anyone with access, so this is the rule that makes
+    the approval a *maintainer* decision.
+    """
+    maintainers = {login.lower() for login in config["maintainers"]}
+    for review in reviews:
+        login = str((review.get("user") or {}).get("login") or "").lower()
+        commit = str(review.get("commit_id") or "").lower()
+        if review.get("state") != "APPROVED":
+            continue
+        if login not in maintainers or login == author.lower():
+            continue
+        if commit and head.lower().startswith(commit):
+            return True
+    return False
+
+
 def ensure_maintainers(
     client: GitHubClient,
     pull: dict[str, Any],
@@ -1115,18 +1141,33 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         post_status(client, pull, "failure", "Two different reviewers and model families are required")
         return None
 
-    post_status(
-        client,
-        pull,
-        "success",
-        "Two independent APPROVE verdicts cover the current scenario content",
-    )
+    # Invite the maintainers first, then decide the status. `review-gate` only
+    # succeeds once a non-author maintainer has formally approved this head, so
+    # that the pull-request side and the merge-group side of the same check
+    # agree: a merge queue evaluates `review-gate` again on the merge group, and
+    # a check that passed here but fails there would eject the pull request from
+    # the queue for a reason that was never visible on the pull request.
     ensure_maintainers(
         client,
         pull,
         config,
         comments,
         reviews,
+    )
+    if not maintainer_approved(config, reviews, pull["user"]["login"], current_head):
+        post_status(
+            client,
+            pull,
+            "pending",
+            "Waiting for a maintainer to formally approve this head",
+        )
+        return None
+
+    post_status(
+        client,
+        pull,
+        "success",
+        "Two independent APPROVE verdicts and a maintainer approval cover this head",
     )
     return None
 

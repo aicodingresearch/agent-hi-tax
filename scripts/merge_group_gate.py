@@ -42,6 +42,7 @@ from scenario_review_flow import (  # noqa: E402
     is_scenario_pull,
     latest_assignment,
     load_config,
+    maintainer_approved,
     matching_capability,
     previous_stage_verdict,
     pull_files,
@@ -50,15 +51,18 @@ from scenario_review_flow import (  # noqa: E402
 
 
 GRAPHQL_URL = "https://api.github.com/graphql"
-# A merge group cannot be longer than the queue's maximum entries to build.
-# Refusing to walk further keeps a malformed chain from looping.
-MAX_GROUP_ENTRIES = 50
+# GitHub caps "maximum entries to build" at 100, so a merge group can never be
+# longer than that. Refusing to walk further keeps a malformed chain from
+# looping, and matching the cap keeps a legitimate deep queue from being
+# rejected. `QUEUE_PAGE_SIZE` must stay at or above this for the same reason.
+MAX_GROUP_ENTRIES = 100
+QUEUE_PAGE_SIZE = 100
 
 QUEUE_QUERY = """
-query($owner:String!,$name:String!,$branch:String!){
+query($owner:String!,$name:String!,$branch:String!,$page:Int!){
   repository(owner:$owner,name:$name){
     mergeQueue(branch:$branch){
-      entries(first:100){
+      entries(first:$page){
         totalCount
         nodes {
           position
@@ -139,7 +143,9 @@ def queue_entries_by_commit(
 ) -> dict[str, dict[str, Any]]:
     owner, _, name = repository.partition("/")
     response = graphql(
-        token, QUEUE_QUERY, {"owner": owner, "name": name, "branch": branch}
+        token,
+        QUEUE_QUERY,
+        {"owner": owner, "name": name, "branch": branch, "page": QUEUE_PAGE_SIZE},
     )
     # Partial data plus errors is normal: `mergeQueue.configuration` is not
     # readable by the Actions token. Only errors on the paths this gate reads
@@ -152,9 +158,18 @@ def queue_entries_by_commit(
     queue = (
         ((response.get("data") or {}).get("repository") or {}).get("mergeQueue") or {}
     )
-    entries = (queue.get("entries") or {}).get("nodes")
+    container = queue.get("entries") or {}
+    entries = container.get("nodes")
     if entries is None:
         raise GateFailure(f"Merge queue for {branch} is not readable")
+    total = container.get("totalCount")
+    # A single page must cover the whole queue. If GitHub reports more entries
+    # than were returned, the map would be silently incomplete and a group
+    # commit could look unexplained, so refuse rather than guess.
+    if isinstance(total, int) and total > len(entries):
+        raise GateFailure(
+            f"Merge queue for {branch} reports {total} entries but only {len(entries)} were read"
+        )
     mapping: dict[str, dict[str, Any]] = {}
     for node in entries:
         commit = (node.get("headCommit") or {}).get("oid")
@@ -197,25 +212,6 @@ def source_pull_requests(
             {"number": int(pull_request["number"]), "head": enqueued_head}
         )
     return resolved
-
-
-def maintainer_approved(
-    config: dict[str, Any],
-    reviews: Iterable[dict[str, Any]],
-    author: str,
-    head: str,
-) -> bool:
-    maintainers = {login.lower() for login in config["maintainers"]}
-    for review in reviews:
-        login = str((review.get("user") or {}).get("login") or "").lower()
-        commit = str(review.get("commit_id") or "").lower()
-        if review.get("state") != "APPROVED":
-            continue
-        if login not in maintainers or login == author.lower():
-            continue
-        if commit and head.lower().startswith(commit):
-            return True
-    return False
 
 
 def evaluate_pull(

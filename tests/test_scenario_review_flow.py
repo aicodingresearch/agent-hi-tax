@@ -650,8 +650,17 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             "keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z"
         )
         process_pull(client, client.value)
-        self.assertEqual(client.statuses[-1]["state"], "success")
         self.assertEqual(client.requested, ["beautyarbutin", "XiaoCooder"])
+        maintainer_approval = {
+            "id": 500,
+            "state": "APPROVED",
+            "submitted_at": "2026-09-03T12:00:00Z",
+            "commit_id": HEAD,
+            "user": {"login": "XiaoCooder"},
+        }
+        client.reviews_data.append(maintainer_approval)
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "success")
 
     def test_openai_second_reviewer_priority_does_not_rotate(self):
         client = FakeClient(pull(number=2))
@@ -854,8 +863,18 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         ]
         self.assertEqual(len(carried), 2)
         self.assertEqual(client.requested, ["beautyarbutin", "XiaoCooder"])
+        self.assertEqual(client.statuses[-1]["state"], "pending")
+        maintainer_approval = {
+            "id": 500,
+            "state": "APPROVED",
+            "submitted_at": "2026-09-03T12:00:00Z",
+            "commit_id": new_head,
+            "user": {"login": "XiaoCooder"},
+        }
+        client.reviews_data.append(maintainer_approval)
+        process_pull(client, client.value)
         self.assertEqual(client.statuses[-1]["state"], "success")
-        self.assertIn("current scenario content", client.statuses[-1]["description"])
+        self.assertIn("maintainer approval", client.statuses[-1]["description"])
 
         before = len(client.comments_data)
         process_pull(client, client.value)
@@ -1088,6 +1107,18 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         process_pull(client, client.value)
         client.add_verdict("keting", "anthropic-claude", submitted="2026-09-03T10:00:00Z")
         process_pull(client, client.value)
+        # Both maintainers are invited, but the check waits for one of them.
+        self.assertEqual(client.statuses[-1]["state"], "pending")
+        self.assertIn("maintainer", client.statuses[-1]["description"])
+        maintainer_approval = {
+            "id": 500,
+            "state": "APPROVED",
+            "submitted_at": "2026-09-03T12:00:00Z",
+            "commit_id": HEAD,
+            "user": {"login": "XiaoCooder"},
+        }
+        client.reviews_data.append(maintainer_approval)
+        process_pull(client, client.value)
         self.assertEqual(client.statuses[-1]["state"], "success")
         maintainer = next(
             comment
@@ -1099,7 +1130,8 @@ class ScenarioReviewFlowTests(unittest.TestCase):
             maintainer["body"].lower(),
         )
         self.assertIn("@beautyarbutin @XiaoCooder", maintainer["body"])
-        self.assertEqual(client.requested, ["beautyarbutin", "XiaoCooder"])
+        # Once one of them approves, only the other one's request is retired.
+        self.assertEqual(client.requested, ["XiaoCooder"])
 
     def test_second_reviewer_must_use_assigned_model_family(self):
         client = FakeClient(pull(number=1))

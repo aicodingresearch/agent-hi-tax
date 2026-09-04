@@ -31,9 +31,19 @@ jobs:
     name: review-gate
     runs-on: ubuntu-latest
     steps:
-      # Always the trusted base branch, never the merge group or any pull
-      # request content: this job decides a merge gate and must not execute
-      # code that is under review.
+      # Check out the base branch so the evaluator, its configuration and the
+      # verdict rules all come from `main` rather than from the code under
+      # review.
+      #
+      # Scope of that guarantee: it pins the *scripts* this job runs. It does
+      # not by itself pin this workflow file — for a `merge_group` event the
+      # workflow definition may be read from the merge group ref, which
+      # contains the queued pull requests. That has not been measured for this
+      # repository and must be before `review-gate` becomes a required check.
+      # Until then the protections that actually cover the workflow file are
+      # the scenario/protocol split rule, which fails any scenario pull request
+      # touching `.github/`, and CODEOWNERS mapping `/.github/` to @keting,
+      # which only bites once `require_code_owner_review` is enabled.
       - name: Check out trusted review automation
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
