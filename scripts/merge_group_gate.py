@@ -19,12 +19,11 @@ writes to GitHub: no comments, no review requests, no statuses, no email.
 from __future__ import annotations
 
 import json
-import os
 import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -51,19 +50,25 @@ from scenario_review_flow import (  # noqa: E402
 
 
 GRAPHQL_URL = "https://api.github.com/graphql"
-# GitHub caps "maximum entries to build" at 100, so a merge group can never be
-# longer than that. Refusing to walk further keeps a malformed chain from
-# looping, and matching the cap keeps a legitimate deep queue from being
-# rejected. `QUEUE_PAGE_SIZE` must stay at or above this for the same reason.
-MAX_GROUP_ENTRIES = 100
+# The queue is read page by page until GitHub says there is no next page, so the
+# page size is a request-shaping detail and carries no correctness meaning: it
+# is deliberately not tied to the walk limit below.
 QUEUE_PAGE_SIZE = 100
+# Bound the pagination loop so a server that never clears `hasNextPage` cannot
+# spin forever. At 100 entries per page this covers 10,000 queue entries.
+MAX_QUEUE_PAGES = 100
+# A guard on the first-parent walk, not a claim about how long a merge group may
+# be. GitHub's documented "maximum entries to build" cap describes concurrent
+# builds, not the length of this chain, so this is set well above any queue this
+# repository will run and only exists to stop a malformed chain from looping.
+MAX_GROUP_ENTRIES = 1000
 
 QUEUE_QUERY = """
-query($owner:String!,$name:String!,$branch:String!,$page:Int!){
+query($owner:String!,$name:String!,$branch:String!,$page:Int!,$after:String){
   repository(owner:$owner,name:$name){
     mergeQueue(branch:$branch){
-      entries(first:$page){
-        totalCount
+      entries(first:$page, after:$after){
+        pageInfo { hasNextPage endCursor }
         nodes {
           position
           state
@@ -142,40 +147,63 @@ def queue_entries_by_commit(
     token: str, repository: str, branch: str
 ) -> dict[str, dict[str, Any]]:
     owner, _, name = repository.partition("/")
-    response = graphql(
-        token,
-        QUEUE_QUERY,
-        {"owner": owner, "name": name, "branch": branch, "page": QUEUE_PAGE_SIZE},
-    )
-    # Partial data plus errors is normal: `mergeQueue.configuration` is not
-    # readable by the Actions token. Only errors on the paths this gate reads
-    # may fail it.
-    for error in response.get("errors") or []:
-        path = [str(item) for item in (error.get("path") or [])]
-        if "configuration" in path:
-            continue
-        raise GateFailure(f"GraphQL error on {'.'.join(path)}: {error.get('message')}")
-    queue = (
-        ((response.get("data") or {}).get("repository") or {}).get("mergeQueue") or {}
-    )
-    container = queue.get("entries") or {}
-    entries = container.get("nodes")
-    if entries is None:
-        raise GateFailure(f"Merge queue for {branch} is not readable")
-    total = container.get("totalCount")
-    # A single page must cover the whole queue. If GitHub reports more entries
-    # than were returned, the map would be silently incomplete and a group
-    # commit could look unexplained, so refuse rather than guess.
-    if isinstance(total, int) and total > len(entries):
-        raise GateFailure(
-            f"Merge queue for {branch} reports {total} entries but only {len(entries)} were read"
-        )
     mapping: dict[str, dict[str, Any]] = {}
-    for node in entries:
-        commit = (node.get("headCommit") or {}).get("oid")
-        if commit:
-            mapping[str(commit).lower()] = node
-    return mapping
+    cursor: str | None = None
+    for _ in range(MAX_QUEUE_PAGES):
+        response = graphql(
+            token,
+            QUEUE_QUERY,
+            {
+                "owner": owner,
+                "name": name,
+                "branch": branch,
+                "page": QUEUE_PAGE_SIZE,
+                "after": cursor,
+            },
+        )
+        # Partial data plus errors is normal: `mergeQueue.configuration` is not
+        # readable by the Actions token. Only errors on the paths this gate
+        # reads may fail it.
+        for error in response.get("errors") or []:
+            path = [str(item) for item in (error.get("path") or [])]
+            if "configuration" in path:
+                continue
+            raise GateFailure(
+                f"GraphQL error on {'.'.join(path)}: {error.get('message')}"
+            )
+        queue = (
+            ((response.get("data") or {}).get("repository") or {}).get("mergeQueue")
+            or {}
+        )
+        container = queue.get("entries") or {}
+        entries = container.get("nodes")
+        if not isinstance(entries, list):
+            raise GateFailure(f"Merge queue for {branch} is not readable")
+        for node in entries:
+            commit = (node.get("headCommit") or {}).get("oid")
+            if commit:
+                mapping[str(commit).lower()] = node
+        # The queue is only fully read when GitHub says so. A missing or
+        # malformed `pageInfo` means the map may be incomplete, and an
+        # incomplete map would make a real group commit look unexplained, so
+        # refuse rather than guess.
+        page_info = container.get("pageInfo")
+        if not isinstance(page_info, dict) or not isinstance(
+            page_info.get("hasNextPage"), bool
+        ):
+            raise GateFailure(
+                f"Merge queue for {branch} did not report whether more entries exist"
+            )
+        if not page_info["hasNextPage"]:
+            return mapping
+        cursor = page_info.get("endCursor")
+        if not isinstance(cursor, str) or not cursor:
+            raise GateFailure(
+                f"Merge queue for {branch} reported more entries without a cursor"
+            )
+    raise GateFailure(
+        f"Merge queue for {branch} did not finish within {MAX_QUEUE_PAGES} pages"
+    )
 
 
 def source_pull_requests(

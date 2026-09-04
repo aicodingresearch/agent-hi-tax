@@ -36,14 +36,22 @@ jobs:
       # review.
       #
       # Scope of that guarantee: it pins the *scripts* this job runs. It does
-      # not by itself pin this workflow file — for a `merge_group` event the
-      # workflow definition may be read from the merge group ref, which
-      # contains the queued pull requests. That has not been measured for this
-      # repository and must be before `review-gate` becomes a required check.
-      # Until then the protections that actually cover the workflow file are
-      # the scenario/protocol split rule, which fails any scenario pull request
-      # touching `.github/`, and CODEOWNERS mapping `/.github/` to @keting,
-      # which only bites once `require_code_owner_review` is enabled.
+      # not pin this workflow file. GitHub runs the version of a workflow that
+      # is present at the ref associated with the triggering event, and for a
+      # `merge_group` event that ref is the merge group itself, which contains
+      # the queued pull requests. A pull request that edits this file therefore
+      # defines the job that is supposed to gate it.
+      #
+      # The scenario/protocol split rule blocks that for scenario submissions,
+      # since it fails any scenario pull request touching `.github/`. It does
+      # not cover a workflow-only pull request. CODEOWNERS maps `/.github/` to
+      # @keting, but that is inert while the ruleset keeps
+      # `require_code_owner_review: false`.
+      #
+      # Hard precondition, not a nice-to-have: before `review-gate` is added to
+      # required status checks, either enable `require_code_owner_review` so
+      # every change to this file needs owner approval, or move the gate to an
+      # external required workflow that a pull request cannot redefine.
       - name: Check out trusted review automation
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:

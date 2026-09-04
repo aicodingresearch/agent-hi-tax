@@ -41,6 +41,21 @@ def commit(sha, parents):
     return {"sha": sha, "parents": [{"sha": item} for item in parents]}
 
 
+def page(nodes, has_next=False, cursor=None):
+    return {
+        "data": {
+            "repository": {
+                "mergeQueue": {
+                    "entries": {
+                        "pageInfo": {"hasNextPage": has_next, "endCursor": cursor},
+                        "nodes": nodes,
+                    }
+                }
+            }
+        }
+    }
+
+
 def entry(position, group_sha, number, head, state="AWAITING_CHECKS"):
     return {
         "position": position,
@@ -102,25 +117,37 @@ class MergeGroupTopologyTests(unittest.TestCase):
         with self.assertRaises(GateFailure):
             group_commits(TopologyClient(commits), GROUP_A, MAIN_TIP)
 
-    def test_a_deep_but_legal_chain_is_accepted(self):
-        # GitHub allows up to 100 entries to build, so a long-but-legal queue
-        # must not be rejected by an over-tight walk limit.
+    def _chain(self, length):
         commits = {}
         previous = MAIN_TIP
-        shas = [f"{index:040x}" for index in range(1, 61)]
+        shas = [f"{index:040x}" for index in range(1, length + 1)]
         for sha in shas:
             commits[sha] = commit(sha, [previous, PR_A_HEAD])
             previous = sha
-        chain = group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
-        self.assertEqual(len(chain), 60)
+        return commits, shas
 
-    def test_a_chain_longer_than_the_queue_cap_fails_closed(self):
-        commits = {}
-        previous = MAIN_TIP
-        shas = [f"{index:040x}" for index in range(1, 130)]
-        for sha in shas:
-            commits[sha] = commit(sha, [previous, PR_A_HEAD])
-            previous = sha
+    def test_walk_limit_covers_the_largest_queue_github_allows(self):
+        from merge_group_gate import MAX_GROUP_ENTRIES
+
+        # An absolute floor, not a restatement of the constant: GitHub's merge
+        # queue settings allow up to 100 entries, so the walk must accept a
+        # 100-commit chain and the constant must not be quietly lowered.
+        self.assertGreaterEqual(MAX_GROUP_ENTRIES, 100)
+        commits, shas = self._chain(100)
+        chain = group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
+        self.assertEqual(len(chain), 100)
+
+    def test_a_chain_at_the_walk_limit_is_accepted(self):
+        from merge_group_gate import MAX_GROUP_ENTRIES
+
+        commits, shas = self._chain(MAX_GROUP_ENTRIES)
+        chain = group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
+        self.assertEqual(len(chain), MAX_GROUP_ENTRIES)
+
+    def test_a_chain_one_past_the_walk_limit_fails_closed(self):
+        from merge_group_gate import MAX_GROUP_ENTRIES
+
+        commits, shas = self._chain(MAX_GROUP_ENTRIES + 1)
         with self.assertRaises(GateFailure):
             group_commits(TopologyClient(commits), shas[-1], MAIN_TIP)
 
@@ -173,22 +200,67 @@ class SourcePullRequestTests(unittest.TestCase):
                     TopologyClient(), "token", "o/r", MAIN_TIP, "refs/heads/main"
                 )
 
-    def test_truncated_queue_page_fails_closed(self):
-        response = {
-            "data": {
-                "repository": {
-                    "mergeQueue": {
-                        "entries": {
-                            "totalCount": 120,
-                            "nodes": [entry(1, GROUP_A, 11, PR_A_HEAD)],
-                        }
-                    }
-                }
-            }
-        }
+    def test_queue_is_read_across_every_page(self):
+        pages = [
+            page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c1"),
+            page([entry(2, GROUP_B, 22, PR_B_HEAD)]),
+        ]
+        with patch("merge_group_gate.graphql", side_effect=pages) as call:
+            mapping = queue_entries_by_commit("token", "o/r", "main")
+        self.assertEqual(sorted(mapping), sorted([GROUP_A, GROUP_B]))
+        self.assertEqual(call.call_count, 2)
+        self.assertIsNone(call.call_args_list[0].args[2]["after"])
+        self.assertEqual(call.call_args_list[1].args[2]["after"], "c1")
+
+    def test_missing_page_info_fails_closed(self):
+        response = page([entry(1, GROUP_A, 11, PR_A_HEAD)])
+        del response["data"]["repository"]["mergeQueue"]["entries"]["pageInfo"]
         with patch("merge_group_gate.graphql", return_value=response):
             with self.assertRaises(GateFailure):
                 queue_entries_by_commit("token", "o/r", "main")
+
+    def test_non_boolean_has_next_page_fails_closed(self):
+        for value in ("false", 0, None):
+            with self.subTest(has_next=value):
+                response = page([entry(1, GROUP_A, 11, PR_A_HEAD)])
+                response["data"]["repository"]["mergeQueue"]["entries"]["pageInfo"][
+                    "hasNextPage"
+                ] = value
+                with patch("merge_group_gate.graphql", return_value=response):
+                    with self.assertRaises(GateFailure):
+                        queue_entries_by_commit("token", "o/r", "main")
+
+    def test_more_pages_without_a_cursor_fails_closed(self):
+        response = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor=None)
+        with patch("merge_group_gate.graphql", return_value=response):
+            with self.assertRaises(GateFailure):
+                queue_entries_by_commit("token", "o/r", "main")
+
+    def test_endless_pagination_fails_closed(self):
+        endless = page([entry(1, GROUP_A, 11, PR_A_HEAD)], has_next=True, cursor="c")
+        with patch("merge_group_gate.graphql", return_value=endless):
+            with self.assertRaises(GateFailure):
+                queue_entries_by_commit("token", "o/r", "main")
+
+    def test_page_size_is_sent_as_a_query_variable(self):
+        from merge_group_gate import QUEUE_PAGE_SIZE
+
+        with patch(
+            "merge_group_gate.graphql",
+            return_value=page([entry(1, GROUP_A, 11, PR_A_HEAD)]),
+        ) as call:
+            queue_entries_by_commit("token", "o/r", "main")
+        self.assertEqual(call.call_args_list[0].args[2]["page"], QUEUE_PAGE_SIZE)
+
+    def test_pagination_can_reach_the_largest_queue_github_allows(self):
+        from merge_group_gate import MAX_QUEUE_PAGES, QUEUE_PAGE_SIZE
+
+        # Page size no longer affects the resulting map, but the loop bound
+        # does: at most `QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES` entries can be read
+        # before the walk gives up, so that product must cover any queue GitHub
+        # will build. Shrinking either constant alone must not silently make a
+        # legal queue unreadable.
+        self.assertGreaterEqual(QUEUE_PAGE_SIZE * MAX_QUEUE_PAGES, 100)
 
     def test_unreadable_merge_queue_fails_closed(self):
         with patch(
@@ -199,21 +271,13 @@ class SourcePullRequestTests(unittest.TestCase):
                 queue_entries_by_commit("token", "o/r", "main")
 
     def test_configuration_permission_error_is_tolerated(self):
-        response = {
-            "data": {
-                "repository": {
-                    "mergeQueue": {
-                        "entries": {"nodes": [entry(1, GROUP_A, 11, PR_A_HEAD)]}
-                    }
-                }
-            },
-            "errors": [
-                {
-                    "path": ["repository", "mergeQueue", "configuration"],
-                    "message": "Resource not accessible by integration",
-                }
-            ],
-        }
+        response = page([entry(1, GROUP_A, 11, PR_A_HEAD)])
+        response["errors"] = [
+            {
+                "path": ["repository", "mergeQueue", "configuration"],
+                "message": "Resource not accessible by integration",
+            }
+        ]
         with patch("merge_group_gate.graphql", return_value=response):
             mapping = queue_entries_by_commit("token", "o/r", "main")
         self.assertEqual(list(mapping), [GROUP_A])
@@ -408,6 +472,13 @@ class EvaluatePullTests(unittest.TestCase):
     def test_owner_is_never_a_first_review_candidate(self):
         # `keting` is excluded from the first-review pool on the pull request
         # side; the merge-group evaluator must not quietly widen that pool.
+        # The exclusion is checked against a configuration that *does* list
+        # `keting` in `reviewers`, which `normalized_config` accepts: testing it
+        # against a pool that happens to omit `keting` would prove nothing.
+        widened = config()
+        widened["reviewers"] = ["keting"] + widened["reviewers"]
+        self.config = normalized_config(widened)
+        self.assertIn("keting", [login.lower() for login in self.config["reviewers"]])
         from scenario_review_flow import process_pull
 
         client = GateClient(pull(number=1))
@@ -585,9 +656,16 @@ class MergeQueueWorkflowTests(unittest.TestCase):
         gate = (ROOT / "scripts/merge_group_gate.py").read_text(encoding="utf-8")
         self.assertIn("def maintainer_approved(", flow)
         self.assertIn("maintainer_approved(config, reviews", flow)
-        # The merge-group gate imports the same helper rather than restating it.
         self.assertIn("maintainer_approved", gate)
-        self.assertNotIn("def maintainer_approved(", gate)
+        # Identity, not text: a renamed local copy would defeat a source check
+        # but cannot make these two names refer to the same function object.
+        import merge_group_gate
+        import scenario_review_flow
+
+        self.assertIs(
+            merge_group_gate.maintainer_approved,
+            scenario_review_flow.maintainer_approved,
+        )
 
     def test_merge_group_gate_answers_only_merge_group(self):
         self.assertIn("on:\n  merge_group:\n    types:\n      - checks_requested", self.gate)
