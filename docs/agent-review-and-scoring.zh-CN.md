@@ -30,7 +30,7 @@
 
 评审资格取决于 PR 本身的状态，而不是评审是被怎样发起的。**draft PR 在任何调用方式下都不具备评审资格**——只给 URL 的自动路由、下文的建议评审输入，或人类明确点名该 PR 的指令，都一样。Agent 报告 draft 状态，写明唯一的解除条件（由贡献者把 PR 转为 Ready for review），然后停止：不发布 comment，不修改仓库。在 draft 上发布 verdict、再在评论里声明“这是 draft”并不是可接受的替代做法——那条路仍然把一份 verdict 留在了记录上，事后还要靠人工把它从门禁里剔除。
 
-这不是新增限制，而是两条既有规则的推论。[每份评审都要写明所针对的 head commit](review-process.zh-CN.md#判定细则)，追加提交后即须重做，所以针对一个仍在移动的 draft 写下的判定，在动笔之前就已注定作废。而[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)要求贡献者在自动核验通过、且逐张复看过截图之后才转 Ready for review——早于该时点评审，等于把评审精力花在贡献者本人尚未交付的检查上。
+这不是新增限制，而是两条既有规则的推论。[每份评审都要写明所针对的 head commit 和实际覆盖的场景内容](review-process.zh-CN.md#判定细则)；只有自动化证明所有已提交场景包的目录树完全不变时，APPROVE 才能跨 head 沿用，而 draft 尚未到达这个稳定边界。[贡献指南](../CONTRIBUTING.zh-CN.md#提交-pull-request)还要求贡献者在自动核验通过、且逐张复看过截图之后才转 Ready for review——早于该时点评审，等于把评审精力花在贡献者本人尚未交付的检查上。
 
 维护者当然可以看 draft 并留言。那属于评审前的沟通：只发普通评论，不发结构化 verdict comment，也不计入任何评审门禁。
 
@@ -106,7 +106,7 @@ Agent 按以下顺序执行：
 7. 对符合条件的场景数据交付，在 `Advisory` 中给出任务、候选分值、叠加或不叠加判断及证据边界。仅协议、文档、软件或台账的 PR 写 `points: not_applicable`，除非已有明确计价任务。
 8. 发布适用的结构化 verdict comment。场景数据评审使用 `docs/review-process.zh-CN.md` 模板。非数据评审保留版本、verdict、head、reviewer、日期、findings、verification、`Could not verify` 和 Advisory 字段，但使用上述对应维度，不得在数据证据表里伪造 `n/a` 行。AI 评审只发 comment，绝不使用 GitHub 的正式 **Approve** 或 **Request changes**。
 9. 贡献者更新后的复审必须保留旧 verdict comment，并在更新之后另发新的结构化 follow-up；绝不通过编辑旧评论来改变其 verdict 或 findings。新评论在 `Supersedes` 中链接旧 verdict，写明本次复核的状态（包括 head 不变、只更新 PR 描述的情况），并披露已经读过前序讨论。它仍属于同一个 reviewer，不得重复计入 L1 独立评审数。
-10. 发布之后，Agent 才可以读取其他 verdict comment，并按当前 PR 类型汇报总门禁：所需独立评审、CODEOWNER 正式批准、CI、threads 解决状态和 merge state。PR head 变化后必须重新评审。汇总时，每个 reviewer 对被评审状态只采用最新且有效的 superseding verdict，旧评论继续保留为历史。
+10. 发布之后，Agent 才可以读取其他 verdict comment，并按当前 PR 类型汇报总门禁：所需独立评审、CODEOWNER 正式批准、CI、threads 解决状态和 merge state。单纯 head 变化不再要求复审：只有自动化证明所有已提交场景包目录树不变时才沿用 APPROVE；场景包内容变化时，原 Reviewer 仍须发布新 verdict。汇总时，每个 reviewer 对被评审状态只采用最新且有效的 superseding verdict，旧评论继续保留为历史。
 
 若疑似出现敏感信息泄露，遵守 `docs/review-process.zh-CN.md` 的隐私例外：不得在公开位置复述该值或指出位置，细节通过私密渠道报告。
 
