@@ -46,7 +46,7 @@
 
 AI 协助的评审必须来自**不同的模型家族**。同一家族的两份评审算作一份，第二份不满足 L1 的下限。
 
-当前 head 获得两份合格的 APPROVE verdict 后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审。Maintainer 不得进入任何结构化评审路由池，因此终审保持为第三次独立判断。终审只要求其中一份正式 Maintainer Approve；第一名合格 Maintainer 批准当前 head 后，这一步即完成。定时归约只撤销另一名 Maintainer 尚未完成的 Review Request，并保留无关请求。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。受信任请求下原本有效的批准，不会因之后的 Maintainer 配置变更而失效。
+当前 head 获得两份合格的 APPROVE verdict 后，自动化会同时向 Maintainer pool 中两名非 PR 作者请求 GitHub 正式评审。终审只要求其中一份正式 Maintainer Approve；这是最终责任确认，不是第三份独立结构化评审，因此 Maintainer 也可以是前两名结构化 Reviewer 之一。第一名合格 Maintainer 批准当前 head 后，这一步即完成。定时归约只撤销另一名 Maintainer 尚未完成的 Review Request，并保留无关请求。PR 作者即使在 Maintainer pool 中，也不会收到邀请或参与这一步判定。受信任请求下原本有效的批准，不会因之后的 Maintainer 配置变更而失效。
 
 ## 意见模板
 

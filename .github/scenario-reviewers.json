@@ -1,8 +1,10 @@
 {
   "reviewers": [
+    "beautyarbutin",
+    "XiaoCooder",
+    "AHMEDALATTAR416",
     "black-pwq",
-    "leonadoor",
-    "AHMEDALATTAR416"
+    "leonadoor"
   ],
   "reviewer_capabilities": {
     "beautyarbutin": [
@@ -31,6 +33,8 @@
     "AHMEDALATTAR416"
   ],
   "glm_first_fallback_reviewers": [
+    "beautyarbutin",
+    "XiaoCooder",
     "black-pwq",
     "leonadoor"
   ],

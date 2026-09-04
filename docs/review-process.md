@@ -46,7 +46,7 @@ Sequential dispatch does not relax independence. The second reviewer must work f
 
 Reviews performed with AI assistance must come from **different model families**. Two reviews from the same family count as one, and the second one does not satisfy the L1 minimum.
 
-After two eligible current-head APPROVE verdicts, automation requests formal GitHub review from both non-author accounts in the Maintainer pool. Maintainers are kept out of every structured-review routing pool, so this final read remains a third independent judgment. Only one formal Maintainer approval is required. The first eligible current-head approval completes that step; scheduled reconciliation removes only the other outstanding Maintainer request and preserves unrelated requests. A Maintainer who authored the PR is excluded from both the request and the decision. An approval that was valid for a trusted request remains valid if the Maintainer configuration later changes.
+After two eligible current-head APPROVE verdicts, automation requests formal GitHub review from both non-author accounts in the Maintainer pool. Only one formal Maintainer approval is required. This is the final responsibility check, not a third independent structured review, so a Maintainer may also have performed one of the two structured reviews. The first eligible current-head approval completes that step; scheduled reconciliation removes only the other outstanding Maintainer request and preserves unrelated requests. A Maintainer who authored the PR is excluded from both the request and the decision. An approval that was valid for a trusted request remains valid if the Maintainer configuration later changes.
 
 ## The verdict comment
 

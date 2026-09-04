@@ -294,17 +294,6 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     missing = configured - set(value["reviewer_capabilities"])
     if missing:
         raise RuntimeError(f"reviewer_capabilities missing: {sorted(missing)}")
-    maintainers = {login.lower() for login in value["maintainers"]}
-    structured_reviewers = {
-        login.lower()
-        for name in ("reviewers", "second_reviewers", "glm_first_fallback_reviewers")
-        for login in value[name]
-    }
-    overlap = maintainers & structured_reviewers
-    if overlap:
-        raise RuntimeError(
-            f"maintainers must be independent from structured reviewer pools: {sorted(overlap)}"
-        )
     return value
 
 
@@ -669,19 +658,18 @@ def ensure_maintainers(
     config: dict[str, Any],
     comments: list[dict[str, Any]],
     reviews: list[dict[str, Any]],
-    structured_reviewers: set[str],
 ) -> None:
     current = maintainer_assignment(comments, pull["head"]["sha"])
     author = pull["user"]["login"].lower()
     desired = [
         login
         for login in config["maintainers"]
-        if login.lower() not in structured_reviewers | {author}
+        if login.lower() != author
     ]
     desired_lower = {login.lower() for login in desired}
     if not desired:
         raise RuntimeError(
-            "No independent maintainer is available after excluding the PR author and structured reviewers"
+            "No maintainer is available after excluding the PR author"
         )
     if current:
         approved = has_formal_approval(reviews, current, pull["head"]["sha"])
@@ -851,7 +839,6 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         config,
         comments,
         reviews,
-        {first.reviewer.lower(), second.reviewer.lower()},
     )
     return None
 
