@@ -1,0 +1,196 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  # Append _<github-handle> to the id (existing maintainer reference samples predate this rule).
+  id: "codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_Xiaoshaoxinxing"
+  captured_from_utc: "2026-08-31T08:02:54Z"
+  captured_to_utc: "2026-08-31T08:28:19Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@Xiaoshaoxinxing"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.151.0"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "Windows"
+  os_version: "10.0.26200"
+  os_build: "26200"
+  architecture: "x64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "subscription-login"
+  subscription_plan: "ChatGPT Plus"
+  usage_multiplier: "not_exposed"
+  # If no listed billing mode fits, record the product-native label (for example, WorkBuddy's workbuddy-credit).
+  billing_mode: "included-quota"
+  quota_shared_scope: "account"
+  plan_evidence_status: "verified"
+
+route:
+  category: "first-party-subscription"
+  provider: "OpenAI"
+  protocol: "native"
+  gateway_public_name: "not_applicable"
+  gateway_public_domain: "not_applicable"
+  upstream_model_claimed: "not_applicable"
+  cache_policy: "automatic"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "gpt-5.6-sol"
+  observation_method: "cli-status"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "high"
+  mode: "not_exposed"
+  service_tier: "fast"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "true"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: "not_exposed"
+  skills_enabled: "not_exposed"
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: 0
+  hook_model_call_assessment: "codex doctor and local observation"
+  network_mode: "restricted"
+  permission_mode: "Workspace (Ask for approval)"
+  filesystem_profile_observed: "Workspace"
+  collaboration_mode: "Default"
+  settings_sources: ["~/.codex/config.toml", "launch-command.txt CLI flags"]
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+# Keep native provider fields in each attempt. These definitions make the
+# scenario-wide primary and derived metrics explicit without pretending that
+# every Agent uses the same token schema.
+measurement:
+  primary_metric: "input_tokens"
+  secondary_metric: "cached_input_tokens"
+  native_input_definition: "Codex CLI reported input_tokens in token usage"
+  total_input_definition: "input_tokens"
+  context_total_definition: "input_tokens + output_tokens"
+  total_input_is_subscription_cost: false
+  latency_method: "manual wall-clock UTC start/end timestamps"
+  transcript_extraction: "manual terminal screenshot and optional local rollout minimal extraction"
+  transcript_deduplication: "one fresh session per attempt; no resume"
+
+# Add one mapping per metric actually summarized in the scenario README.
+# Copy the structure from the closest completed sample; do not invent fields.
+aggregate:
+  input_tokens_including_cached:
+    values: [14426, 14426, 14426]
+    min: 14426
+    median: 14426
+    max: 14426
+    mean: 14426
+  output_tokens:
+    values: [13, 13, 13]
+    min: 13
+    median: 13
+    max: 13
+    mean: 13
+  context_total_tokens:
+    values: [14439, 14439, 14439]
+    min: 14439
+    median: 14439
+    max: 14439
+    mean: 14439
+
+quota:
+  attribution: "not_measured"
+  notes: "Quota before/after will not be attributed unless no other same-account usage occurs during the run."
+
+evidence:
+  package_level: "B"
+  visual_evidence_access: "public"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "verified"
+    usage_multiplier: "not_exposed"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "verified"
+    environment: "verified"
+    workspace_and_session: "verified"
+    skills_and_hooks: "not_exposed"
+    mcp_plugins_and_hooks: "self_reported"
+  public_files:
+    - "README.md"
+    - "manifest.yaml"
+    - "prompt.txt"
+    - "launch-command.txt"
+    - "RESULTS.csv"
+    - "evidence/preflight.txt"
+    - "evidence/environment.redacted.png"
+    - "evidence/subscription-plan.png"
+    - "evidence/private-evidence.md"
+    - "evidence/redaction-audit.txt"
+    - "attempts/r1/result.yaml"
+    - "attempts/r1/response.txt"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/events.sanitized.jsonl"
+    - "attempts/r2/result.yaml"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/events.sanitized.jsonl"
+    - "attempts/r3/result.yaml"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/events.sanitized.jsonl"
+  withheld_private_evidence: true
+  redactions: ["account identifiers", "full home path", "session identifiers"]
+
+# Omit this block when no cross-scenario claim is made. When a comparison has
+# an uncontrolled variable, record it instead of attributing the difference.
+comparison:
+  status: "other"
+  reference_scenario: "codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin"
+  confounder: "different Codex CLI version, account, Windows environment, and harness state"
+  notes: "This is a same-task retest, not a controlled single-variable comparison."
+
+protocol:
+  deviations:
+    - "The Fast service tier was visible and constant in all three attempt footers but was not explicitly pinned in launch-command.txt; it was mapped to service_tier retrospectively from the public screenshots."
+    - "Claim issue #88 was filed retrospectively on 2026-09-03 after the 2026-08-31 measurement; the scenario manifest itself was fixed before the three attempts."
+  notes: "Scenario pre-registered before the 2026-08-31 fresh-session attempts."
