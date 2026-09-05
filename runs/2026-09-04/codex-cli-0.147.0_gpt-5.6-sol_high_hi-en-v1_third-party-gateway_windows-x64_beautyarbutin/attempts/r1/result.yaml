@@ -1,0 +1,53 @@
+attempt: 1
+status: "valid"
+started_at_utc: "not_exposed"
+assistant_message_at_utc: "not_exposed"
+usage_recorded_at_utc: "not_exposed"
+response_latency_ms: "not_measured"
+latency_method: "manual screenshot timestamps"
+
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+
+usage:
+  source: "exit-ui"
+  provider_schema: "openai"
+  input_tokens_including_cached: 844
+  cached_input_tokens: 0
+  non_cached_input_tokens: 844
+  output_tokens: 14
+  reasoning_output_tokens: "not_exposed"
+  context_total_tokens: 858
+  cli_total_excluding_cached: 858
+  cli_total_source: "exit-ui"
+  cache_write_input_tokens: 0
+  cache_read_input_tokens: 0
+  model_context_window_event: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "c84516910ffd6f186951c5ebe8eeede7cef9534100e70e8ce9adaa6d7cfea003"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_provided"
+  after: "not_provided"
+  attribution: "not_exposed"
+
+evidence:
+  response_screenshot: "after-response-status.redacted.png"
+  usage_screenshot: "after-response-status.redacted.png"
+  pre_prompt_screenshot: "before-status.redacted.png"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "not_provided"
+    quota: "not_provided"
+
+deviations: []

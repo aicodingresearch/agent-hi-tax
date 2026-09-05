@@ -1,0 +1,179 @@
+schema_version: "pilot-0.3"
+protocol_version: "manual-hi-tax-0.3"
+
+scenario:
+  id: "2026-09-04_codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_third-party-gateway_windows-x64_beautyarbutin"
+  captured_from_utc: "2026-09-04T15:58:44Z"
+  captured_to_utc: "2026-09-04T15:58:44Z"
+  planned_repetitions: 3
+  valid_repetitions: 3
+
+contributor:
+  github_handle: "@beautyarbutin"
+
+agent:
+  product: "OpenAI Codex CLI"
+  vendor: "OpenAI"
+  distribution: "first-party"
+  surface: "cli"
+  version: "0.147.0"
+  build: "not_exposed"
+  executable: "codex"
+
+environment:
+  os: "Windows"
+  os_version: "11"
+  os_build: "10.0.26200 Build 26200"
+  architecture: "x86_64"
+  locale: "zh-CN"
+  timezone: "Asia/Shanghai"
+
+account:
+  auth_channel: "gateway-account"
+  subscription_plan: "not_exposed"
+  usage_multiplier: "not_exposed"
+  billing_mode: "unknown"
+  quota_shared_scope: "gateway-balance"
+  plan_evidence_status: "not_provided"
+
+route:
+  category: "third-party-gateway"
+  provider: "IKUN Family"
+  protocol: "unknown"
+  gateway_public_name: "IKUN Family"
+  gateway_public_domain: "api.ikungod.online"
+  upstream_model_claimed: "gpt-5.6-sol"
+  cache_policy: "unknown"
+  fallback_policy: "unknown"
+
+model:
+  requested: "gpt-5.6-sol"
+  observed: "not_exposed"
+  observation_method: "not_exposed"
+
+reasoning:
+  effort_requested: "high"
+  effort_observed: "not_exposed"
+  mode: "not_exposed"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+generation_parameters:
+  temperature: "not_exposed"
+  top_p: "not_exposed"
+  max_output_tokens: "not_exposed"
+  other: {}
+
+harness:
+  context_profile: "as-used"
+  session_state: "fresh"
+  prior_human_chat_turns: 0
+  workspace_type: "empty-directory"
+  environment_context_injected: "not_exposed"
+  instruction_files: []
+  built_in_tools: "not_exposed"
+  plugins_enabled: []
+  skills_enabled: []
+  mcp_servers_enabled: []
+  hooks_enabled: []
+  hook_model_calls_observed: "not_exposed"
+  hook_model_call_assessment: "not_exposed"
+  network_mode: "enabled"
+  permission_mode: "Workspace (Ask for approval)"
+  filesystem_profile_observed: "Workspace"
+  settings_sources: ["<CODEX_HOME>/config.toml", "user profile: t50-ikun-gateway", "CLI launch args"]
+
+prompt:
+  case_id: "hi-en-v1"
+  file: "prompt.txt"
+  sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+  bytes: 2
+  encoding: "UTF-8"
+  language: "en"
+  leading_whitespace: false
+  trailing_whitespace: false
+  submit_method: "typed"
+
+measurement:
+  primary_metric: "provider-native input tokens"
+  secondary_metric: "provider-native output tokens"
+  native_input_definition: "To be recorded from the gateway/provider receipt or local Codex usage evidence."
+  total_input_definition: "Provider-native definition; do not infer billing units."
+  context_total_definition: "total_input + output when both are exposed"
+  total_input_is_subscription_cost: false
+  latency_method: "ui-timer"
+  transcript_extraction: "not_applicable"
+  transcript_deduplication: "not_applicable"
+
+aggregate:
+  input_tokens_including_cached:
+    values: [844, 12492, 13132]
+    min: 844
+    median: 12492
+    max: 13132
+    mean: 8822.6666666667
+  output_tokens:
+    values: [14, 12, 14]
+    min: 12
+    median: 14
+    max: 14
+    mean: 13.3333333333
+  context_total_tokens:
+    values: [858, 12504, 13146]
+    min: 858
+    median: 12504
+    max: 13146
+    mean: 8836
+
+quota:
+  attribution: "not_exposed"
+  notes: "Gateway balance/credits and before/after values will be recorded only if publicly verifiable; otherwise use not_exposed or not_provided."
+
+evidence:
+  package_level: "C"
+  visual_evidence_access: "not_provided"
+  field_statuses:
+    agent_version: "verified"
+    subscription_plan: "not_provided"
+    usage_multiplier: "not_exposed"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "verified"
+    harness: "self_reported"
+    environment: "self_reported"
+    workspace_and_session: "self_reported"
+    skills_and_hooks: "not_exposed"
+    mcp_plugins_and_hooks: "not_exposed"
+  public_files:
+    - "evidence/preregistration.md"
+    - "evidence/preflight.redacted.png"
+    - "evidence/preflight.invalid-response.redacted.png"
+    - "evidence/preflight.invalid-status.redacted.png"
+    - "attempts/r1/before-status.png"
+    - "attempts/r1/response.png"
+    - "attempts/r1/usage.png"
+    - "attempts/r1/response.txt"
+    - "attempts/r1/result.yaml"
+    - "attempts/r2/before-status.png"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/result.yaml"
+    - "attempts/r3/before-status.png"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/result.yaml"
+  withheld_private_evidence: false
+  redactions: []
+
+comparison:
+  status: "controlled"
+  reference_scenario: "T-50 official API side to be run after this gateway block"
+  confounder: "route"
+  notes: "The intended variable is route (IKUN Family gateway versus official API). Codex CLI version, model label, effort, OS, prompt, fresh workspace, and execution order are frozen before the gateway runs."
+
+protocol:
+  deviations:
+    - "hi was sent accidentally in the preflight workspace; retained as invalid diagnostic evidence and excluded from R1-R3 aggregates"
+  notes: "The preflight workspace accidentally received hi and is retained as invalid diagnostic evidence; it is excluded from R1-R3 and from aggregate results. A fresh R1 workspace is required. The credential is supplied privately through an environment variable and is not recorded."
