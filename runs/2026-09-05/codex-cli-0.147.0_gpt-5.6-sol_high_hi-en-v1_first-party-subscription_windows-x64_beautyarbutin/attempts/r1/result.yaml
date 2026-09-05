@@ -1,0 +1,54 @@
+﻿attempt: 1
+status: "valid"
+started_at_utc: "not_exposed"
+assistant_message_at_utc: "not_exposed"
+usage_recorded_at_utc: "not_exposed"
+response_latency_ms: "not_measured"
+latency_method: "manual screenshot timestamps"
+
+model_observed: "gpt-5.6-sol"
+effort_observed: "high"
+
+usage:
+  source: "exit-ui"
+  provider_schema: "openai"
+  input_tokens_including_cached: 15976
+  cached_input_tokens: "not_exposed"
+  non_cached_input_tokens: "not_exposed"
+  output_tokens: 28
+  reasoning_output_tokens: 13
+  context_total_tokens: 16004
+  cli_total_excluding_cached: "not_exposed"
+  cli_total_source: "exit-ui"
+  cache_write_input_tokens: "not_exposed"
+  cache_read_input_tokens: "not_exposed"
+  model_context_window_event: 258000
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "3347431a93ea418a6ceeb9489bbf7a110cb42f58b11f0655aa9a912e5c05ec72"
+
+activity:
+  tool_calls: 0
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_provided"
+  after: "not_provided"
+  attribution: "not_measured"
+
+evidence:
+  response_screenshot: "response.png"
+  usage_screenshot: "usage.png"
+  pre_prompt_screenshot: "before-status.png"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "not_provided"
+    quota: "not_provided"
+
+deviations:
+  - "WebSocket stream disconnected before completion; Codex fell back to HTTPS and returned a complete response. Attempt retained as valid with transport deviation."
