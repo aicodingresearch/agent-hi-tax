@@ -6,7 +6,7 @@ scenario:
   captured_from_utc: "not_exposed"
   captured_to_utc: "not_exposed"
   planned_repetitions: 3
-  valid_repetitions: 2
+  valid_repetitions: 3
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -105,7 +105,28 @@ measurement:
   transcript_extraction: "manual terminal screenshot and exact response text"
   transcript_deduplication: "one fresh session per attempt; no resume"
 
-aggregate: {}
+aggregate:
+  valid_attempts: 3
+  input_tokens_including_cached:
+    values: [15976, 15976, 15976]
+    min: 15976
+    max: 15976
+    mean: 15976
+  output_tokens:
+    values: [28, 28, 28]
+    min: 28
+    max: 28
+    mean: 28
+  reasoning_output_tokens:
+    values: [13, 13, 13]
+    min: 13
+    max: 13
+    mean: 13
+  context_total_tokens:
+    values: [16004, 16004, 16004]
+    min: 16004
+    max: 16004
+    mean: 16004
 
 quota:
   attribution: "not_exposed"
@@ -145,6 +166,11 @@ evidence:
     - "attempts/r2/usage.png"
     - "attempts/r2/response.txt"
     - "attempts/r2/result.yaml"
+    - "attempts/r3/before-status.png"
+    - "attempts/r3/response.png"
+    - "attempts/r3/usage.png"
+    - "attempts/r3/response.txt"
+    - "attempts/r3/result.yaml"
   withheld_private_evidence: false
   redactions: []
 
@@ -156,4 +182,4 @@ comparison:
 
 protocol:
   deviations: []
-  notes: "Formal R1-R3 have not started. Do not send hi during preflight."
+  notes: "Formal R1-R3 completed as three independent fresh sessions. Do not reuse or resume an attempt."
