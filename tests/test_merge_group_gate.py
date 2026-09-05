@@ -695,12 +695,40 @@ class EvaluatePullTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn("privacy", reason)
 
-    def test_non_scenario_pull_request_is_not_applicable(self):
+    def test_non_scenario_pull_request_still_needs_a_maintainer(self):
+        # The merge group is the last place an approval that was dismissed
+        # after enqueueing can be caught, so it asks the same question the
+        # pull-request side asks.
         client = GateClient(pull(number=1))
         client.scenario = False
         ok, reason = evaluate_pull(client, self.config, client.value)
+        self.assertFalse(ok)
+        self.assertIn("maintainer", reason)
+
+    def test_non_scenario_pull_request_passes_once_a_maintainer_approves(self):
+        client = GateClient(pull(number=1))
+        client.scenario = False
+        client.reviews_data.append(approved_maintainer_review())
+        ok, _ = evaluate_pull(client, self.config, client.value)
         self.assertTrue(ok)
-        self.assertIn("does not apply", reason)
+
+    def test_the_index_refresh_passes_the_merge_group_without_an_approval(self):
+        client = GateClient(pull(number=1))
+        client.scenario = False
+        client.paginate = lambda path: (
+            [
+                {"filename": "RESULTS.md", "status": "modified"},
+                {"filename": "RESULTS.zh-CN.md", "status": "modified"},
+            ]
+            if "/files" in path
+            else []
+        )
+        client.value["head"]["ref"] = "chore/refresh-results-index"
+        client.value["head"]["repo"] = {"full_name": "aicodingresearch/agent-hi-tax"}
+        client.value["base"]["repo"] = {"full_name": "aicodingresearch/agent-hi-tax"}
+        ok, reason = evaluate_pull(client, self.config, client.value)
+        self.assertTrue(ok)
+        self.assertIn("results index", reason)
 
     def test_mixed_scenario_and_protocol_pull_request_fails(self):
         client = self.two_approvals()

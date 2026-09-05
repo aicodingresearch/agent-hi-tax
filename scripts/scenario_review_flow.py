@@ -71,6 +71,17 @@ PROTECTED_PROTOCOL_FILES = {
     "SECURITY.md",
     "SECURITY.zh-CN.md",
 }
+# The owners named in .github/CODEOWNERS. GitHub's own code-owner rule stops
+# applying once `required_approving_review_count` is 0 — measured, not assumed —
+# so the requirement is carried here instead.
+CODE_OWNERS = ("keting",)
+# The one branch the generated index refresh is allowed to come from, and the
+# only files it may carry.
+RESULTS_REFRESH_BRANCH = "chore/refresh-results-index"
+RESULTS_INDEX_FILES = ("RESULTS.md", "RESULTS.zh-CN.md")
+# GitHub's pull request files endpoint stops at this many entries however far
+# you page, so a change set at or above it cannot be fully inspected.
+MAX_LISTABLE_FILES = 3000
 
 
 @dataclass(frozen=True)
@@ -565,12 +576,18 @@ def is_scenario_pull(files: Iterable[dict[str, Any]]) -> bool:
 def changes_protected_protocol(files: Iterable[dict[str, Any]]) -> bool:
     # Keep this list aligned with .github/CODEOWNERS. A scenario submission
     # that changes one of these paths must be split before normal review.
+    #
+    # Both names of a rename count. Reading only `filename` would let a change
+    # set move a protected file out of its directory and be judged on where it
+    # landed rather than where it came from.
     for item in files:
-        filename = str(item.get("filename") or "")
-        if filename in PROTECTED_PROTOCOL_FILES or filename.startswith(
-            PROTECTED_PROTOCOL_PREFIXES
-        ):
-            return True
+        for key in ("filename", "previous_filename"):
+            name = str(item.get(key) or "")
+            if name and (
+                name in PROTECTED_PROTOCOL_FILES
+                or name.startswith(PROTECTED_PROTOCOL_PREFIXES)
+            ):
+                return True
     return False
 
 
@@ -836,6 +853,35 @@ def request_second(
     return assignment
 
 
+def approved_by(
+    logins: Iterable[str],
+    reviews: Iterable[dict[str, Any]],
+    author: str,
+    head: str,
+) -> bool:
+    """Has one of `logins`, other than the author, approved exactly this head?
+
+    Pinning the approval to the head is what replaces `dismiss_stale_reviews_on_push`:
+    an approval of an earlier commit does not count for a later one.
+
+    Write access is not re-checked here. GitHub's own approval rule counted any
+    reviewer with write access; this counts a named list instead, which is a
+    smaller set — but it is only as current as `.github/scenario-reviewers.json`,
+    and that file is under a CODEOWNERS path, so changing it needs the owner.
+    """
+    wanted = {login.lower() for login in logins}
+    for review in reviews:
+        login = str((review.get("user") or {}).get("login") or "").lower()
+        commit = str(review.get("commit_id") or "").lower()
+        if review.get("state") != "APPROVED":
+            continue
+        if login not in wanted or login == author.lower():
+            continue
+        if commit and head.lower().startswith(commit):
+            return True
+    return False
+
+
 def maintainer_approved(
     config: dict[str, Any],
     reviews: Iterable[dict[str, Any]],
@@ -845,21 +891,75 @@ def maintainer_approved(
     """Has a non-author maintainer formally approved exactly this head?
 
     Shared by the pull-request status and the merge-group check so both sides of
-    `review-gate` answer the same question. The repository ruleset only requires
-    one approving review from anyone with access, so this is the rule that makes
-    the approval a *maintainer* decision.
+    `review-gate` answer the same question. This is the rule that makes the
+    approval a *maintainer* decision rather than an approval from anyone with
+    write access.
     """
-    maintainers = {login.lower() for login in config["maintainers"]}
-    for review in reviews:
-        login = str((review.get("user") or {}).get("login") or "").lower()
-        commit = str(review.get("commit_id") or "").lower()
-        if review.get("state") != "APPROVED":
-            continue
-        if login not in maintainers or login == author.lower():
-            continue
-        if commit and head.lower().startswith(commit):
-            return True
-    return False
+    return approved_by(config["maintainers"], reviews, author, head)
+
+
+def index_refresh_pull(
+    pull: dict[str, Any], files: Iterable[dict[str, Any]]
+) -> bool:
+    """Is this the generated results index refresh, which carries no judgement?
+
+    Only the shape is decided here: the fixed branch, in this repository, into
+    `main`, modifying the two generated pages and nothing else. That those pages
+    really are the generator's output is `verify`'s job — the index check is
+    required for any change set that touches them, and it runs on the pull
+    request head and again on the merge group.
+    """
+    head = pull.get("head") or {}
+    base = pull.get("base") or {}
+    if base.get("ref") != "main" or head.get("ref") != RESULTS_REFRESH_BRANCH:
+        return False
+    head_repo = (head.get("repo") or {}).get("full_name")
+    base_repo = (base.get("repo") or {}).get("full_name")
+    if not head_repo or not base_repo or head_repo != base_repo:
+        return False
+    listed = list(files)
+    names = sorted(str(item.get("filename") or "") for item in listed)
+    if names != sorted(RESULTS_INDEX_FILES):
+        return False
+    return all(item.get("status") == "modified" for item in listed)
+
+
+def non_scenario_gate(
+    config: dict[str, Any],
+    pull: dict[str, Any],
+    files: Iterable[dict[str, Any]],
+    reviews: Iterable[dict[str, Any]],
+) -> tuple[bool, str]:
+    """`review-gate`'s answer for a pull request that is not a new scenario.
+
+    The repository ruleset no longer carries `required_approving_review_count`,
+    because GitHub applies that to the merge queue in a way nothing but a human
+    can satisfy: `enqueuePullRequest` ignores ruleset bypass actors entirely.
+    The requirement did not go away — it lives here, where the one pull request
+    that provably contains no judgement can be exempted and everything else
+    still needs a maintainer.
+    """
+    listed = list(files)
+    if index_refresh_pull(pull, listed):
+        return True, "Generated results index refresh; verify proves its content"
+    author = str((pull.get("user") or {}).get("login") or "")
+    head = str((pull.get("head") or {}).get("sha") or "")
+    if not head:
+        return False, "The head commit of this pull request could not be read"
+    if len(listed) >= MAX_LISTABLE_FILES:
+        # GitHub stops listing a pull request's files at this many, so a larger
+        # change set cannot be checked against CODEOWNERS at all. Refuse rather
+        # than judge it on the part that happened to be visible.
+        return False, "Too many files to check against CODEOWNERS; split this PR"
+    if changes_protected_protocol(listed):
+        owners = {login.lower() for login in CODE_OWNERS}
+        if author.lower() not in owners and not approved_by(
+            CODE_OWNERS, reviews, author, head
+        ):
+            return False, "Protocol files need a code owner as author or approver"
+    if not maintainer_approved(config, reviews, author, head):
+        return False, "No non-author maintainer has approved this head"
+    return True, "A non-author maintainer approved this head"
 
 
 def ensure_maintainers(
@@ -945,14 +1045,17 @@ def process_pull(client: GitHubClient, pull: dict[str, Any]) -> str | None:
         post_status(client, pull, "pending", "Draft PRs are not eligible for review")
         return None
     files = pull_files(client, number)
+    config = load_config()
     if not is_scenario_pull(files):
-        post_status(client, pull, "success", "Not a new scenario PR; review-gate does not apply")
+        eligible, reason = non_scenario_gate(
+            config, pull, files, client.reviews(number)
+        )
+        post_status(client, pull, "success" if eligible else "failure", reason)
         return None
     if changes_protected_protocol(files):
         post_status(client, pull, "failure", "Split scenario data and protected protocol changes into separate PRs")
         return None
 
-    config = load_config()
     comments = client.comments(number)
     reviews = client.reviews(number)
     records = comments + reviews
