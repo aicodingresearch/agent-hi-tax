@@ -52,4 +52,3 @@ evidence:
 
 deviations:
   - "WebSocket stream disconnected before completion; Codex fell back to HTTPS and returned a complete response. Attempt retained as valid with transport deviation."
-
