@@ -43,6 +43,7 @@ from scenario_review_flow import (  # noqa: E402
     load_config,
     maintainer_approved,
     matching_capability,
+    non_scenario_gate,
     previous_stage_verdict,
     pull_files,
     scenario_content_unchanged,
@@ -334,7 +335,10 @@ def evaluate_pull(
 
     files = pull_files(client, number)
     if not is_scenario_pull(files):
-        return True, "not a new scenario PR; review-gate does not apply"
+        # Same answer as the pull-request side, from the same function: the
+        # merge group is where a pull request that lost its approval between
+        # being queued and being merged has to be caught.
+        return non_scenario_gate(config, pull, files, client.reviews(number))
     if changes_protected_protocol(files):
         return False, "scenario data and protected protocol changes must be split"
 

@@ -110,3 +110,11 @@ Verdict 使用 `PRIVACY-CONCERN-RAISED-PRIVATELY`，细节按 [SECURITY.md](../S
 评审是输入，不是裁决。合并、分值发放与登记、递减桶的归一化、台账更新，以及把 `private_evidence` 原图与其登记的哈希核对，都由维护者执行。评审可以在 Advisory 一行里给出分值意见，但它本身不具备效力。
 
 AI 协助的评审只发结构化评论，不使用 GitHub 的正式 **Approve** 或 **Request changes** 按钮——那两个按钮记录的是一个具名的人对判断负责，而 agent 不是这样的主体。
+
+## 非场景提交的改动
+
+文档、工具和 workflow 类 PR 不走两轮场景评审，但并非无人审核。`review-gate` 会拒绝它们，直到有一位非作者的 Maintainer 对当前 head 正式 Approve；如果改动涉及 [CODEOWNERS](../.github/CODEOWNERS) 列出的路径，还必须由 code owner 作为作者或 Approve 人参与。对旧提交的 Approve 不会自动延续到新提交。
+
+只有一个例外。常驻的 `chore/refresh-results-index` PR 只重新生成 `RESULTS.md` 和 `RESULTS.zh-CN.md`，不改动任何其他文件。这两个页面由场景包派生而来，里面没有需要人判断的内容：它们要么逐字节等于 `scripts/build-results-index.py` 的输出——这一点由必需检查 `verify` 在 PR 上和 merge group 上各确认一次——要么不等于，检查就失败。`review-gate` 放行这一个 PR 而不要求 Approve，然后由一个 GitHub App 独立复核它确实来自本仓库的那个分支、只改了那两个文件、且两个文件都等于当前 `main` 的生成结果，再把它加入合并队列。
+
+这也是仓库 ruleset 把 `required_approving_review_count` 设为 0 的原因。GitHub 的合并队列会忽略 ruleset 的 bypass actor，所以写成规则的审批要求无法对单个 PR 放宽；写成必需检查就可以。要求本身没有变弱——它搬进了 `review-gate`，并且在那里有测试覆盖。
