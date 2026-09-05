@@ -20,8 +20,10 @@ from scenario_review_flow import (  # noqa: E402
     changes_protected_protocol,
     choose_candidates,
     has_formal_approval,
+    index_refresh_pull,
     latest_assignment,
     main,
+    non_scenario_gate,
     normalized_config,
     PROTECTED_PROTOCOL_FILES,
     PROTECTED_PROTOCOL_PREFIXES,
@@ -575,14 +577,90 @@ class ScenarioReviewFlowTests(unittest.TestCase):
         ]
         self.assertEqual(len(assignment_comments), 1)
 
-    def test_non_scenario_pull_reports_not_applicable_success(self):
+    def test_non_scenario_pull_without_an_approval_is_refused(self):
+        # The ruleset no longer requires an approving review, so review-gate is
+        # what stops an unreviewed change now.
         client = FakeClient(pull(number=1))
         client.scenario = False
         self.assertIsNone(process_pull(client, client.value))
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertIn("maintainer", client.statuses[-1]["description"])
+
+    def test_non_scenario_pull_with_a_maintainer_approval_passes(self):
+        client = FakeClient(pull(number=1))
+        client.scenario = False
+        client.reviews_data.append(
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}}
+        )
+        self.assertIsNone(process_pull(client, client.value))
         self.assertEqual(client.statuses[-1]["state"], "success")
-        self.assertIn("does not apply", client.statuses[-1]["description"])
         process_pull(client, client.value)
         self.assertEqual(len(client.statuses), 1)
+
+    def test_an_approval_of_an_earlier_commit_does_not_carry(self):
+        client = FakeClient(pull(number=1))
+        client.scenario = False
+        client.reviews_data.append(
+            {"state": "APPROVED", "commit_id": "0" * 40, "user": {"login": "XiaoCooder"}}
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+
+    def test_the_author_cannot_approve_their_own_change(self):
+        client = FakeClient(pull(number=1, author="XiaoCooder"))
+        client.scenario = False
+        client.reviews_data.append(
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}}
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+
+    def test_a_non_maintainer_approval_is_not_enough(self):
+        client = FakeClient(pull(number=1))
+        client.scenario = False
+        client.reviews_data.append(
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "black-pwq"}}
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+
+    def test_protocol_changes_need_a_code_owner_as_author_or_approver(self):
+        client = FakeClient(pull(number=1))
+        client.scenario = False
+        client.protocol_change = True
+        client.reviews_data.append(
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}}
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "failure")
+        self.assertIn("code owner", client.statuses[-1]["description"])
+
+    def test_a_code_owner_authored_protocol_change_needs_only_a_maintainer(self):
+        # The single code owner is usually the author of protocol changes, and
+        # GitHub never lets an author approve their own pull request. Requiring
+        # an owner *approval* would make those unmergeable, so authorship by an
+        # owner counts, and a non-author maintainer still has to approve.
+        client = FakeClient(pull(number=1, author="keting"))
+        client.scenario = False
+        client.protocol_change = True
+        client.reviews_data.append(
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}}
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "success")
+
+    def test_a_code_owner_approval_unlocks_a_contributor_protocol_change(self):
+        client = FakeClient(pull(number=1))
+        client.scenario = False
+        client.protocol_change = True
+        client.reviews_data.extend(
+            [
+                {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "keting"}},
+                {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}},
+            ]
+        )
+        process_pull(client, client.value)
+        self.assertEqual(client.statuses[-1]["state"], "success")
 
     def test_draft_pull_reports_pending_without_assignment(self):
         value = pull(number=1)
@@ -1585,6 +1663,184 @@ class NotifyOutputTests(unittest.TestCase):
     def test_first_review_stage_publishes_an_empty_notify_output(self):
         client = FakeClient(pull(number=1))
         self.assertIn("notify_prs=\n", self._run_main(client))
+
+
+
+REPO = "aicodingresearch/agent-hi-tax"
+
+
+def refresh_pull(**overrides):
+    """The standing results-index refresh pull request."""
+    value = {
+        "number": 93,
+        "state": "open",
+        "draft": False,
+        "user": {"login": "keting"},
+        "head": {
+            "ref": "chore/refresh-results-index",
+            "sha": HEAD,
+            "repo": {"full_name": REPO},
+        },
+        "base": {"ref": "main", "repo": {"full_name": REPO}},
+    }
+    value.update(overrides)
+    return value
+
+
+INDEX_FILES = [
+    {"filename": "RESULTS.md", "status": "modified"},
+    {"filename": "RESULTS.zh-CN.md", "status": "modified"},
+]
+
+
+class IndexRefreshExemptionTests(unittest.TestCase):
+    """The one exemption from "a maintainer must approve", and its edges."""
+
+    def setUp(self):
+        self.config = normalized_config(config())
+
+    def gate(self, pull_value, files, reviews=()):
+        return non_scenario_gate(self.config, pull_value, files, list(reviews))
+
+    def test_the_refresh_pull_request_needs_no_approval(self):
+        self.assertTrue(index_refresh_pull(refresh_pull(), INDEX_FILES))
+        eligible, reason = self.gate(refresh_pull(), INDEX_FILES)
+        self.assertTrue(eligible)
+        self.assertIn("results index", reason)
+
+    def test_another_branch_carrying_the_same_files_is_not_exempt(self):
+        value = refresh_pull()
+        value["head"]["ref"] = "chore/refresh-results-index-2"
+        self.assertFalse(index_refresh_pull(value, INDEX_FILES))
+        self.assertFalse(self.gate(value, INDEX_FILES)[0])
+
+    def test_a_fork_branch_of_the_same_name_is_not_exempt(self):
+        value = refresh_pull()
+        value["head"]["repo"] = {"full_name": "someone-else/agent-hi-tax"}
+        self.assertFalse(index_refresh_pull(value, INDEX_FILES))
+
+    def test_a_deleted_head_repository_is_not_exempt(self):
+        value = refresh_pull()
+        value["head"]["repo"] = None
+        self.assertFalse(index_refresh_pull(value, INDEX_FILES))
+
+    def test_another_base_branch_is_not_exempt(self):
+        value = refresh_pull()
+        value["base"] = {"ref": "release", "repo": {"full_name": REPO}}
+        self.assertFalse(index_refresh_pull(value, INDEX_FILES))
+
+    def test_one_extra_file_removes_the_exemption(self):
+        files = INDEX_FILES + [{"filename": "scripts/x.py", "status": "modified"}]
+        self.assertFalse(index_refresh_pull(refresh_pull(), files))
+        eligible, reason = self.gate(refresh_pull(), files)
+        self.assertFalse(eligible)
+        self.assertIn("maintainer", reason)
+
+    def test_an_extra_file_from_a_non_owner_needs_the_code_owner(self):
+        files = INDEX_FILES + [{"filename": "scripts/x.py", "status": "modified"}]
+        eligible, reason = self.gate(
+            refresh_pull(user={"login": "someone-else"}), files
+        )
+        self.assertFalse(eligible)
+        self.assertIn("code owner", reason)
+
+    def test_a_missing_index_page_removes_the_exemption(self):
+        self.assertFalse(index_refresh_pull(refresh_pull(), INDEX_FILES[:1]))
+
+    def test_an_empty_change_set_is_not_exempt(self):
+        self.assertFalse(index_refresh_pull(refresh_pull(), []))
+
+    def test_an_added_or_removed_page_removes_the_exemption(self):
+        for status in ("added", "removed", "renamed"):
+            files = [
+                {"filename": "RESULTS.md", "status": status},
+                {"filename": "RESULTS.zh-CN.md", "status": "modified"},
+            ]
+            self.assertFalse(index_refresh_pull(refresh_pull(), files), status)
+
+    def test_a_lookalike_path_removes_the_exemption(self):
+        files = [
+            {"filename": "docs/RESULTS.md", "status": "modified"},
+            {"filename": "RESULTS.zh-CN.md", "status": "modified"},
+        ]
+        self.assertFalse(index_refresh_pull(refresh_pull(), files))
+
+    def test_the_exemption_does_not_depend_on_who_opened_it(self):
+        for author in ("keting", "results-index[bot]", "someone-else"):
+            value = refresh_pull(user={"login": author})
+            self.assertTrue(index_refresh_pull(value, INDEX_FILES), author)
+
+    def test_a_head_that_cannot_be_read_is_refused(self):
+        value = refresh_pull()
+        value["head"] = {"ref": "feature", "sha": "", "repo": {"full_name": REPO}}
+        eligible, reason = self.gate(value, [{"filename": "a.md", "status": "modified"}])
+        self.assertFalse(eligible)
+        self.assertIn("could not be read", reason)
+
+class ProtectedPathEscapeTests(unittest.TestCase):
+    """A change set must not be judged on where a file landed."""
+
+    def setUp(self):
+        self.config = normalized_config(config())
+        self.approval = [
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}}
+        ]
+
+    def test_renaming_a_protected_file_out_of_its_directory_still_counts(self):
+        files = [
+            {
+                "filename": "tools/merge_group_gate.py",
+                "previous_filename": "scripts/merge_group_gate.py",
+                "status": "renamed",
+            }
+        ]
+        self.assertTrue(changes_protected_protocol(files))
+        eligible, reason = non_scenario_gate(
+            self.config, refresh_pull(user={"login": "someone-else"}), files, self.approval
+        )
+        self.assertFalse(eligible)
+        self.assertIn("code owner", reason)
+
+    def test_renaming_a_file_into_a_protected_directory_also_counts(self):
+        files = [
+            {
+                "filename": "scripts/new_gate.py",
+                "previous_filename": "notes/new_gate.py",
+                "status": "renamed",
+            }
+        ]
+        self.assertTrue(changes_protected_protocol(files))
+
+    def test_an_ordinary_rename_is_still_unprotected(self):
+        files = [
+            {
+                "filename": "docs/b.md",
+                "previous_filename": "docs/a.md",
+                "status": "renamed",
+            }
+        ]
+        self.assertFalse(changes_protected_protocol(files))
+
+    def test_a_change_set_too_large_to_list_is_refused(self):
+        files = [
+            {"filename": f"runs/2026-09-03/p{index}/manifest.yaml", "status": "added"}
+            for index in range(3000)
+        ]
+        eligible, reason = non_scenario_gate(
+            self.config, refresh_pull(), files, self.approval
+        )
+        self.assertFalse(eligible)
+        self.assertIn("Too many files", reason)
+
+    def test_a_change_set_just_under_the_cap_is_still_judged(self):
+        files = [
+            {"filename": f"docs/n{index}.md", "status": "modified"}
+            for index in range(2999)
+        ]
+        eligible, _ = non_scenario_gate(
+            self.config, refresh_pull(), files, self.approval
+        )
+        self.assertTrue(eligible)
 
 
 if __name__ == "__main__":

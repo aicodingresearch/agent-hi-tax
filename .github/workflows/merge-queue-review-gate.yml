@@ -49,14 +49,26 @@ jobs:
       #
       # The scenario/protocol split rule blocks that for scenario submissions,
       # since it fails any scenario pull request touching `.github/`. It does
-      # not cover a workflow-only pull request. CODEOWNERS maps `/.github/` to
-      # @keting, but that is inert while the ruleset keeps
-      # `require_code_owner_review: false`.
+      # not cover a workflow-only pull request.
       #
-      # Hard precondition, not a nice-to-have: before `review-gate` is added to
-      # required status checks, either enable `require_code_owner_review` so
-      # every change to this file needs owner approval, or move the gate to an
-      # external required workflow that a pull request cannot redefine.
+      # What closes it is the *other* producer of `review-gate`. The
+      # pull-request side runs from `scenario-review-flow.yml`, which is
+      # triggered by `pull_request_target` and checks out `main`, so a pull
+      # request cannot redefine it. That side refuses any change under
+      # `.github/` unless a code owner is the author or has approved it — see
+      # `non_scenario_gate` in `scripts/scenario_review_flow.py`. It is also the
+      # only producer that reports on a pull request head; this workflow reports
+      # on merge groups alone.
+      #
+      # So a pull request that edits this file cannot be added to the queue
+      # until an owner has signed off, and that step is measured rather than
+      # assumed: required status checks are enforced at `enqueuePullRequest` for
+      # every actor, including one with `always` bypass on every applicable
+      # ruleset.
+      #
+      # GitHub's own `require_code_owner_review` is not what enforces this: it
+      # is measurably inert once `required_approving_review_count` is 0, which
+      # is what lets the deterministic index refresh merge unattended.
       - name: Check out trusted review automation
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:

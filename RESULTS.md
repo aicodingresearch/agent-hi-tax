@@ -8,9 +8,9 @@
 
 [Project home](README.md) | [Scenario catalog](runs/README.md) | [Contribution & semantics rules](CONTRIBUTING.md)
 
-- Scenarios: 21
+- Scenarios: 22
 - Agent products: 5
-- Valid attempts: 75
+- Valid attempts: 78
 
 ## How to read this table
 
@@ -34,6 +34,7 @@
 | [OpenAI Codex CLI 0.147.0](runs/2026-08-30/codex-cli-0.147.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_beautyarbutin/README.md)<br><sub>2026-08-29</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Windows 11 x64</sub> | 3 | 15,340 | 15,353 (15,353–15,354) | 13 (13–14) | 1.994 (1.87–2.816) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.149.1](runs/2026-08-31/20260831_codex-cli_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_XiaoCooder/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Linux x86_64</sub> | 3 | 19,160 (17,609–19,160) | 19,173 (17,631–19,173) | 13 (13–22) | — | B · public visuals<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0](runs/2026-08-31/20260831_codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_linux-x64_black-pwq/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Linux (WSL2) x86_64</sub> | 3 | 17,902 | 17,915 (17,915–17,916) | 13 (13–14) | 2.798 (2.629–4.082) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
+| [OpenAI Codex CLI 0.151.0](runs/2026-08-31/codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_Xiaoshaoxinxing/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Windows x64</sub><br><sub>other</sub> | 3 | 14,426 | 14,439 | 13 | — | B · public visuals<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0](runs/2026-08-31/codex-cli-0.151.0_gpt-5.6-sol_high_hi-en-v1_as-used_windows-x64_leonadoor/README.md)<br><sub>2026-08-31</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Plus<br><sub>official subscription</sub> | as-used · fresh<br><sub>Windows 11 Professional x64</sub> | 3 | 16,055 | 16,068 (16,068–16,069) | 13 (13–14) | 9.333 (8.872–10.31) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-01/20260901_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_TH-Chou/README.md)<br><sub>2026-09-01</sub> | gpt-5.6-sol<br><sub>high</sub> | —<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub> | 3 | 20,756 (20,756–20,959) | 20,788 (20,787–20,974) | 31 (15–32) | 2.656 (2.163–3.455) s<br><sub>event timestamps</sub> | C · no visuals<br><sub>quota: not_measured</sub> |
 | [OpenAI Codex CLI 0.151.0-alpha.7.2](runs/2026-09-02/20260902_codex-cli-0.151.0-alpha.7.2_gpt-5.6-sol_high_hi-en-v1_as-used_mac-arm64_BoomShuai/README.md)<br><sub>2026-09-02</sub> | gpt-5.6-sol<br><sub>high</sub> | ChatGPT Pro 20x<br><sub>official subscription</sub> | as-used · fresh<br><sub>macOS arm64</sub><br><sub>paired-controls-verified</sub> | 6 | 20,421 | 20,435 (20,434–20,435) | 14 (13–14) | 1.901 (1.668–2.408) s<br><sub>event timestamps</sub> | A · public visuals<br><sub>quota: not_measured</sub> |

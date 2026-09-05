@@ -110,3 +110,11 @@ Use `PRIVACY-CONCERN-RAISED-PRIVATELY` as the verdict, and send the detail throu
 Reviews are input, not adjudication. The maintainer performs the merge, awards and records points, normalizes decay buckets, updates the ledger, and checks any `private_evidence` originals against their registered hashes. A reviewer may put a point-value opinion in the Advisory line; it carries no weight of its own.
 
 AI-assisted reviews are posted as structured comments only. They do not use GitHub's formal **Approve** or **Request changes** buttons — those record a named person taking responsibility for a judgement, and an agent is not one.
+
+## Changes that are not scenario submissions
+
+Documentation, tooling and workflow pull requests do not go through the two-reviewer scenario flow, but they are not unreviewed. `review-gate` refuses them until a Maintainer other than the author has formally approved the current head, and a change under a path listed in [CODEOWNERS](../.github/CODEOWNERS) additionally needs a code owner as its author or as an approver. An approval of an earlier commit does not carry over to a later one.
+
+There is exactly one exemption. The standing `chore/refresh-results-index` pull request regenerates `RESULTS.md` and `RESULTS.zh-CN.md` and changes nothing else. Those pages are derived from the scenario packages, so there is no judgement in them to review: either they are byte-for-byte what `scripts/build-results-index.py` produces, which the required `verify` check confirms on the pull request and again on the merge group, or they are not and it fails. `review-gate` lets that one pull request through without an approval, and a GitHub App adds it to the merge queue after re-checking, independently, that it is open on that branch in this repository, that it touches only those two files, and that both files match the generator output for current `main`.
+
+This is why the repository ruleset sets `required_approving_review_count` to 0. GitHub's merge queue ignores ruleset bypass actors, so an approval requirement expressed as a rule cannot be relaxed for one pull request; expressed as a required check, it can. The requirement did not become weaker — it moved into `review-gate`, where it is tested.
