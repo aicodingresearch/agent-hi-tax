@@ -79,6 +79,9 @@ CODE_OWNERS = ("keting",)
 # only files it may carry.
 RESULTS_REFRESH_BRANCH = "chore/refresh-results-index"
 RESULTS_INDEX_FILES = ("RESULTS.md", "RESULTS.zh-CN.md")
+# GitHub's pull request files endpoint stops at this many entries however far
+# you page, so a change set at or above it cannot be fully inspected.
+MAX_LISTABLE_FILES = 3000
 
 
 @dataclass(frozen=True)
@@ -573,12 +576,18 @@ def is_scenario_pull(files: Iterable[dict[str, Any]]) -> bool:
 def changes_protected_protocol(files: Iterable[dict[str, Any]]) -> bool:
     # Keep this list aligned with .github/CODEOWNERS. A scenario submission
     # that changes one of these paths must be split before normal review.
+    #
+    # Both names of a rename count. Reading only `filename` would let a change
+    # set move a protected file out of its directory and be judged on where it
+    # landed rather than where it came from.
     for item in files:
-        filename = str(item.get("filename") or "")
-        if filename in PROTECTED_PROTOCOL_FILES or filename.startswith(
-            PROTECTED_PROTOCOL_PREFIXES
-        ):
-            return True
+        for key in ("filename", "previous_filename"):
+            name = str(item.get(key) or "")
+            if name and (
+                name in PROTECTED_PROTOCOL_FILES
+                or name.startswith(PROTECTED_PROTOCOL_PREFIXES)
+            ):
+                return True
     return False
 
 
@@ -854,6 +863,11 @@ def approved_by(
 
     Pinning the approval to the head is what replaces `dismiss_stale_reviews_on_push`:
     an approval of an earlier commit does not count for a later one.
+
+    Write access is not re-checked here. GitHub's own approval rule counted any
+    reviewer with write access; this counts a named list instead, which is a
+    smaller set — but it is only as current as `.github/scenario-reviewers.json`,
+    and that file is under a CODEOWNERS path, so changing it needs the owner.
     """
     wanted = {login.lower() for login in logins}
     for review in reviews:
@@ -932,6 +946,11 @@ def non_scenario_gate(
     head = str((pull.get("head") or {}).get("sha") or "")
     if not head:
         return False, "The head commit of this pull request could not be read"
+    if len(listed) >= MAX_LISTABLE_FILES:
+        # GitHub stops listing a pull request's files at this many, so a larger
+        # change set cannot be checked against CODEOWNERS at all. Refuse rather
+        # than judge it on the part that happened to be visible.
+        return False, "Too many files to check against CODEOWNERS; split this PR"
     if changes_protected_protocol(listed):
         owners = {login.lower() for login in CODE_OWNERS}
         if author.lower() not in owners and not approved_by(

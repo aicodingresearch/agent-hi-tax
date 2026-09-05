@@ -1665,9 +1665,6 @@ class NotifyOutputTests(unittest.TestCase):
         self.assertIn("notify_prs=\n", self._run_main(client))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 REPO = "aicodingresearch/agent-hi-tax"
 
@@ -1779,3 +1776,72 @@ class IndexRefreshExemptionTests(unittest.TestCase):
         eligible, reason = self.gate(value, [{"filename": "a.md", "status": "modified"}])
         self.assertFalse(eligible)
         self.assertIn("could not be read", reason)
+
+class ProtectedPathEscapeTests(unittest.TestCase):
+    """A change set must not be judged on where a file landed."""
+
+    def setUp(self):
+        self.config = normalized_config(config())
+        self.approval = [
+            {"state": "APPROVED", "commit_id": HEAD, "user": {"login": "XiaoCooder"}}
+        ]
+
+    def test_renaming_a_protected_file_out_of_its_directory_still_counts(self):
+        files = [
+            {
+                "filename": "tools/merge_group_gate.py",
+                "previous_filename": "scripts/merge_group_gate.py",
+                "status": "renamed",
+            }
+        ]
+        self.assertTrue(changes_protected_protocol(files))
+        eligible, reason = non_scenario_gate(
+            self.config, refresh_pull(user={"login": "someone-else"}), files, self.approval
+        )
+        self.assertFalse(eligible)
+        self.assertIn("code owner", reason)
+
+    def test_renaming_a_file_into_a_protected_directory_also_counts(self):
+        files = [
+            {
+                "filename": "scripts/new_gate.py",
+                "previous_filename": "notes/new_gate.py",
+                "status": "renamed",
+            }
+        ]
+        self.assertTrue(changes_protected_protocol(files))
+
+    def test_an_ordinary_rename_is_still_unprotected(self):
+        files = [
+            {
+                "filename": "docs/b.md",
+                "previous_filename": "docs/a.md",
+                "status": "renamed",
+            }
+        ]
+        self.assertFalse(changes_protected_protocol(files))
+
+    def test_a_change_set_too_large_to_list_is_refused(self):
+        files = [
+            {"filename": f"runs/2026-09-03/p{index}/manifest.yaml", "status": "added"}
+            for index in range(3000)
+        ]
+        eligible, reason = non_scenario_gate(
+            self.config, refresh_pull(), files, self.approval
+        )
+        self.assertFalse(eligible)
+        self.assertIn("Too many files", reason)
+
+    def test_a_change_set_just_under_the_cap_is_still_judged(self):
+        files = [
+            {"filename": f"docs/n{index}.md", "status": "modified"}
+            for index in range(2999)
+        ]
+        eligible, _ = non_scenario_gate(
+            self.config, refresh_pull(), files, self.approval
+        )
+        self.assertTrue(eligible)
+
+
+if __name__ == "__main__":
+    unittest.main()

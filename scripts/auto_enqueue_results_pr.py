@@ -511,20 +511,36 @@ def verify_with_wait(
         try:
             return verify(client, repository, repo_root, trusted_main)
         except EnqueuePending as pending:
-            remaining = deadline - clock()
-            if remaining < poll_seconds:
-                raise EnqueueRefused(
-                    f"{pending} — still not decided after waiting "
-                    f"{wait_seconds:.0f}s over {attempt} attempt(s)"
-                ) from pending
-            log_event(
-                "waiting",
-                attempt=attempt,
-                reason=str(pending),
-                seconds_left=int(remaining),
-                requests=getattr(client, "spent", None),
+            reason, kind = str(pending), "pending"
+        except EnqueueRefused:
+            # A decided "no". Waiting can never turn it into a yes.
+            raise
+        except RuntimeError as transport:
+            # `GitHubClient` raises this for a transport failure it has already
+            # retried — a truncated response, a reset connection, a 5xx. Those
+            # are observed often enough in practice that failing the whole run
+            # on one is wrong, and retrying is safe: nothing here has been
+            # decided yet, and the request budget still bounds it.
+            reason, kind = str(transport), "transport"
+
+        remaining = deadline - clock()
+        if remaining < poll_seconds:
+            message = (
+                f"{reason} — still not decided after waiting "
+                f"{wait_seconds:.0f}s over {attempt} attempt(s)"
             )
-            sleep(poll_seconds)
+            if kind == "transport":
+                raise RuntimeError(message)
+            raise EnqueueRefused(message)
+        log_event(
+            "waiting",
+            attempt=attempt,
+            kind=kind,
+            reason=reason,
+            seconds_left=int(remaining),
+            requests=getattr(client, "spent", None),
+        )
+        sleep(poll_seconds)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -608,7 +624,18 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
 
-    enqueue_token = required_env("ENQUEUE_TOKEN")
+    # Reached only when the switch is on. If it was turned on before the app
+    # exists, say so plainly rather than ending the run on a traceback.
+    enqueue_token = os.environ.get("ENQUEUE_TOKEN", "").strip()
+    if not enqueue_token:
+        log_event("no_enqueue_token", pull=number, head=head_sha)
+        print(
+            "::error title=Results auto-enqueue::"
+            "RESULTS_AUTO_ENQUEUE_ENABLED is true but no app token is available; "
+            "set RESULTS_APP_ID and RESULTS_APP_PRIVATE_KEY, or set the variable "
+            "back to false"
+        )
+        return 1
     try:
         entry = enqueue(enqueue_token, str(pull["node_id"]), head_sha)
     except EnqueueRefused as error:

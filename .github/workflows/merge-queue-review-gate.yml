@@ -56,9 +56,15 @@ jobs:
       # triggered by `pull_request_target` and checks out `main`, so a pull
       # request cannot redefine it. That side refuses any change under
       # `.github/` unless a code owner is the author or has approved it — see
-      # `non_scenario_gate` in `scripts/scenario_review_flow.py`. Since
-      # `review-gate` is a required status check, a pull request that edits this
-      # file cannot even be added to the merge queue until that has happened.
+      # `non_scenario_gate` in `scripts/scenario_review_flow.py`. It is also the
+      # only producer that reports on a pull request head; this workflow reports
+      # on merge groups alone.
+      #
+      # So a pull request that edits this file cannot be added to the queue
+      # until an owner has signed off, and that step is measured rather than
+      # assumed: required status checks are enforced at `enqueuePullRequest` for
+      # every actor, including one with `always` bypass on every applicable
+      # ruleset.
       #
       # GitHub's own `require_code_owner_review` is not what enforces this: it
       # is measurably inert once `required_approving_review_count` is 0, which

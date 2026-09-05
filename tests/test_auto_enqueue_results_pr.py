@@ -600,6 +600,46 @@ class WaitingTests(GateTestCase):
             self.wait(client, wait_seconds=10_000)
         self.assertIn("budget", str(caught.exception))
 
+    def test_a_truncated_response_is_retried_rather_than_failing_the_run(self):
+        # GitHub occasionally truncates a reply; observed three times in seven
+        # live runs. Nothing has been decided at that point, so retry.
+        client = FakeClient(routes())
+        real_request = client.request
+        state = {"failures": 0}
+
+        def request(path, method="GET", payload=None):
+            if "check-runs" in path and state["failures"] < 2:
+                state["failures"] += 1
+                raise RuntimeError(
+                    "GitHub API GET /check-runs failed: IncompleteRead(5465 bytes read)"
+                )
+            return real_request(path, method, payload)
+
+        client.request = request
+        (pull, head), slept = self.wait(client)
+        self.assertEqual(head, HEAD)
+        self.assertEqual(slept, [30, 30])
+
+    def test_a_transport_failure_that_never_clears_stays_an_error(self):
+        class Broken:
+            spent = 0
+
+            def request(self, path, method="GET", payload=None):
+                raise RuntimeError("connection reset")
+
+        with self.assertRaises(RuntimeError) as caught:
+            self.wait(Broken())
+        self.assertNotIsInstance(caught.exception, gate.EnqueueRefused)
+        self.assertIn("still not decided", str(caught.exception))
+
+    def test_a_refusal_is_never_retried_as_a_transport_failure(self):
+        table = routes(**{"/pulls/93/files": []})
+        client = FakeClient(table)
+        with self.assertRaises(gate.EnqueueRefused):
+            self.wait(client)
+        # One pass only: a decided no must not consume the wait budget.
+        self.assertEqual(len([c for c in client.calls if c.startswith("/pulls?")]), 1)
+
     def test_every_attempt_re_reads_the_head(self):
         table = routes(
             **{f"/commits/{HEAD}/check-runs": {"total_count": 0, "check_runs": []}}
@@ -867,7 +907,9 @@ class MainTests(GateTestCase):
             with mock.patch.object(gate, "BudgetedClient", lambda r, t: Broken()):
                 with mock.patch.object(gate, "enqueue", mock.Mock()) as enqueued:
                     with contextlib.redirect_stdout(buffer):
-                        code = gate.main([])
+                        code = gate.main(
+                            ["--wait-seconds", "0", "--poll-seconds", "0"]
+                        )
         self.assertEqual(code, 1)
         enqueued.assert_not_called()
         self.assertIn("::error", buffer.getvalue())
@@ -886,6 +928,22 @@ class MainTests(GateTestCase):
         del env["ENQUEUE_TOKEN"]
         code, _, calls = self.run_main([], env)
         self.assertEqual(code, 0)
+        self.assertEqual(calls["enqueue"], [])
+
+    def test_the_switch_on_without_an_app_token_says_so_and_stops(self):
+        # Turning the variable on before the app exists must not end the run on
+        # a traceback: the job has to say which secret is missing.
+        env = self.base_env()
+        del env["ENQUEUE_TOKEN"]
+        code, out, calls = self.run_main([], env)
+        self.assertEqual(code, 1)
+        self.assertEqual(calls["enqueue"], [])
+        self.assertIn("RESULTS_APP_ID", out)
+        self.assertIn("::error", out)
+
+    def test_an_empty_app_token_is_treated_as_absent(self):
+        code, out, calls = self.run_main([], self.base_env(ENQUEUE_TOKEN="   "))
+        self.assertEqual(code, 1)
         self.assertEqual(calls["enqueue"], [])
 
     def test_a_missing_read_token_is_fatal(self):
