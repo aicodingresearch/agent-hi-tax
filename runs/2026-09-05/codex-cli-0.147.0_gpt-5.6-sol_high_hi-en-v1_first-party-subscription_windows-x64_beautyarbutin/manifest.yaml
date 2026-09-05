@@ -115,15 +115,15 @@ evidence:
   package_level: "C"
   visual_evidence_access: "not_provided"
   field_statuses:
-    agent_version: "self_reported"
-    subscription_plan: "self_reported"
+    agent_version: "verified"
+    subscription_plan: "verified"
     usage_multiplier: "not_exposed"
-    route: "self_reported"
-    model: "self_reported"
-    reasoning_effort: "self_reported"
+    route: "verified"
+    model: "verified"
+    reasoning_effort: "verified"
     harness: "self_reported"
-    environment: "self_reported"
-    workspace_and_session: "self_reported"
+    environment: "verified"
+    workspace_and_session: "verified"
     skills_and_hooks: "not_exposed"
     mcp_plugins_and_hooks: "not_exposed"
   public_files:
@@ -133,6 +133,8 @@ evidence:
     - "launch-command.txt"
     - "RESULTS.csv"
     - "evidence/preregistration.md"
+    - "evidence/preflight.md"
+    - "evidence/preflight-status.png"
   withheld_private_evidence: false
   redactions: []
 
