@@ -12,4 +12,3 @@
 - 凭据：只在本机私有环境变量中提供；仓库不保存 key、token、cookie、Authorization header 或完整本机路径
 
 本文件创建时尚未发送正式 `hi`。协议兼容性、实际 token usage、延迟、额度和模型观测值全部留到 preflight/attempt 证据中；无法公开验证的字段按仓库规定记录为 `not_exposed` 或 `not_provided`。
-
