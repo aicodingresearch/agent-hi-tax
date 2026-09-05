@@ -1,0 +1,62 @@
+Tool: python/Pillow (PIL) 10.3.0
+Method: deterministic, fully opaque black rectangles; no blur, crop, resize, generative editing, or text reconstruction
+
+environment.redacted.png
+- source dimensions: 399x120
+- public dimensions: 399x120
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r1/start.png
+- source dimensions: 1617x711
+- public dimensions: 1617x711
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r1/response.png
+- source dimensions: 2145x1116
+- public dimensions: 2145x1116
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r2/start.png
+- source dimensions: 1836x969
+- public dimensions: 1836x969
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r2/response.png
+- source dimensions: 2151x1167
+- public dimensions: 2151x1167
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r3/start.png
+- source dimensions: 1860x1260
+- public dimensions: 1860x1260
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r3/response.png
+- source dimensions: 2136x1092
+- public dimensions: 2136x1092
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+Unchanged public images have SHA-256 values identical to their private originals.
+
+OCR privacy scan of all public images found none of these private strings:
+- private absolute home path
+- local username and hostname prompt
+- injected Git identity
+- email address
+- session UUID
+
+Manual visual inspection confirmed that no sensitive text is exposed and the model, credit, timing, prompt, response, and workspace evidence is readable.

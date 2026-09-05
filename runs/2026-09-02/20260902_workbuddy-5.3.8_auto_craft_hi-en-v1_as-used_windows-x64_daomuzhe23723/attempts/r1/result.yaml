@@ -1,0 +1,75 @@
+attempt: "r1"
+status: "valid"
+started_at_utc: "2026-09-02T06:21:27.902Z"
+assistant_message_at_utc: "2026-09-02T06:21:38.335Z"
+usage_recorded_at_utc: "2026-09-02T06:21:38.333Z"
+response_latency_ms: 10433
+response_latency_display_seconds: 10
+latency_method: "workbuddy-jsonl-event-timestamps"
+
+model_requested: "Auto"
+model_observed: "deepseek-v4-flash"
+effort_observed: "not_exposed"
+# 5.3.8 sessions 字段在会话结束后异步最终化：R1 刚完成时读到中间态 model='craft'/mode=NULL；
+# 切到 r2 后再查已是 mode='craft'（工作模式）/ model='auto'（requested model）。mode_observed=craft 不变。
+mode_observed: "craft"
+
+usage:
+  source: "workbuddy-providerData.rawUsage-plus-sqlite-crosscheck"
+  provider_schema: "workbuddy"
+  input_tokens_including_cached: 35981
+  cached_input_tokens: 0
+  non_cached_input_tokens: 35981
+  cli_total_excluding_cached: "not_applicable"
+  cache_write_input_tokens: 0
+  model_context_window_event: "not_exposed"
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  total_input_tokens: 35981
+  output_tokens: 646
+  reasoning_output_tokens: 482
+  non_reasoning_output_tokens: 164
+  context_total_tokens: 36627
+  provider_total_tokens: 36627
+  api_calls: 1
+  workbuddy_credit: 3.25
+  credit_unit: "workbuddy_credit"
+  credit_crosscheck: "matched"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "c26be967c7d4ae6133cb6b06830c7cd45d611dee91a90732931b56411598dcbe"
+  private_exact_text_sha256: "c26be967c7d4ae6133cb6b06830c7cd45d611dee91a90732931b56411598dcbe"
+  redacted: false
+
+activity:
+  tool_calls: 0
+  web_used: false
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "per_attempt_native_credit_verified"
+
+evidence:
+  # 以下文件由人工截图后放入本目录（待填：start.png / response.png 尚未放置）
+  start_screenshot: "start.png"
+  response_screenshot: "response.png"
+  usage_screenshot: "response.png"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    credit: "verified"
+    quota: "not_provided"
+
+deviations:
+  - note: "5.3.8 JSONL schema 与 5.3.13 样板差异：user 输入正文含环境注入上下文，末尾 <user_query>hi</user_query> 为唯一真实输入；providerData.rawUsage 更丰富（含 prompt_tokens_details/completion_tokens_details/cache_* 等）。"
+  - note: "5.3.8 session_usage.credit_json 的 key 是 providerData.conversationRequestId（非 messageId），按 messageId 去重后唯一调用 credit=3.25 与 SQLite 求和 3.25 一致，credit_crosscheck=matched。"
+  - note: "5.3.8 sessions 表字段会话结束后异步最终化：R1 刚完成时读到 mode=NULL/model='craft' 中间态，切到 r2 后最终态为 mode='craft'（工作模式）/model='auto'（requested）。requested=Auto 与路由模型以 JSONL providerData 为准。"
