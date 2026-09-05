@@ -6,7 +6,7 @@ scenario:
   captured_from_utc: "not_exposed"
   captured_to_utc: "not_exposed"
   planned_repetitions: 3
-  valid_repetitions: 1
+  valid_repetitions: 2
 
 contributor:
   github_handle: "@beautyarbutin"
@@ -140,6 +140,11 @@ evidence:
     - "attempts/r1/usage.png"
     - "attempts/r1/response.txt"
     - "attempts/r1/result.yaml"
+    - "attempts/r2/before-status.png"
+    - "attempts/r2/response.png"
+    - "attempts/r2/usage.png"
+    - "attempts/r2/response.txt"
+    - "attempts/r2/result.yaml"
   withheld_private_evidence: false
   redactions: []
 
