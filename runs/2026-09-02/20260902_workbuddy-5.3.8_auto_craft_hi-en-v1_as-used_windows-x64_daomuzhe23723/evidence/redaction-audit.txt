@@ -1,0 +1,65 @@
+Tool: python/Pillow (PIL); initial packaging pass 10.3.0, privacy-redaction pass 12.3.0
+Method: deterministic, fully opaque black rectangles; no blur, crop, resize, generative editing, or text reconstruction
+
+environment.redacted.png
+- source dimensions: 399x120
+- public dimensions: 399x120
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r1/start.png
+- source dimensions: 1617x711
+- public dimensions: 1617x711
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r1/response.png
+- source dimensions: 2145x1116
+- public dimensions: 2145x1116
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r2/start.png
+- source dimensions: 1836x969
+- public dimensions: 1836x969
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r2/response.png
+- source dimensions: 2151x1167
+- public dimensions: 2151x1167
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r3/start.png
+- source dimensions: 1860x1260
+- public dimensions: 1860x1260
+- rectangles, inclusive coordinates: (none)
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+attempts/r3/response.png
+- source dimensions: 2136x1092
+- public dimensions: 2136x1092
+- rectangles, inclusive coordinates: (436,528)-(1726,650)
+- reason: the model's reply restated the user's cross-session memory profile; the paragraph is fully covered by one fully opaque black rectangle
+- decoded RGB maximum difference outside rectangles: 0
+- decoded alpha maximum difference across the full image: 0
+
+Unchanged public images have SHA-256 values identical to their private originals. attempts/r3/response.png is the only public image whose SHA-256 differs from its private original, due to the single declared rectangle above.
+
+OCR privacy scan of all public images found none of these private strings:
+- private absolute home path
+- local username and hostname prompt
+- injected Git identity
+- email address
+- session UUID
+
+Known blind spot, addressed in this revision: the OCR scan matches identifier fingerprints only and cannot detect model-generated semantic content. R3's reply restated the user's cross-session profile; that content was redacted manually (opaque rectangle in the screenshot, paragraph replacement in the public text and sanitized events) and is treated as a sixth protected category going forward.
+
+Manual visual inspection confirmed that no sensitive text is exposed in the public package; the model, credit, timing, prompt, response, and workspace evidence remains readable, and the redacted region in attempts/r3/response.png contains only the opaque rectangle.
