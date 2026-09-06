@@ -1,0 +1,13 @@
+# T-03 retest preflight (Windows, draft snapshot)
+captured_utc: 2026-09-02T04:05:16Z
+product: WorkBuddy Desktop (electron), exe=D:/workbuddy/WorkBuddy.exe
+product_version: 5.3.8 (FileVersion 5.3.8, ProductVersion 5.3.8.0)
+os: Microsoft Windows build 10.0.26200 (MINGW64_NT-10.0-26200)
+arch: x86_64
+enabled_plugins:
+  - weixinpay@workbuddy-builtin
+  - tencent-docs-plugin@workbuddy-builtin
+  - tencent-pptx@workbuddy-builtin
+  - agent-browser@codebuddy-plugins-official
+  - find-skills@codebuddy-plugins-official
+note: regenerate this file on the actual test day if runs happen later.

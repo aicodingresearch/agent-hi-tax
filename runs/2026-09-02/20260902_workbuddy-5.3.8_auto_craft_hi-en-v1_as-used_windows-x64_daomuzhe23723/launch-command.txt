@@ -1,0 +1,3 @@
+WorkBuddy 5.3.8 is a desktop IDE in this scenario. There is no model-bearing CLI launch command.
+
+The terminal was used only to create and verify each empty directory. The contributor then selected that directory in the WorkBuddy GUI, confirmed Auto / 日常办公 / 允许完全访问, opened a blank fresh session, and manually submitted hi.

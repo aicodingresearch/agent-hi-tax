@@ -1,0 +1,74 @@
+attempt: "r2"
+status: "valid"
+started_at_utc: "2026-09-02T06:41:39.232Z"
+assistant_message_at_utc: "2026-09-02T06:41:47.009Z"
+usage_recorded_at_utc: "2026-09-02T06:41:47.007Z"
+response_latency_ms: 7777
+response_latency_display_seconds: 8
+latency_method: "workbuddy-jsonl-event-timestamps"
+
+model_requested: "Auto"
+model_observed: "deepseek-v4-flash"
+effort_observed: "not_exposed"
+# 5.3.8 sessions 字段在会话结束后异步最终化；最终态 mode='craft'（工作模式）/ model='auto'（requested）。
+mode_observed: "craft"
+
+usage:
+  source: "workbuddy-providerData.rawUsage-plus-sqlite-crosscheck"
+  provider_schema: "workbuddy"
+  input_tokens_including_cached: 35981
+  cached_input_tokens: 896
+  non_cached_input_tokens: 35085
+  cli_total_excluding_cached: "not_applicable"
+  cache_write_input_tokens: 0
+  model_context_window_event: "not_exposed"
+  input_tokens: "not_applicable"
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  total_input_tokens: 35981
+  output_tokens: 404
+  reasoning_output_tokens: 263
+  non_reasoning_output_tokens: 141
+  context_total_tokens: 36385
+  provider_total_tokens: 36385
+  api_calls: 1
+  workbuddy_credit: 3.11
+  credit_unit: "workbuddy_credit"
+  credit_crosscheck: "matched"
+  service_tier: "not_exposed"
+  speed: "not_exposed"
+
+response:
+  file: "response.txt"
+  exact_text_sha256: "adfdb87db093b641fd047fbd8ea93d09351419f8fd0738d98420f5f26d84691b"
+  private_exact_text_sha256: "adfdb87db093b641fd047fbd8ea93d09351419f8fd0738d98420f5f26d84691b"
+  redacted: false
+
+activity:
+  tool_calls: 0
+  web_used: false
+  approvals: 0
+  errors: []
+
+quota:
+  before: "not_measured"
+  after: "not_measured"
+  attribution: "per_attempt_native_credit_verified"
+
+evidence:
+  # 以下文件由人工截图后放入本目录（待填：start.png / response.png 尚未放置）
+  start_screenshot: "start.png"
+  response_screenshot: "response.png"
+  usage_screenshot: "response.png"
+  sanitized_events: "events.sanitized.jsonl"
+  field_statuses:
+    prompt_and_response: "verified"
+    usage: "verified"
+    timing: "verified"
+    credit: "verified"
+    quota: "not_provided"
+
+deviations:
+  - note: "5.3.8 切目录后已完成 session 未被软删除（r1 deleted_at=NULL），与 5.3.13 mac 实测的软删除行为不同；本包所有 session 均可事后回查。"
+  - note: "5.3.8 session_usage.credit_json key = conversationRequestId，与 JSONL providerData.conversationRequestId 对应（4bd92175...）；credit=3.11 与 SQLite 求和 3.11 一致。"
+  - note: "rawUsage.prompt_cache_hit_tokens=896 而 cache_read_input_tokens=0（提供商字段语义差异，两者并不同源），cached_input_tokens 以 prompt_cache_hit_tokens 计。"
