@@ -1,0 +1,8 @@
+# T-50 gateway-side launch notes. Do not put the IKUN API key in this file.
+# Set OPENAI_API_KEY privately in the PowerShell process before use. The value
+# must be the IKUN Family credential and must never be committed.
+$env:OPENAI_API_KEY = '<already set privately; never commit the value>'
+
+# The user-level Codex profile must define the custom provider and its public base URL.
+# Keep the provider/base URL and credential variable name fixed for R1-R3.
+codex --no-alt-screen --profile t50-ikun-gateway --model gpt-5.6-sol --config 'model_reasoning_effort="high"' --cd "<RUN_DIR>"
