@@ -165,7 +165,9 @@ evidence:
     - "attempts/r3/response.txt"
     - "attempts/r3/result.yaml"
   withheld_private_evidence: false
-  redactions: []
+  redactions:
+    - "evidence/preflight.redacted.png and evidence/preflight.invalid-status.redacted.png replace the local directory and session identifier with fully opaque terminal-background rectangles."
+    - "evidence/preflight.invalid-response.redacted.png replaces the bottom status-bar directory with a fully opaque terminal-background rectangle."
 
 comparison:
   status: "controlled"

@@ -172,7 +172,8 @@ evidence:
     - "attempts/r3/response.txt"
     - "attempts/r3/result.yaml"
   withheld_private_evidence: false
-  redactions: []
+  redactions:
+    - "evidence/preflight-status.png replaces the account email and Session ID with fully opaque terminal-background rectangles while retaining the other visible status fields."
 
 comparison:
   status: "controlled"
